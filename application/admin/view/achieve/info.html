@@ -1,0 +1,127 @@
+<include file="public/layout" />
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="javascript:history.back();" title="返回列表"><i class="fa fa-arrow-circle-o-left"></i></a>
+            <div class="subject">
+                <h3>会员等级管理 - 编辑会员等级</h3>
+                <h5>网站系统会员等级管理</h5>
+            </div>
+        </div>
+    </div>
+	<div class="explanation" id="explanation">
+	  <div class="title" id="checkZoom"><i class="fa fa-lightbulb-o"></i>
+	    <h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+	    <span id="explanationZoom" title="收起提示"></span>
+	  </div>
+	  <ul>
+	    <li></li>
+	  </ul>
+	</div>
+    <form class="form-horizontal" id="handleposition" method="post">
+        <!-- <input type="hidden" name="act" value="{$act}"> -->
+        <input type="hidden" name="id" value="{$info.user_id}">
+        <input type="hidden" name="m" value="{$info.new_money}">
+        <div class="ncap-form-default">
+
+            <dl class="row">
+                <dt class="tit">会员名称</label>
+                </dt>
+                <dd class="opt">
+                     {$info.nickname}(ID:{$info.user_id})
+                    <span class="err" id="err_level_name"></span>
+                
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">会员等级</label>
+                </dt>
+                <dd class="opt">
+                     {$level[$info['level']]}
+                    <span class="err" id="err_level_name"></span>
+               
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">业绩</label>
+                </dt>
+                <dd class="opt">
+                     {$info.new_money}
+                    <span class="err" id="err_level_name"></span>
+                    
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="bonus_total">会员业绩分红开关设置:</label>
+                </dt>
+                <dd class="opt">
+                    <div class="onoff">
+                        <label for="is_pool_open" class="cb-enable <if condition='$info.ach_pool eq 1'>selected</if>">开启</label>
+                        <label for="is_pool_close" class="cb-disable <if condition='$info.ach_pool eq 0'>selected</if>">关闭</label>
+                        <input id="is_pool_open" name="ach_pool" <if condition="$info.ach_pool eq 1">checked="checked"</if> value="1" type="radio"> 
+                        <input id="is_pool_close" name="ach_pool" <if condition="$info.ach_pool eq 0">checked="checked"</if> value="0" type="radio">
+                    </div>
+                    <p class="notic">是否开启业绩分红</p>
+                </dd>
+            </dl>
+			<dl class="row">
+			    <dt class="tit">
+			        <label for="level_name"><em>*</em>业绩百分比</label>
+			    </dt>
+			    <dd class="opt">
+			        <input type="text" name="ach_rate" value="{$info.ach_rate}" id="ach_rate" class="input-txt" onkeyup="this.value=this.value.replace(/[^\d]/g,'')">
+			        <span>%</span>
+			        <p class="notic">设置会员分红奖励百分比，单位%</p>
+			    </dd>
+			</dl>
+           
+            <div class="bot"><a href="JavaScript:void(0);" onclick="verifyForm()" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a></div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    function verifyForm(){
+        $('span.err').show();
+        $.ajax({
+            type: "POST",
+            url: "{:U('Admin/Achieve/info')}",
+            data: $('#handleposition').serialize(),
+            dataType: "json",
+            error: function () {
+                layer.alert("服务器繁忙, 请联系管理员!");
+            },
+            success: function (data) {
+                if (data.status == 1) {
+                    layer.msg(data.msg, {icon: 1});
+                    location.href = "{:U('Admin/Achieve/slist')}";
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                    $.each(data.result, function (index, item) {
+                        $('#err_' + index).text(item).show();
+                    });
+                }
+            }
+        });
+    }
+	
+	function showMsg(obj) {
+	var opt = obj.options[obj.selectedIndex]
+	// alert("The option you select is:"+opt.text+"("+opt.value+")");
+		if(obj.value==201){
+			// alert();
+			document.getElementById("numsshow").style.display="block";
+			document.getElementById("nums_is").innerHTML="人";
+		}else if(obj.value==301){
+			document.getElementById("numsshow").style.display="block";
+			document.getElementById("nums_is").innerHTML="元";
+		}else{
+			document.getElementById("numsshow").style.display="none";
+		}
+	}
+</script>
+</body>
+</html>

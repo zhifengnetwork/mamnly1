@@ -1,0 +1,8 @@
+<foreach name="account_log" item="v" key="k"> 
+	<div class="fll_acc" onclick="ajax_account_detail(this)" data-url="{:U('Mobile/User/account_detail',['log_id'=>$v['log_id']])}">
+		<div class="fll">订单编号：{$v[order_sn]|default='无'}</div>
+		<div class="fll">变动金额：<span style="color:#e01222;">{$v[user_money]}</span></div>
+		<div class="fll" style="color:#999;">变动时间：{:date('Y-m-d H:i:s',$v[change_time])}</div>
+		<div class="fll">描述：{$v[desc]}</div>
+	</div>
+</foreach>

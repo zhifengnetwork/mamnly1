@@ -1,0 +1,5 @@
+
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: Undefined variable: \"$ppr\".\A    \A \A 1: .successsystem{\A 2:     text-align: center;\A 3:     padding: 100px/$ppr 0;\A 4:     img{\A 5:         width: 150px/$ppr;\A 6:         height: 150px/$ppr;\A 7:     }\A 8: }"; }

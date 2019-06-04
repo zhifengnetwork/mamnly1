@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title>订单详情</title>
+		<script src="__STATIC__/js/public/rem.js" ></script>
+		<!-- <script src="js/jquery-1.8.3.min.js" ></script> -->
+		<style type="text/css">
+			*{margin: 0;padding: 0;}
+			.lj_header{width: 100%;height: 0.8rem;background: #f5f5f5;line-height: 0.8rem;}
+			.lj_header a img{width: 0.24rem;height: 0.38rem;position: absolute;top: 0.2rem;left: 0.3rem;}
+			.lj_header p{text-align: center;font-size: 0.3rem;}
+			.lj_main{ border-radius: 0.09rem;width: 93%;margin: 0 auto;margin-top: 0.3rem;font-size: 0.3rem;}
+			.lj_main_c1{display: flex;letter-spacing: 0.02rem;}
+			.lj_main_c1 span:nth-child(2){padding: 0.1rem;word-wrap: break-word;width: 70%;border-radius: 0.1rem;}
+			.lj_main_span{padding-top: 0.1rem;box-sizing: border-box;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;width: 30%}
+			.lj_mian_p{width: 100%;height: 0.3rem;background: #f5f5f5;}
+			.juzhong {position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);font-size: 0.3rem;}
+            .shopbox{
+                display: flex;
+                display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */ 
+                display: -moz-box; /* Firefox 17- */ 
+                display: -webkit-flex; /* Chrome 21+, Safari 6.1+, iOS Safari 7+, Opera 15/16 */ 
+                display: -moz-flex; /* Firefox 18+ */ 
+                display: -ms-flexbox; /* IE 10 */ 
+            }
+            .shop-name{
+                width: 30%;
+                padding-top: 0.1rem;
+            }
+            .shop-list{
+                width: 70%;
+            }
+            .shop-pirce{
+                  display:block;
+                  padding: 0.1rem;
+            }
+            .rebate{
+                width: 30%;
+            }
+            .rebate .lj_main_span,.rebate-info>.lj_main_span{
+                width: 100%;
+            }
+            .rebate-list{
+                width: 70%;
+                /* float: right; */
+                display: block;
+            }
+            .rebate-box{
+                
+                padding: 0.1rem 0.1rem 0.1rem 0;
+            }
+           
+		</style>
+	</head>
+	<body>
+		<!--头部-->
+		<div class="lj_header">
+			<a href="javascript:history.back(-1)"><img src="/template/shop/rainbow/static/images/return.png" /></a>
+			<p>订单详情</p>
+		</div>
+		<!--循环整个div-->
+		<empty name="detail">
+			<span class="juzhong">暂无数据</span>
+		<else/>
+            <div class="lj_all">
+                <div class="lj_main">
+                    <div class="lj_main_c1">
+                        <span class="lj_main_span">订单ID</span>
+                        <span>{$detail.order_id}</span>
+                    </div>
+                    <div class="lj_main_c1">
+                        <span class="lj_main_span">下单人ID:</span>
+                        <span>{$detail.user_id}</span>
+                    </div>
+                    <div class="lj_main_c1">
+                        <span class="lj_main_span">下单人:</span>
+                        <span>{$detail.nickname}（等级: {$level_name}）</span>
+                    </div>
+                    <div class="lj_main_c1">
+                        <span class="lj_main_span">收货人:</span>
+                        <span>{$detail.consignee}</span>
+                    </div>
+                    <div class="lj_main_c1">
+                        <span class="lj_main_span">订单编号:</span>
+                        <span>{$detail.order_sn}</span>
+                    </div>
+                  
+                    <div class="shopbox">
+                        <div class="shop-name">商品:</div>
+                        <div class="shop-list">    
+                            <!-- 循环商品 -->
+                            <foreach name="$detail.goods" item="item">
+                                    <div class="lj_main_c1 shop-pirce">
+                                         <span>{$item.goods_name}</span>
+                                         <div class="lj_main_c1">
+                                            <span>{$item.goods_price}(价格) * {$item.goods_num}(数量)</span>
+                                        </div>
+                                    </div>
+                            </foreach>
+                        </div>
+                    </div>
+
+                    <div class="lj_main_c1">
+                        <span class="lj_main_span">订单总价:</span>
+                        <span>{$detail.total_amount}</span>
+                    </div>
+                    <div class="lj_main_c1">
+                        <span class="lj_main_span">下单时间:</span>
+                        <span>{$detail.add_time|date="Y-m-d H:i:s", ###}</span>
+                    </div>
+                    <div class="lj_main_c1">
+                        <span class="lj_main_span">支付时间:</span>
+                        <span>{$detail.pay_time|date="Y-m-d H:i:s", ###}</span>
+                    </div><br><br>
+
+                    <notempty name="log">
+                        <div class="lj_main_c1">
+                            <span class=""><strong>我的返利:</strong>（我的ID：{$user_id}）</span>
+                        </div>
+                        <foreach name="log" item="log">
+                            <div class="lj_main_c1 rebate-box">
+                             <div class="rebate">
+                                <div class="lj_main_span">返利金额:</div>
+                                <div class="lj_main_span">级别:</div>
+                                <div class="lj_main_span">备注:</div>
+                                <div class="lj_main_span">时间:</div>
+                            </div>
+                            
+                             <div class="rebate-list">
+                                <div class="rebate-info">
+                                        <div class="lj_main_span">{$log.user_money}</div>
+                                        <div class="lj_main_span">{$jibie}顾客</div>
+                                        <div class="lj_main_span">{$log.desc}</div>
+                                        <div class="lj_main_span">{$log.change_time|date="Y-m-d H:i:s", ###}</div>
+                                </div>
+                            
+                            </div>
+                       
+                        </div>
+                        </foreach>
+                    </notempty>
+                </div>
+                <!-- <div class="lj_mian_p"></div> -->
+            </div>
+		</empty>
+		
+	</body>
+</html>
