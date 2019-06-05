@@ -6,4 +6,6 @@
 
 		'MCHID' => '1507131181',      
 		'KEY' => 'KXlt05RqoFShDPrLsTZxs6o1uWuudaag',
+
+		'special_cid'	=> 8,	//特殊商品分类ID
 	];

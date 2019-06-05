@@ -153,6 +153,7 @@ return array(
     'member' => array('name' => '会员', 'child' => array(
         array('name' => '会员管理', 'child' => array(
             array('name' => '会员列表', 'act' => 'index', 'op' => 'User'),
+            array('name'=>'业绩列表','act'=>'yejiList','op'=>'User'),
             array('name' => '快速更改等级', 'act' => 'changelevel', 'op' => 'User'),
             array('name'=>'会员等级','act'=>'levelList','op'=>'User'),
             array('name'=>'申请大区董事列表','act'=>'lists','op'=>'Largearea'),
@@ -203,8 +204,8 @@ return array(
 			array('name' => '模式管理', 'child' => array(
 				// array('name' => '分销商品', 'act' => 'goods_list', 'op' => 'Distribut'),
 				// array('name' => '分销商列表', 'act' => 'distributor_list', 'op' => 'Distribut'),
-				array('name' => '分销设置', 'act' => 'grade_list', 'op' => 'Distribut'),
-                array('name' => '代理商设置', 'act' => 'agent_grade_list', 'op' => 'Distribut'),
+				//array('name' => '分销设置', 'act' => 'grade_list', 'op' => 'Distribut'),
+                //array('name' => '代理商设置', 'act' => 'agent_grade_list', 'op' => 'Distribut'),
                 // array('name' => '等级关系', 'act' => 'tree', 'op' => 'Distribut'),
 				// array('name' => '分销设置', 'act' => 'distribut', 'op' => 'System'),
 				array('name' => '分成日志列表', 'act' => 'rebate_log', 'op' => 'Distribut'),
@@ -215,7 +216,7 @@ return array(
 				array('name' => '奖励排名表', 'act' => 'ranking', 'op' => 'BonusPool'),
                 array('name' => '领取日志列表', 'act' => 'receive_log', 'op' => 'BonusPool'),
                 array('name' => '奖励日志列表', 'act' => 'bonus_log', 'op' => 'BonusPool'),
-			)),
+			)),/*
                  array('name' => '分红管理', 'child' => array(
 
                 // array('name' => '业绩奖励设置', 'act' => 'lists', 'op' => 'Rewardo'),
@@ -226,7 +227,7 @@ return array(
                  // array('name' => '团队列表', 'act' => 'preform', 'op' => 'PreForm'),
 
 
-            )),
+            )),*/
 	)),
 
     'data' => array('name' => '数据', 'child' => array(

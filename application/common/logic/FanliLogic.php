@@ -132,7 +132,7 @@ class FanliLogic extends Model
 			        	$desc = "分享返利";
 			        	$log = $this->writeLog($user_info['first_leader'],$commission,$desc,1); //写入日志
 			            //检查返利管理津贴
-			          //  $this->jintie($user_info['first_leader'],$commission);
+			          $this->jintie($user_info['first_leader'],$commission);
 			        	//return true;
 			         } else {
 			        	return false;
@@ -212,14 +212,15 @@ class FanliLogic extends Model
 	          //自动升级总监
 			    $parent_info = M('users')->where('user_id',$user_info['first_leader'])->field('first_leader,level,is_code,user_id')->find();
 
-				$num=M('users')->where(['first_leader'=>$user_info['first_leader'],'level'=>3])->count();
-				$fanli = M('user_level')->where('level',4)->field('tui_num')->find();
-	             if($num>=$fanli['tui_num'] && !empty($fanli['tui_num']) && $parent_info['level']==3)
-	             {
-	                  $res = M('users')->where(['user_id'=>$user_info['first_leader']])->update(['level'=>4,'count_time'=>'']);
-	                  $desc = "直推店主".$fanli['tui_num']."个成为总监";
-		        	  $log = $this->writeLog_ug($user_info['first_leader'],'',$desc,2); //写入日志
-	             }
+				
+				$fanli = M('user_level')->where('level',4)->field('tui_num,tui_level')->find();
+				$num=M('users')->where(['first_leader'=>$user_info['first_leader'],'level'=>$fanli['tui_level']])->count();
+				if($num>=$fanli['tui_num'] && !empty($fanli['tui_num']))
+				{
+						$res = M('users')->where(['user_id'=>$user_info['first_leader']])->update(['level'=>4,'count_time'=>'']);
+						$desc = "直推店主".$fanli['tui_num']."个成为总监";
+				$log = $this->writeLog_ug($user_info['first_leader'],'',$desc,2); //写入日志
+				}
 	        }
 		}
 

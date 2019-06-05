@@ -11,7 +11,7 @@ function get_nickname($user_id){
 
 function get_agent_log($user_id){
 
-	
+	return M('Yeji')->where(['uid'=>$user_id])->sum('money');
 	$agent_money = M('agent_performance')->where(['user_id'=>$user_id])->find();
 	
 	if(empty($agent_money)){
