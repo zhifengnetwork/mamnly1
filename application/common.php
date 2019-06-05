@@ -197,6 +197,7 @@ function getAllUp($invite_id,&$userList=array())
 
     $goods_list = M('order_goods')->where(['order_id'=>$order_id])->select();
     agent_performance($order_id);
+    $num = 0;
     foreach($goods_list as $k => $v){
 
         $goodId = $v['goods_id'];
@@ -204,6 +205,23 @@ function getAllUp($invite_id,&$userList=array())
 
         $model = new BonusLogic($userId, $goodId,$goodNum,$orderSn,$order_id);
         $res = $model->bonusModel();
+
+        if(!$v['prom_type'] && !$v['prom_id'] && ($v['cat_id'] != C('customize.special_cid'))){
+            $num +=  ($goodNum * $v['final_price']); 
+        }
+    }
+
+    //查找订单用户上级链中的level为4或5的用户
+    $UsersLogic = new \app\common\logic\UsersLogic();
+    $leader = $UsersLogic->getUserLevTop($userId,4);
+    $Yeji = M('yeji');
+    $Yeji->add(['uid'=>$userId,'money'=>$num,'addtime'=>time(),'order_id'=>$order_id]);
+    if($leader['user_id']){
+        $Yeji->add(['uid'=>$leader['user_id'],'money'=>$num,'addtime'=>time(),'order_id'=>$order_id]);
+        $leader = $UsersLogic->getUserLevTop($userId,5);
+        if($leader['user_id']){
+            $Yeji->add(['uid'=>$leader['user_id'],'money'=>$num,'addtime'=>time(),'order_id'=>$order_id]);
+        }
     }
  }
 

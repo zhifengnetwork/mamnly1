@@ -1668,15 +1668,7 @@ class UsersLogic extends Model
 		
 		return false;
 
-	}
-	
-
-	private function getArrayValue($arr){
-        $data = [];
-        foreach($arr as $v)
-            $data[] = $v['user_id'];
-        return $data;
-    }    
+	}    
 
     //获取用户下级
     private function getUserLevBot($uid){
@@ -1687,7 +1679,7 @@ class UsersLogic extends Model
             $sql = "select user_id from tp_users where first_leader = $uid";
             
         $res = M('users')->query($sql);
-        $arr1 = $this->getArrayValue($res);          
+        $arr1 = get_arr_column($res,'user_id');        
         return $arr1;
     }
 
@@ -1702,6 +1694,31 @@ class UsersLogic extends Model
         }
         return $arr;
 	}
+
+    //获取指定级别的用户上级
+    public function getUserLevTop($uid,$level){
+		//获取上级
+		$sql = "select level,first_leader from tp_users where user_id = $uid";
+		$res = M('users')->query($sql);
+
+		//获取上级级别
+		if(count($res)){
+			if($res[0]['level'] >= $level)return ['user_id'=>0,'level'=>0];
+			$leader = ['user_id'=>$res[0]['first_leader'],'level'=>0];
+			$sql = "select level from tp_users where user_id = {$res[0]['first_leader']}";
+			$res1 = M('users')->query($sql);	
+			
+			if(count($res1)){  
+				if($res1[0]['level'] >= $level){
+					$leader['level'] = $res1[0]['level'];
+					return $leader;
+				}else
+					return $this->getUserLevTop($res[0]['first_leader'],$level);
+			}
+			return ['user_id'=>0,'level'=>0];
+		}
+		return ['user_id'=>0,'level'=>0];
+	}    	
 	
 	/**
 	 * 获取某个ID下面的团队总人数
