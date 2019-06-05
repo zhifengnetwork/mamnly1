@@ -217,7 +217,8 @@ function getAllUp($invite_id,&$userList=array())
     $Yeji = M('yeji');
     $Yeji->add(['uid'=>$userId,'money'=>$num,'addtime'=>time(),'order_id'=>$order_id]);
     if($leader['user_id']){
-        $Yeji->add(['uid'=>$leader['user_id'],'money'=>$num,'addtime'=>time(),'order_id'=>$order_id]);
+		if(!$Yeji->where(['uid'=>$leader['user_id'],'order_id'=>$order_id])->count())
+			$Yeji->add(['uid'=>$leader['user_id'],'money'=>$num,'addtime'=>time(),'order_id'=>$order_id]);
         $leader = $UsersLogic->getUserLevTop($userId,5);
         if($leader['user_id']){
 			if(!$Yeji->where(['uid'=>$leader['user_id'],'order_id'=>$order_id])->count())
