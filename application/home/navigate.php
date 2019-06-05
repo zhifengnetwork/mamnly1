@@ -17,7 +17,7 @@
             	    )
                ),             		
               'admin/index'=>array(
-                'name' =>'凡露希',
+                'name' =>'曼梦丽国际',
                 'action'=>array(
                      'index'=>'欢迎页面',                     
          	       )

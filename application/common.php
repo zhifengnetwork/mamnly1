@@ -1388,7 +1388,7 @@ function update_pay_status($order_sn,$ext=array())
                 foreach ($goods as $key => $value) {
                     $text .= $value['goods_name'].'(规格：'.$value['spec_key_name'].',数量：'.$value['goods_num'].',价格：'.$value['final_price'].');';
                 }
-            $wx_content = "订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商户：凡露希环球直供\n商品：{$text}\n金额：{$order['total_amount']}\n\n【凡露希环球直供】欢迎您的再次购物！";
+            $wx_content = "订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商户：曼梦丽国际\n商品：{$text}\n金额：{$order['total_amount']}\n\n【曼梦丽国际】欢迎您的再次购物！";
             $wechat = new \app\common\logic\wechat\WechatUtil();
             $wechat->sendMsg($userinfo['openid'], 'text', $wx_content);
 

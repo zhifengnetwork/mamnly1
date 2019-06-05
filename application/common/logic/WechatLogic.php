@@ -76,7 +76,7 @@ class WechatLogic
      */
     private function handleSubscribeEvent($msg)
     {
-        write_log($msg.'凡露希微信第一次关注接口-第一次公众号');
+        write_log($msg.'曼梦丽国际微信第一次关注接口-第一次公众号');
         $openid = $msg['FromUserName'];
         if (!$openid) {
             exit("openid无效");
