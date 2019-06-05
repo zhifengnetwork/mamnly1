@@ -6,9 +6,9 @@
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>首页-{$tpshop_config['shop_info_store_title']}</title>
 	<script src="__STATIC__/js/public/rem.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" type="text/css" href="__STATIC__/css/reset.css?v=111" />
-	<link rel="stylesheet" type="text/css" href="__STATIC__/css/swiper.min.css?v=111" />
-	<link rel="stylesheet" type="text/css" href="__STATIC__/css/index_zp.css?v=668" />
+	<link rel="stylesheet" type="text/css" href="__STATIC__/css/reset.css?v=1113" />
+	<link rel="stylesheet" type="text/css" href="__STATIC__/css/swiper.min.css?v=1113" />
+	<link rel="stylesheet" type="text/css" href="__STATIC__/css/index_zp.css?v=1113" />
 
 
 </head>
@@ -19,7 +19,7 @@
 		<div class="header">
 			<div class="scan">
 				<a href="/shop/Goods/categoryList.html">
-					<img src="__STATIC__/images/home_zp/scan@2x.png?v=1" />
+					<img src="__STATIC__/images/home_zp/caidangg.png?v=1" />
 				</a>
 			</div>
 
@@ -31,13 +31,14 @@
 
 			<div class="login-btn">
 				<a href="{:U('Shop/User/index')}">
-					<img src="__STATIC__/images/home_zp/login-btn-index@2x.png?v=1" />
+					<img src="__STATIC__/images/home_zp/rentouxiang.png?v=1" />
 				</a>
 			</div>
 		</div>
 
 		<!-- 轮播图 -->
 		<div class="swiper-container banner-wrap-zp">
+			
 			<div class="swiper-wrapper">
 				<adv pid="9" limit="5" item="v">
 					<div class="swiper-slide">
@@ -48,34 +49,34 @@
 				</adv>
 			</div>
 			<div class="swiper-pagination"></div>
-			<!-- 装饰条bg -->
-			<div class="swiper-bg"><img src="__STATIC__/images/home_zp/swiper-bg.png" /></div>
+			 <!--装饰条bg--> 
+			<!--<div class="swiper-bg"><img src="__STATIC__/images/home_zp/swiper-bg.png" /></div>-->
 		</div>
-
+		
 		<!-- 菜单导航 -->
 		<div class="nav-wrap-zp">
 			<ul>
 				<li>
 					<a href="{:U('shop/activity/auction_list')}">
-						<img src="__STATIC__/images/home_zp/Auction@2x.png?v=1">
+						<img src="__STATIC__/images/home_zp/1.png?v=1">
 						<span>竞拍</span>
 					</a>
 				</li>
 				<li>
 					<a href="{:U('shop/groupbuy/grouplist')}">
-						<img src="__STATIC__/images/home_zp/Assemble@2x.png?v=1">
+						<img src="__STATIC__/images/home_zp/libao.png?v=1">
 						<span>拼团</span>
 					</a>
 				</li>
 				<li>
 					<a href="{:U('Shop/Order/order_list')}">
-						<img src="__STATIC__/images/home_zp/my-distribution.png?v=1">
+						<img src="__STATIC__/images/home_zp/fenxiao.png?v=1">
 						<span>分销</span>
 					</a>
 				</li>
 				<li>
 					<a href="{:U('shop/Goods/goodsList',array('id'=>DISTRIBUT))}">
-						<img src="__STATIC__/images/home_zp/commodity@2x.png?v=1">
+						<img src="__STATIC__/images/home_zp/mianju.png?v=1">
 						<span>鱼子面膜</span>
 					</a>
 				</li>
@@ -87,115 +88,54 @@
 				</li> -->
 				<li>
 					<a href="{:U('Shop/Material/index')}">
-						<img src="__STATIC__/images/home_zp/Material@2x.png?v=1">
+						<img src="__STATIC__/images/home_zp/tupian.png?v=1">
 						<span>素材区</span>
 					</a>
 				</li>
 				
 				<li>
 					<a href="/Shop/User/team_list">
-						<img src="__STATIC__/images/home_zp/Sign in@2x.png?v=1">
+						<img src="__STATIC__/images/home_zp/tuanguo.png?v=1">
 						<span>我的团队</span>
 					</a>
 				</li>
 				<li>
 					<a href="{:U('shop/Goods/goodsList',array('id'=>BONUS))}">
-						<img src="__STATIC__/images/home_zp/Products@2x.png?v=1">
+						<img src="__STATIC__/images/home_zp/jine.png?v=1">
 						<span>奖金池产品</span>
 					</a>
 				</li>
 				<li>
 					<a href="{:U('Shop/Order/order_list')}">
-						<img src="__STATIC__/images/home_zp/Order@2x.png?v=1">
+						<img src="__STATIC__/images/home_zp/qianbao.png?v=1">
 						<span>我的订单</span>
 					</a>
 				</li>
 			</ul>
 		</div>
-        <!-- 公告区域 -->
-        <div class="tututututu">
-			<div class="tubiao">
-			<img src="__STATIC__/images/home_zp/laba.png"/>
-			<span>公告</span>
-			</div>
-			<div class="tubiao1" style="position: relative;right:0rem;top:-1.5rem;height: .8rem;">
-			 <marquee scrolldelay="150">
-				<a href="{:U('Shop/Article/detail',array('article_id'=>$article['article_id']))}">{$article.title}</a>
-			 </marquee>
-		   </div>
-        </div>
+
 
 		<div class="floors">
-			<!-- 秒杀 -->
-			<div class="seckill-wrap">
-				<a href="{:U('Shop/Activity/flash_sale_list')}">
-					<div class="up">
-						<i><img src="__STATIC__/images/home_zp/Second kill@2x.png?v=1" /></i>
-						<div class="downTime">
-							<span id="downTime-h"></span> : <span id="downTime-m"></span> : <span
-								id="downTime-s"></span>
-						</div>
-					</div>
-				</a>
-				<div class="down">
-					<foreach name="flash_sale_list" item="v" length='2'>
-						<div class="item">
-							<a href="{:U('Shop/Goods/goodsInfo',array('id'=>$v[goods_id],'item_id'=>$v[item_id]))}">
-								<div class="picture">
-									<img src="{$v[goods_id]|goods_thum_images=200,200}?v={:date('Ymd')}">
-								</div>
-							</a>
-							<p class="price">￥<span>{$v[price]}</span>元</p>
-						</div>
-					</foreach>
-				</div>
-				<if condition="count($flash_sale_list) eq nll">
-					<div style="text-align: center; color: #6f6d6d; font-size: .1rem;">暂无抢购商品...</div>
-				</if>
-			</div>
-
-			<!-- 发现好货 -->
-			<div class="find-good">
-				<div class="up">
-					<i><img src="__STATIC__/images/home_zp/goods-icon@2x.png" /></i>
-					<h3>发现好货</h3>
-				</div>
-				<div class="down">
-					<volist name="hot_goods" id="vo" key='k' length='2'>
-						<div class="item">
-							<a href="{:U('Shop/Goods/goodsInfo',array('id'=>$vo[goods_id],'item_id'=>$vo[item_id]))}">
-								<div class="picture">
-									<img src="{$vo[goods_id]|goods_thum_images=200,200}?v={:date('Ymd')}">
-								</div>
-								<!-- <p class="price">￥<span>{$vo[shop_price]}</span>元</p> -->
-								<p class="green{$k}">
-      							<if condition="$k eq 1">粉丝福利<else/>会员福利</if></p>
-							</a>
-						</div>
-					</volist>
-					<!-- <div class="item">
-						<div class="picture">
-							<img src="__STATIC__/images/home_zp/tuanpian3@2x.png" >
-						</div>
-						<p class="price">¥3360.00</p>
-					</div> -->
-				</div>
-			</div>
+			
+			<img src="__STATIC__/images/home_zp/manmenlili.jpg?v=1"  style="width: 100%;height: 2.4rem;"/>
+			
 		</div>
 
 		<!-- 为你推荐 -->
 		<div class="recommend-wrap">
-			<div class="title">
-				<h3>为你推荐</h3>
-			</div>
-
+			<!--<div class="title">
+				<h3>&nbsp;为你推荐</h3>
+			</div>-->
+		
+			<img src="__STATIC__/images/home_zp/weinin.png?v=3" class="imgimg" />
+            
 			<div class="recommend-list">
 				<ul>
 					<foreach name="favourite_goods" id="v">
 						<li>
 							<div class="img-wrap">
 								<a href="{:U('Shop/Goods/goodsInfo',array('id'=>$v[goods_id]))}"><img
-										src="{$v[goods_id]|goods_thum_images=400,400}?v={:date('Ymd')}" /></a>
+										src="{$v[goods_id]|goods_thum_images=400,400}?v={:date('Ym')}" /></a>
 							</div>
 							<div class="text">
 								<p class="tit"><a
@@ -222,13 +162,13 @@
 
 		<!-- 免费领取面膜弹框 -->
       <if condition="$is_code eq 1">
-    		<div class="free-receive">
-    			<a href="{:U('shop/Goods/goodsInfo',['id'=>47])}">
+    		<!--<div class="free-receive">
+    			<a href="{:U('shop/Goods/goodsInfo',['id'=>37])}">
     				<div class="dialog-content">
     					<img src="__STATIC__/images/home_zp/free-receive-bg.png" />
     				</div>
     			</a>
-    		</div>
+    		</div>-->
 			</if>
 			
 	</div>
@@ -280,19 +220,27 @@
 			setInterval(setendTime, 1000);
 			// 首页轮播图
 			var swiper = new Swiper('.banner-wrap-zp', {
-				loop: true,
+				/*轮播项-循环*/
+        		loop: true,
+        		//设置自动循环播放
+        		autoplay: {
+        			/*时间间隔*/
+					delay: 1000,
+					/*允许客户操作后，自动轮播*/
+					disableOnInteraction: false,
+				},
 				pagination: '.swiper-pagination',
 				paginationClickable: true,
 				spaceBetween: 30,
-				autoplay: 3000,
 				autoplayDisableOnInteraction: false
 			});
+
 
 		})
 
 		/**
-		* 继续加载猜您喜欢
-		* */
+			* 继续加载猜您喜欢
+			* */
 		var before_request = 1; // 上一次请求是否已经有返回来, 有才可以进行下一次请求
 		var page = 0;
 		function ajax_sourch_submit() {

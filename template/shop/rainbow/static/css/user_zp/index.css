@@ -3,14 +3,14 @@
 	width: 100%;
 	height: 100%;
 	background: #ededed;
-	
 	padding-bottom: 1rem;
 }
 
 /*我的顶部*/
 .user-head-zp{
 	height: 2.4rem;
-	background: linear-gradient(to bottom, #fe44a0,#660a90);
+	/*background: linear-gradient(to bottom, #fe44a0,#660a90);*/
+	background: rgb(31,31,31);
 	padding: 0 0.2rem;
 	margin-bottom: 0.2rem;
 }
@@ -162,8 +162,8 @@
 	position: relative;
 }
 .user-nav-zp li img{
-	width: 0.4rem;
-	height: 0.33rem;
+	width: 0.47rem;
+	height: 0.47rem;
 	display: block;
 	margin: 0.1rem auto;
 }
@@ -195,7 +195,7 @@
 	display: -ms-flexbox; /* IE 10 */ 
 }
 .wallet-zp ul li{
-	width: 50%;
+	width: 33.3333%;
 	text-align: center;
 	margin: 0.12rem 0;
 }

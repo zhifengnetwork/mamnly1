@@ -29,7 +29,8 @@
     display: block;
     width: 100%;
     font-size: 0.26rem;
-    color: #d6d6d6;
+   /* color: #d6d6d6;*/
+   color: black;
 }
 
 .footer-zp ul li.on span{
@@ -43,36 +44,39 @@
 	display: block;
 	margin:0.08rem auto;
 }
+.cart-icon{
+	margin-left: .69rem!important;
+}
 .footer-zp ul li .home-icon{
-	background: url(/template/shop/rainbow/static/images/category/home-icon.png) no-repeat;
+	background: url(/template/shop/rainbow/static/images/category/2.png) no-repeat;
 	background-size: 100%;
 }
 .footer-zp ul li .category-icon{
-	background: url(../images/category/cate-icon.png) no-repeat;
+	background: url(/template/shop/rainbow/static/images/category/fenlie.png) no-repeat;
 	background-size: 100%;
 }
 .footer-zp ul li .cart-icon{
-	background: url(../images/category/cart-icon.png) no-repeat;
+	background: url(/template/shop/rainbow/static/images/category/gouwuche.png) no-repeat;
 	background-size: 100%;
 }
 .footer-zp ul li .user-icon{
-	background: url(../images/category/user-icon.png) no-repeat;
+	background: url(/template/shop/rainbow/static/images/category/i.png) no-repeat;
 	background-size: 100%;
 }
 
 .footer-zp ul li.on .home-icon{
-	background: url(../images/category/home-icon-on.png) no-repeat;
+	background: url(/template/shop/rainbow/static/images/category/2.png) no-repeat;
 	background-size: 100%;
 }
 .footer-zp ul li.on .category-icon{
-	background: url(../images/category/cate-icon-on.png) no-repeat;
+	background: url(/template/shop/rainbow/static/images/category/fenlie.png) no-repeat;
 	background-size: 100%;
 }
 .footer-zp ul li.on .cart-icon{
-	background: url(../images/category/cart-icon-on.png) no-repeat;
+	background: url(/template/shop/rainbow/static/images/category/gouwuche.png) no-repeat;
 	background-size: 100%;
 }
 .footer-zp ul li.on .user-icon{
-	background: url(../images/category/user-icon-on.png) no-repeat;
+	background: url(/template/shop/rainbow/static/images/category/i.png) no-repeat;
 	background-size: 100%;
 }

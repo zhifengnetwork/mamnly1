@@ -69,28 +69,28 @@
 						<ul>
 							<li>
 								<a href="{:U('/Shop/Order/order_list',array('type'=>'WAITPAY'))}">
-									<img src="__STATIC__/images/user_zp/mm3@2x.png"/>
+									<img src="__STATIC__/images/user_zp/6.png"/>
 									<span class="num">{$order_info.waitPay}</span>
 									<p>待付款</p>
 								</a>
 							</li>
 							<li>
 								<a href="{:U('/Shop/Order/order_list',array('type'=>'WAITSEND'))}">
-									<img src="__STATIC__/images/user_zp/mm2@2x.png"/>
+									<img src="__STATIC__/images/user_zp/7.png"/>
 									<span class="num">{$order_info.waitSend}</span>
 									<p>待发货</p>
 								</a>
 							</li>
 							<li>
 								<a href="{:U('/Shop/Order/wait_receive',array('type'=>'WAITRECEIVE'))}">
-									<img src="__STATIC__/images/user_zp/mm5@2x.png"/>
+									<img src="__STATIC__/images/user_zp/8.png"/>
 									<span class="num">{$order_info.waitReceive}</span>
 									<p>待收货</p>
 								</a>
 							</li>
 							<li>
 								<a href="{:U('Shop/Order/comment',array('status'=>0))}">
-									<img src="__STATIC__/images/user_zp/mm4@2x.png"/>
+									<img src="__STATIC__/images/user_zp/xinxi.png"/>
 									<span class="num">{$order_info.uncomment_count}</span>
 									<p>待评价</p>
 								</a>
@@ -113,13 +113,12 @@
 						<ul>
                             <li>
                                 <a href="{:U('Shop/User/withdrawals')}">
-                                    <img src="__STATIC__/images/user_zp/jb13@2x.png" />
+                                    <img src="__STATIC__/images/user_zp/9.png" />
                                     <p>余额</p>
                                     <p class="num">{$user.user_money}</p>
                                 </a>
                             </li>
-
-                            <if condition="$user.level neq 2">
+                            <if condition="$user.level gt 2">
                                 <li>
                                     <a href="{:U('/shop/Goods/goodsList/id/1')}">
                                     <img src="__STATIC__/images/user_zp/商品.png" />
@@ -127,16 +126,15 @@
                                     <p class="num">{$user.sign_free_num}</p>
                                     </a>
                                 </li>
+                        
                             </if>
-                            <if condition="$user.level gt 1">
-                                <li>
-                                	<a href="{:U('/shop/Goods/goodsList/id/9')}">
-                                    <img src="__STATIC__/images/user_zp/商品.png" />
-                                    <p>多肽面膜</p>
-                                    <p class="num">{$user.distribut_free_num}</p>
-                                	</a>
-                                </li>
-                            </if>
+                            <li>
+                            	<a href="{:U('/shop/Goods/goodsList/id/9')}">
+                                <img src="__STATIC__/images/user_zp/10.png" />
+                                <p>多肽面膜</p>
+                                <p class="num">{$user.distribut_free_num}</p>
+                            	</a>
+                            </li>
 							<!-- <li>
 								<img src="__STATIC__/images/user_zp/JF1@2x.png" />
 								<p>积分</p>
@@ -176,19 +174,19 @@
 						<ul>
                             <li>
                                 <a href="{:U('Shop/User/team_list')}">
-                                    <img src="__STATIC__/images/user_zp/TU2@2x.png"/>
+                                    <img src="__STATIC__/images/user_zp/tuanguo.png"/>
                                     <p>我的团队</p>
                                 </a>
                             </li>
 							<li>
 								<a href="{:U('Shop/User/withdrawals')}">
-									<img src="__STATIC__/images/user_zp/JJTX@2x.png"/>
+									<img src="__STATIC__/images/user_zp/zhuanghu.png"/>
 									<p>奖金提现</p>
 								</a>
 							</li>
                             <li>
                                 <a href="{:U('shop/User/account_list')}">
-                                    <img src="__STATIC__/images/user_zp/zhmx1@2x.png"/>
+                                    <img src="__STATIC__/images/user_zp/yue.png"/>
                                     <p>账户明细</p>
                                 </a>
                             </li>
@@ -197,7 +195,7 @@
                             <li>
 
                                 <a href="{:U('shop/user/member')}">
-                                    <img src="__STATIC__/images/user_zp/zt26@2x.png"/>
+                                    <img src="__STATIC__/images/user_zp/3.png"/>
                                     
                                     <p>我的分销</p>
                                 </a>
@@ -213,13 +211,13 @@
                             </li> -->
                             <li>
                                 <a href="{:U('shop/activity/auction_list')}">
-                                    <img src="__STATIC__/images/user_zp/PM@2x.png"/>
+                                    <img src="__STATIC__/images/user_zp/1.png"/>
                                     <p>竞拍</p>
                                 </a>
                             </li>
                             <li>
                                 <a href="{:U('shop/groupbuy/grouplist')}">
-                                    <img src="__STATIC__/images/user_zp/PT@2x.png"/>
+                                    <img src="__STATIC__/images/user_zp/4.png"/>
                                     <p>拼团</p>
                                 </a>
                             </li>
@@ -231,19 +229,19 @@
                             </li> -->
                             <li>
                                 <a href="{:U('Shop/User/message_notice')}">
-                                    <img src="__STATIC__/images/user_zp/xyx124@2x.png"/>
+                                    <img src="__STATIC__/images/user_zp/xiaoyouxi.png"/>
                                     <p>消息中心</p>
                                 </a>
                             </li>
                             <li>
                                 <a href="{:U('Shop/Order/comment',array('status'=>1))}">
-                                    <img src="__STATIC__/images/user_zp/mm4@2x.png"/>
+                                    <img src="__STATIC__/images/user_zp/xinxi.png"/>
                                     <p>我的评论</p>
                                 </a>
                             </li>
                             <li>
                                 <a href="{:U('Shop/User/fenxiang',array('usercode'=>1))}">
-                                    <img src="__STATIC__/images/user_zp/ewm1.png"/>
+                                    <img src="__STATIC__/images/user_zp/erweima.png"/>
                                     <p>我的二维码</p>
                                 </a>
 							</li>
@@ -255,7 +253,7 @@
                             </li> -->
                             <li>
                                 <a href="{:U('Shop/User/address_list')}">
-                                    <img src="__STATIC__/images/user_zp/mlist.png"/>
+                                    <img src="__STATIC__/images/user_zp/address.png"/>
                                     <p>地址管理</p>
                                 </a>
                             </li>
