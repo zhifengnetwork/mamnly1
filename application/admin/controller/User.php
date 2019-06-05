@@ -629,7 +629,8 @@ class User extends Base
 			$level = I('level');
 			$level_name = I('level_name');
 			$type = I('type');
-			$con_name = I('con_name');
+            $con_name = I('con_name');
+            $con_level = I('con_level');
 			$rebate_id = I('rebate');
 			$rebate = I('rebate');
 			$rate = I('rate');
@@ -665,7 +666,8 @@ class User extends Base
 				'level'=>$level,
 				'level_name'=>$level_name,
 				'type'=>$type,
-				'con_name'=>$con_name,
+                'con_name'=>$con_name,
+                //'con_level'=>$con_level,
 				'rebate'=>$rebate_id,
 				'rate'=>$rate,
 				//'rebate'=>$rebate,
@@ -693,7 +695,7 @@ class User extends Base
 				$res = M('user_level')->insert($data);
 			}
           //echo Db::table('user_level')->getLastSql();
-			if($res){
+			if(false !== $res){
 				$this->ajaxReturn(['status' => 1, 'msg' => '操作成功']);
 			}else{
 				$this->ajaxReturn(['status' => 0, 'msg' => '参数失败']);

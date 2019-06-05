@@ -51,15 +51,25 @@
                 </dt>
                 <dd class="opt">
 					<div style="margin-bottom: 10px;">
-					<select name="type" onchange="showMsg(this)">
+					<select name="type" onchange="showMsg(this)" id='con_type'>
 						<option value="0">选择条件</option>
 						<option value="101"<if condition="$info['type'] eq 101"> selected</if>>购买任意商品</option>
 						<option value="201"<if condition="$info['type'] eq 201"> selected</if>>直推人数</option>
 						<option value="301"<if condition="$info['type'] eq 301"> selected</if>>分享购物金额</option>
 						<option value="401"<if condition="$info['type'] eq 401"> selected</if>>申请</option>
 					</select>
-					</div>
-					<div id="numsshow" style="display: none;">
+                    </div>
+                    <div class="numsshow jibie" style="display: none;">
+                        <select name="con_level" disabled="disabled">
+                            <option value="0">选择级别</option>
+                            <volist name='level' id='v'>
+                            <option value="{$v.level}" <if condition="$info['con_level'] eq $v['level']"> selected</if>>{$v.level_name}</option>
+                            </volist>
+                            
+                        </select>
+                    </div>
+                    <br />
+					<div class="numsshow" style="display: none;">
 						<input type="text" name="con_name" value="{$info.con_name}"  class="input-txt" onkeyup="this.value=this.value.replace(/[^\d]/g,'')"><span id="nums_is"></span>
 					</div>
                     <span class="err" id="err_amount"></span>
@@ -310,19 +320,24 @@
     }
 	
 	function showMsg(obj) {
-	var opt = obj.options[obj.selectedIndex]
+	var opt = obj.options[obj.selectedIndex];
 	// alert("The option you select is:"+opt.text+"("+opt.value+")");
 		if(obj.value==201){
 			// alert();
-			document.getElementById("numsshow").style.display="block";
+            $(".numsshow").show();
+			//document.getElementById("numsshow").style.display="block";
 			document.getElementById("nums_is").innerHTML="人";
 		}else if(obj.value==301){
-			document.getElementById("numsshow").style.display="block";
+            $(".numsshow").show();
+            $(".jibie").hide();
+			//document.getElementById("numsshow").style.display="block";
 			document.getElementById("nums_is").innerHTML="元";
 		}else{
-			document.getElementById("numsshow").style.display="none";
+            $(".numsshow").hide();
+			//document.getElementById("numsshow").style.display="none";
 		}
 	}
+    if($('#con_type').val() == 201)$(".numsshow").show();
 </script>
 </body>
 </html>

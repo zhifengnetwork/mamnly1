@@ -200,10 +200,10 @@ class FanliLogic extends Model
               	$desc = "购买产品成为vip";
 	        	$log = $this->writeLog_ug($user_info['user_id'],'',$desc,2); //写入日志
 		}
-		else if($this->goodId==$this->tgoodsid  && $order['pay_status']==1 && $user_info['level']<3)//自动升级店主
+		else if($this->goodId==$this->tgoodsid  && $order['pay_status']==1 && $user_info['level']<3)//自动升级合伙人
 		{
 			$res_s = M('users')->where(['user_id'=>$user_id])->update(['level'=>3,'count_time'=>'']);
-			$desc = "购买指定产品获得店主";
+			$desc = "购买指定产品获得合伙人";
 	        $log = $this->writeLog_ug($user_info['user_id'],'398',$desc,2); //写入日志
 
 	        if($res_s)
@@ -213,13 +213,23 @@ class FanliLogic extends Model
 			    $parent_info = M('users')->where('user_id',$user_info['first_leader'])->field('first_leader,level,is_code,user_id')->find();
 
 				
-				$fanli = M('user_level')->where('level',4)->field('tui_num,tui_level')->find();
+				$fanli = M('user_level')->where('level',4)->field('con_name,tui_level')->find();
 				$num=M('users')->where(['first_leader'=>$user_info['first_leader'],'level'=>$fanli['tui_level']])->count();
-				if($num>=$fanli['tui_num'] && !empty($fanli['tui_num']))
+				if($num>=$fanli['con_name'] && !empty($fanli['con_name']))
 				{
 						$res = M('users')->where(['user_id'=>$user_info['first_leader']])->update(['level'=>4,'count_time'=>'']);
-						$desc = "直推店主".$fanli['tui_num']."个成为总监";
-				$log = $this->writeLog_ug($user_info['first_leader'],'',$desc,2); //写入日志
+						$desc = "直推合伙人".$fanli['con_name']."个成为联合创始人";
+						$log = $this->writeLog_ug($user_info['first_leader'],'',$desc,2); //写入日志
+
+						$fanli = M('user_level')->where('level',5)->field('con_name,tui_level')->find();
+						$first_leader = M('Users')->where(['user_id'=>$user_info['first_leader']])->column('first_leader');
+						if(!$first_leader)return;
+						$num=M('users')->where(['first_leader'=>$first_leader,'level'=>$fanli['tui_level']])->count();
+						if($num>=$fanli['con_name'] && !empty($fanli['con_name'])){
+							$res = M('users')->where(['user_id'=>$first_leader])->update(['level'=>5,'count_time'=>'']);
+							$desc = "直推联合创始人".$fanli['con_name']."个成为执行董事";
+							$log = $this->writeLog_ug($first_leader,'',$desc,2); //写入日志	
+						}
 				}
 	        }
 		}
