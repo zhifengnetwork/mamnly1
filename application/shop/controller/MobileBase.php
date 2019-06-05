@@ -65,10 +65,10 @@ class MobileBase extends Controller {
             if (empty(session('user')) ){
 
                 if(is_array($this->weixin_config) && $this->weixin_config['wait_access'] == 1){
-                  
+                    
 
                     if(!session("third_oauth")){
-
+                        
                         $wxuser = $this->GetOpenid(); //授权获取openid以及微信用户信息
                         if(!$wxuser['openid']){
                             $this->error('获取新openid失败');
@@ -93,7 +93,7 @@ class MobileBase extends Controller {
 
                     //如果 没有  is_cunzai_user
                     if(!$is_cunzai_user){
-
+                        
                         if(I('old_openid') == ''){
                             //跳去获取旧openid
                             header('Location:/shop/code/index');

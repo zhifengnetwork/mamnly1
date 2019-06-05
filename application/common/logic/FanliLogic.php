@@ -213,18 +213,18 @@ class FanliLogic extends Model
 			    $parent_info = M('users')->where('user_id',$user_info['first_leader'])->field('first_leader,level,is_code,user_id')->find();
 
 				
-				$fanli = M('user_level')->where('level',4)->field('con_name,tui_level')->find();
-				$num=M('users')->where(['first_leader'=>$user_info['first_leader'],'level'=>$fanli['tui_level']])->count();
+				$fanli = M('user_level')->where('level',4)->field('con_name,con_level')->find();
+				$num=M('users')->where(['first_leader'=>$user_info['first_leader'],'level'=>$fanli['con_level']])->count();
 				if($num>=$fanli['con_name'] && !empty($fanli['con_name']))
 				{
 						$res = M('users')->where(['user_id'=>$user_info['first_leader']])->update(['level'=>4,'count_time'=>'']);
 						$desc = "直推合伙人".$fanli['con_name']."个成为联合创始人";
 						$log = $this->writeLog_ug($user_info['first_leader'],'',$desc,2); //写入日志
 
-						$fanli = M('user_level')->where('level',5)->field('con_name,tui_level')->find();
+						$fanli = M('user_level')->where('level',5)->field('con_name,con_level')->find();
 						$first_leader = M('Users')->where(['user_id'=>$user_info['first_leader']])->column('first_leader');
 						if(!$first_leader)return;
-						$num=M('users')->where(['first_leader'=>$first_leader,'level'=>$fanli['tui_level']])->count();
+						$num=M('users')->where(['first_leader'=>$first_leader,'level'=>$fanli['con_level']])->count();
 						if($num>=$fanli['con_name'] && !empty($fanli['con_name'])){
 							$res = M('users')->where(['user_id'=>$first_leader])->update(['level'=>5,'count_time'=>'']);
 							$desc = "直推联合创始人".$fanli['con_name']."个成为执行董事";

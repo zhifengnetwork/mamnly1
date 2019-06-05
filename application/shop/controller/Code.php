@@ -17,7 +17,7 @@ class Code extends Controller
             header('Location:/shop/index/index?old_openid='.$old_openid);
             exit;
         }
-
+        
         //去取old_openid
         $old_openid = $this->GetOldOpenid(); //授权获取openid以及微信用户信息
 
@@ -46,19 +46,19 @@ class Code extends Controller
     public function GetOldOpenid()
     {
         //通过code获得openid
-        if (!isset($_GET['code'])){
+        if (!isset($_GET['code'])){ 
             //触发微信返回code码
             //$baseUrl = urlencode('http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']);
             $baseUrl = urlencode($this->get_url());
             $url = $this->__CreateOauthUrlForCode2($baseUrl); // 获取 code地址
             Header("Location: $url"); // 跳转到微信授权页面 需要用户确认登录的页面
             exit();
-        } else {
+        } else { 
             
             //上面获取到code后这里跳转回来
             $code = $_GET['code'];
             $data = $this->getOpenidFromMp($code);//获取网页授权access_token和用户openid
-          
+
             if(!$data['openid']){
                 $this->error('获取old_openid错误');
             }
@@ -88,7 +88,7 @@ class Code extends Controller
      */
     private function __CreateOauthUrlForCode2($redirectUrl)
     {
-        $urlObj["appid"] = 'wx0730f0b42ecd4bfe';
+        $urlObj["appid"] = 'wxbb1e919597771c7d';
         $urlObj["redirect_uri"] = "$redirectUrl";
         $urlObj["response_type"] = "code";
         $urlObj["scope"] = "snsapi_base";
@@ -157,8 +157,8 @@ class Code extends Controller
      */
     private function __CreateOauthUrlForOpenid($code)
     {
-        $urlObj["appid"] = 'wx0730f0b42ecd4bfe';
-        $urlObj["secret"] = 'f9eab4a9e74778a2d504066ed9f89689';
+        $urlObj["appid"] = 'wxbb1e919597771c7d';
+        $urlObj["secret"] = 'a3511bcaecebe429bd91bb3e705839fa';
         $urlObj["code"] = $code;
         $urlObj["grant_type"] = "authorization_code";
         $bizString = $this->ToUrlParams($urlObj);
