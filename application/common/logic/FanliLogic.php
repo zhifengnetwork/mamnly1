@@ -80,6 +80,28 @@ class FanliLogic extends Model
 
 		$pro_num = $this->getproductnum();
 		//echo $this->goodId.'-'.$this->tgoodsid.'-'.$user_info['level'];exit;
+		$goods_info=$this->getgoodsinfo();
+		if($goods_info['sign_free_receive']==0) //免费领取，签到产品不参与返利
+		{
+			if($user_info['level']>=3)//自购只返利给店主以上级别
+				{
+					$distribut_level = M('user_level')->where('level',$user_info['level'])->field('direct_rate')->find();
+						//计算返利金额
+			$goods = $this->goods();
+			$commission = $goods['shop_price'] * ($distribut_level['direct_rate'] / 100) * $this->goodNum;
+					//计算佣金
+				//按上一级等级各自比例分享返利
+			$bool = M('users')->where('user_id',$user_info['user_id'])->setInc('user_money',$commission);
+				if ($bool !== false) {
+					$desc = "自购返利";
+					$log = $this->writeLog($user_info['user_id'],$commission,$desc,7); 
+					//return true;
+					} else {
+					return false;
+					}
+				}		
+		}
+
         if($this->goodId==$this->tgoodsid )//是否特殊产品
         {
         	 
@@ -92,26 +114,8 @@ class FanliLogic extends Model
         else
         {
         	//不是特产品按照佣金比例反给用户 ，自购返利
-        	$goods_info=$this->getgoodsinfo();
         	if($goods_info['sign_free_receive']==0) //免费领取，签到产品不参与返利
         	{
-        	  if($user_info['level']>=3)//自购只返利给店主以上级别
-              {
-               $distribut_level = M('user_level')->where('level',$user_info['level'])->field('direct_rate')->find();
-                 //计算返利金额
-		        $goods = $this->goods();
-		        $commission = $goods['shop_price'] * ($distribut_level['direct_rate'] / 100) * $this->goodNum;
-		           //计算佣金
-		          //按上一级等级各自比例分享返利
-		        $bool = M('users')->where('user_id',$user_info['user_id'])->setInc('user_money',$commission);
-		         if ($bool !== false) {
-			        	$desc = "自购返利";
-			        	$log = $this->writeLog($user_info['user_id'],$commission,$desc,7); 
-			        	//return true;
-			         } else {
-			        	return false;
-			         }
-              }
             // 购买商品返利给上一级
             if(empty($rebase)||$rebase[$parent_info['level']]<=0) //计算返利比列
 		       {

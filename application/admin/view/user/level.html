@@ -85,7 +85,7 @@
 					<select name="rebate">
 						<option value="0">选择返利等级</option>
 						<volist name="level" id="vo">
-						<option value="{$vo.level}" <if condition="$info['rebate'] eq $vo['rebate']"> selected</if>>{$vo.level_name}</option>
+						<option value="{$vo.level}" <if condition="$info['rebate'] eq $vo['level']"> selected</if>>{$vo.level_name}</option>
 						</volist>
 					</select>
                     <input type="text" name="rate" value="{$info.rate}" id="discount" class="input-txt" onkeyup="this.value=this.value.replace(/[^\d]/g,'')">
@@ -101,7 +101,7 @@
 			        <select name="reward_id">
 						<option value="0">选择直推等级</option>
 						<volist name="level" id="vv">
-						<option <if condition="$info['reward_id'] eq $vv['reward_id']"> selected</if> value="{$vv.level}">{$vv.level_name}</option>
+						<option <if condition="$info['reward_id'] eq $vv['level']"> selected</if> value="{$vv.level}">{$vv.level_name}</option>
 						</volist>
 					</select>
 					<input type="text" name="reward" value="{$info.reward}" class="input-txt" onkeyup="this.value=this.value.replace(/[^\d]/g,'')">

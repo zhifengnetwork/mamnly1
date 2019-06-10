@@ -688,7 +688,7 @@ class User extends Base
                 'direct_rate'=>$direct_rate,
                 'lead_reward'=>$lead_reward,
 			);
-			if($id>0){
+			if($id>0){	
 				$res = M('user_level')->where('id',$id)->data($data)->save();
 			}else{
 				$data['create_time'] = time();
