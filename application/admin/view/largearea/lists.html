@@ -7,8 +7,8 @@
 	<div class="fixed-bar">
 		<div class="item-title">
 			<div class="subject">
-				<h3>申请大区董事列表</h3>
-				<h5>申请大区董事列表</h5>
+				<h3>申请执行董事列表</h3>
+				<h5>申请执行董事列表</h5>
 			</div>
 		</div>
 	</div>
@@ -20,14 +20,14 @@
 		  <span title="收起提示" id="explanationZoom" style="display: block;"></span>
 		</div>
 		 <ul>
-			<li>显示总监推荐总监及其业绩</li>
+			<li>显示联合创始人推荐联合创始人及其业绩</li>
 		</ul>
 	</div>
 	
 	<div class="flexigrid">
 		<div class="mDiv">
 			<div class="ftitle">
-				<h3>申请大区董事列表记录</h3>
+				<h3>申请执行董事列表记录</h3>
 				<h5>(共{$pager->totalRows}条记录)</h5>
 			</div>
 			<div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
@@ -67,7 +67,7 @@
 							<div style="text-align: center; width: 100px;" class="">手机</div>
 						</th>
 						<th align="center" abbr="article_show" axis="col5" class="">
-							<div style="text-align: center; width: 150px;" class="">推荐总监人数</div>
+							<div style="text-align: center; width: 150px;" class="">推荐联合创始人人数</div>
 						</th>
 						<th align="center" abbr="article_show" axis="col5" class="">
 							<div style="text-align: center; width: 150px;" class="">业绩</div>
@@ -111,7 +111,7 @@
 							<td align="center" class="handle">
 								<if condition="($vo['first'] egt $user_level['achievement']) and ($vo['znum'] egt $user_level['tui_num']) ">
 								<div style="text-align: center; width: 200px; max-width:200px;">
-									<a class="btn blue" href="javascript:void(0)" data-url="{:U('Largearea/levelupdate')}" data-id="{$vo.id}" onClick="delfun(this)"><i class="fa fa-pencil-square-o"></i>升级为大区</a>
+									<a class="btn blue" href="javascript:void(0)" data-url="{:U('Largearea/levelupdate')}" data-id="{$vo.id}" onClick="delfun(this)"><i class="fa fa-pencil-square-o"></i>升级为执行</a>
 								</div>
 								  <else />
 								  	<div style="text-align: center; width: 200px; max-width:200px;">
@@ -167,7 +167,7 @@
 	}
 
 	function delfun(obj) {
-		// 升级大区
+		// 升级执行
 		layer.confirm('确实升级？', {
 			btn: ['确定', '取消'] //按钮
 		}, function () {

@@ -99,13 +99,13 @@ class Largearea extends Base {
 
           }
     }
-    //确认升级大区
+    //确认升级执行
     public function levelupdate(){
     if($_POST){
       $id = I('id');
       $res = M('users')->where('user_id',$id)->update(['level'=>5]);
       if($res){
-        $desc = "升级为大区董事";
+        $desc = "升级为执行董事";
         $log = $this->writeLog_ug($id,'',$desc,2); //写入日志
         $this->ajaxReturn(['status' => 1, 'msg' => '升级成功']);
       }else{

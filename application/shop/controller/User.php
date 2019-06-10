@@ -130,7 +130,7 @@ class User extends MobileBase
         return $this->fetch();
     }
 
-    /*升级为大区董事
+    /*升级为执行董事
     */
     /*
     public function member_upgrade()
@@ -140,7 +140,7 @@ class User extends MobileBase
 
       if($level==4)
       {
-        $znum['znum'] =  Db::name('users')->alias('u')->field('u.user_id')->where('first_leader='.$this->user['user_id'].' and u.level=4')->count(); //推荐总监数量
+        $znum['znum'] =  Db::name('users')->alias('u')->field('u.user_id')->where('first_leader='.$this->user['user_id'].' and u.level=4')->count(); //推荐联合创始人数量
         $yeji = $this->jisuanyeji($this->user['user_id']); //业绩
         $total = !empty($yeji)?$yeji[0]['sale_amount']:0; 
         if($total>=$user_level['achievement'] && )
@@ -155,12 +155,12 @@ class User extends MobileBase
             }
         }else
         {
-              $this->ajaxReturn(['status' => 0, 'msg' => '推荐总监人数或业绩没达到']);
+              $this->ajaxReturn(['status' => 0, 'msg' => '推荐联合创始人人数或业绩没达到']);
         }
       }else
       {
 
-       $this->ajaxReturn(['status' => 0, 'msg' => '没达到升级大区条件']);
+       $this->ajaxReturn(['status' => 0, 'msg' => '没达到升级执行条件']);
       }
        // $this->ajaxReturn(['status' => 0, 'msg' => '操作成功', 'result'=>[]);
 

@@ -69,7 +69,7 @@ class FanliLogic extends Model
 		$user_info = M('users')->where('user_id',$this->userId)->field('first_leader,level,user_id')->find();
 		//查询上一级信息
 		$parent_info = M('users')->where('user_id',$user_info['first_leader'])->field('level')->find();
-        //判断是否特殊产品成为店主，则不走返利流程
+        //判断是否特殊产品成为合伙人，则不走返利流程
         //用户购买后检查升级
       	$goods_info=$this->getgoodsinfo();
         if($goods_info['sign_free_receive']==0) //免费领取，签到产品不参与返利
@@ -83,7 +83,7 @@ class FanliLogic extends Model
 		$goods_info=$this->getgoodsinfo();
 		if($goods_info['sign_free_receive']==0) //免费领取，签到产品不参与返利
 		{
-			if($user_info['level']>=3)//自购只返利给店主以上级别
+			if($user_info['level']>=3)//自购只返利给合伙人以上级别
 				{
 					$distribut_level = M('user_level')->where('level',$user_info['level'])->field('direct_rate')->find();
 						//计算返利金额
@@ -105,11 +105,11 @@ class FanliLogic extends Model
         if($this->goodId==$this->tgoodsid )//是否特殊产品
         {
         	 
-          $this->addhostmoney($user_info['user_id'],$parent_info);//店主推荐店主
-             $this->upzdmoney($user_info['first_leader']);//大区，董事无限代
+          $this->addhostmoney($user_info['user_id'],$parent_info);//合伙人推荐合伙人
+             $this->upzdmoney($user_info['first_leader']);//执行，董事无限代
              //$this->pingji($user_info['first_leader']);//评级奖
-          //$this->ppInvitation($user_info['first_leader']);//总监下线推荐店主金额
-          //$this->ccInvitation($user_info['first_leader']);//大区下线推荐店主金额
+          //$this->ppInvitation($user_info['first_leader']);//联合创始人下线推荐合伙人金额
+          //$this->ccInvitation($user_info['first_leader']);//执行下线推荐合伙人金额
         }
         else
         {
@@ -190,7 +190,7 @@ class FanliLogic extends Model
 	//会员升级
 	public function checkuserlevel($user_id,$order_id)
 	{
-         //自动升级为vip，店主，总监，大区董事自动申请
+         //自动升级为vip，合伙人，联合创始人，执行董事自动申请
 		
 		 //扫码登陆
 
@@ -212,8 +212,8 @@ class FanliLogic extends Model
 
 	        if($res_s)
 	        {
-	        	//$this->addhostmoney2($user_info['user_id']);//产生店主获得金额和津贴
-	          //自动升级总监
+	        	//$this->addhostmoney2($user_info['user_id']);//产生合伙人获得金额和津贴
+	          //自动升级联合创始人
 			    $parent_info = M('users')->where('user_id',$user_info['first_leader'])->field('first_leader,level,is_code,user_id')->find();
 
 				
@@ -239,11 +239,11 @@ class FanliLogic extends Model
 		}
 
 	}
-    //推荐店主获得金额
+    //推荐合伙人获得金额
 	public function addhostmoney($user_id,$parent_info)
 	{
 		$user_info = M('users')->where('user_id',$user_id)->field('first_leader,level')->find();
-       //只有店主，总监，大区董事推荐店主才能的到店主推荐金额
+       //只有合伙人，联合创始人，执行董事推荐合伙人才能的到合伙人推荐金额
 		 if($parent_info['level']==3 || $parent_info['level']==4 || $parent_info['level']==5)//
 		 {
 		//计算返利金额
@@ -256,7 +256,7 @@ class FanliLogic extends Model
           if($commission>0){
           	 $bool = M('users')->where('user_id',$user_info['first_leader'])->setInc('user_money',$commission);
 	         if ($bool !== false) {
-	        	$desc = "推荐店主获得金额";
+	        	$desc = "推荐合伙人获得金额";
 	        	$log = $this->writeLog($user_info['first_leader'],$commission,$desc,3); //写入日志
 
 	        	return true;
@@ -276,7 +276,7 @@ class FanliLogic extends Model
 	//获得管理津贴
 	public  function jintie($user_leader,$fanli_money)
 	{
-      //只有总监和大区获得管理津贴
+      //只有联合创始人和执行获得管理津贴
 		//查询上上级信息
 		$parent_info = M('users')->where('first_leader',$user_leader)->field('level,user_id')->find();
 		if($parent_info['level']==4 || $parent_info['level']==5)
@@ -294,7 +294,7 @@ class FanliLogic extends Model
 		//获得管理津贴
 	public  function jintienew($user_id,$fanli_money)
 	{
-      //只有总监和大区获得管理津贴
+      //只有联合创始人和执行获得管理津贴
 		//查询上上级信息
 		$user_info = M('users')->where('user_id',$user_id)->field('level,user_id')->find();
 
@@ -313,7 +313,7 @@ class FanliLogic extends Model
 		
 
 	}
-	 //总监，大区董事产生一个店主的金额和管理津贴
+	 //联合创始人，执行董事产生一个合伙人的金额和管理津贴
 	public function addhostmoney2($user_id)
 	{
 		//查询会员当前等级
@@ -327,7 +327,7 @@ class FanliLogic extends Model
 	       $commission = $fanli['chan']; //计算佣金
 	          //按上一级等级各自比例分享返利
 	       $bool = M('users')->where('user_id',$user_info['user_id'])->setInc('user_money',$commission);
-	       	$desc = "团队产生店主获得金额";
+	       	$desc = "团队产生合伙人获得金额";
 	        $log = $this->writeLog($user_info['first_leader'],$commission,$desc,4); //写入日志
 	        return true;
 		}
@@ -405,14 +405,14 @@ class FanliLogic extends Model
 		if(!$goods) return 0;
 		return $goods['goods_id'];
 	}
-		//总监，大区无限代返利
+		//联合创始人，执行无限代返利
 	public function upzdmoney($user_id)
 	{
-		$three =0; //记录总监返利几个
-	    $zongjing =0;//记录这条线是否有总监
-	    $four = 0;//记录大区返利几个
-	    $pingji_4 =0;//记录总监平级奖返利几个
-	    $pingji_5 =0;//记录大区平级奖返利几个
+		$three =0; //记录联合创始人返利几个
+	    $zongjing =0;//记录这条线是否有联合创始人
+	    $four = 0;//记录执行返利几个
+	    $pingji_4 =0;//记录联合创始人平级奖返利几个
+	    $pingji_5 =0;//记录执行平级奖返利几个
 	    $daqu=0;
 	    $teshu =0;//特殊情况
 		//查询上级信息
@@ -429,17 +429,17 @@ class FanliLogic extends Model
 			 //	if($ke>=1) //从上上级开始
 			 	//{
 			 $next_k =$ke+1;
-			 //特殊情况 上级就是总监，跳到到总监程序
+			 //特殊情况 上级就是联合创始人，跳到到联合创始人程序
 			 /*
 			 if($parent_info['level']==4)
 			 {
 			 	$three =1;
 			 } */
 
-			  if($ye['level']==4 && $three<2 && $error!=1)   //处理总监返利
+			  if($ye['level']==4 && $three<2 && $error!=1)   //处理联合创始人返利
 			  {
 	
-				    if($parent_info['level']==4 && $pingji_4!=1)//总监直邀店主平级奖
+				    if($parent_info['level']==4 && $pingji_4!=1)//联合创始人直邀合伙人平级奖
 				    {
 				     	if($ke>=1)
 				     	{
@@ -449,7 +449,7 @@ class FanliLogic extends Model
 					        if($commission>0){
 					        	          //按上一级等级各自比例分享返利
 					        $bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission);
-					       	$desc = "总监平级奖";
+					       	$desc = "联合创始人平级奖";
 					        $log = $this->writeLog($ye['user_id'],$commission,$desc,6); //写入日志
 					        $pingji_4 =1;
 					        $three = $three+1;
@@ -461,7 +461,7 @@ class FanliLogic extends Model
 				     }
 				     elseif($parent_info['level']!=4 && $pingji_4!=1)
 				     {
-				     	if($three==1) //总监平级奖
+				     	if($three==1) //联合创始人平级奖
 						 {
 	                  	    if($ke>=1)
 					     	{
@@ -471,7 +471,7 @@ class FanliLogic extends Model
 						        if($commission>0){
 							          //按上一级等级各自比例分享返利
 							        $bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission);
-							       	$desc = "总监平级奖";
+							       	$desc = "联合创始人平级奖";
 							        $log = $this->writeLog($ye['user_id'],$commission,$desc,6); //写入日志
 							        $pingji_4 =1;
 							        $three = $three+1;
@@ -487,7 +487,7 @@ class FanliLogic extends Model
 							 	if($commission>0){
 							 		 //按上一级等级各自比例分享返利
 					        	$bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission);
-					       		$desc = "总监直属店主邀店主获得金额";
+					       		$desc = "联合创始人直属合伙人邀合伙人获得金额";
 					        	$log = $this->writeLog($ye['user_id'],$commission,$desc,6); //写入日志
 					        	$three =$three+1;
 
@@ -508,7 +508,7 @@ class FanliLogic extends Model
 				    //}
 				
 				}
-				if($ye['level']==5 && $four<2)  //处理大区返利
+				if($ye['level']==5 && $four<2)  //处理执行返利
 				{
 					/*
 					 if($parent_info['level']==5)
@@ -523,7 +523,7 @@ class FanliLogic extends Model
                          $error =1; //判断上级比下级等级少，记录不循环
 					}
 		
-				   if($parent_info['level']==5 && $pingji_5!=1)//大区平级奖
+				   if($parent_info['level']==5 && $pingji_5!=1)//执行平级奖
 				   {
 				      if($ke>=1)
 				      {
@@ -533,7 +533,7 @@ class FanliLogic extends Model
 						 {
 						 	//按上一级等级各自比例分享返利
 				         $bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission);
-				       	 $desc = "大区平级奖";
+				       	 $desc = "执行平级奖";
 				         $log = $this->writeLog($ye['user_id'],$commission,$desc,6); //写入日志
 
 						 }
@@ -563,22 +563,22 @@ class FanliLogic extends Model
 				   	
 					if($four==1)  
 					 {
-					 	//特殊情况返利两个总监时候没有平级奖
+					 	//特殊情况返利两个联合创始人时候没有平级奖
 					 	if($teshu==0){
-					 		 //大区直属总监邀店主的平级奖
+					 		 //执行直属联合创始人邀合伙人的平级奖
 						 	if($parent_info['level']==4)
 						 	{
 						 	  $fanli = M('user_level')->where('level',5)->field('pin_reward4')->find();
 							  $commission = $fanli['pin_reward4']; //计算金额
 						 	}
-						 	//大区直属总监的店主邀店主的平级奖
-						 	elseif($zongjing==1)//证明这条线有总监和大区
+						 	//执行直属联合创始人的合伙人邀合伙人的平级奖
+						 	elseif($zongjing==1)//证明这条线有联合创始人和执行
 							{
 						 	  $fanli = M('user_level')->where('level',5)->field('pin_reward2')->find();
 							  $commission = $fanli['pin_reward2']; //计算金额
 					         
 					         }
-					         //大区直属店主邀店主的平级奖
+					         //执行直属合伙人邀合伙人的平级奖
 					         else
 					         {
 					         	 $fanli = M('user_level')->where('level',5)->field('pin_reward3')->find();
@@ -587,7 +587,7 @@ class FanliLogic extends Model
 					         if($commission>0)
 						    {
 					         $bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission);
-					       	 $desc = "大区平级奖";
+					       	 $desc = "执行平级奖";
 					         $log = $this->writeLog($ye['user_id'],$commission,$desc,6); //写入日志
 					        }
 
@@ -603,7 +603,7 @@ class FanliLogic extends Model
 					 }
                     if($four<1)
                     {
-                    	if($teshu==1) //大区直属总监邀店主(有平级总监时候)
+                    	if($teshu==1) //执行直属联合创始人邀合伙人(有平级联合创始人时候)
 					 	{
 					 		if($ke>=1)
 					      {
@@ -613,7 +613,7 @@ class FanliLogic extends Model
 				          //按上一级等级各自比例分享返利
 						 	if($commission_z>0){
 						 	 $bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission_z);
-				       		 $desc = "大区直属总监邀店主获得金额";
+				       		 $desc = "执行直属联合创始人邀合伙人获得金额";
 				       		 $log = $this->writeLog($ye['user_id'],$commission_z,$desc,6); //写入日志
 				       		 $four =$four+1;
 
@@ -622,7 +622,7 @@ class FanliLogic extends Model
 				       	   }
 
 					 	}
-                    	elseif($parent_info['level']==4) //大区直属总监邀店主
+                    	elseif($parent_info['level']==4) //执行直属联合创始人邀合伙人
 					 	{
 					 		if($ke>=1)
 					      {
@@ -633,7 +633,7 @@ class FanliLogic extends Model
 						 	{
 						 		//按上一级等级各自比例分享返利
 				        	$bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission_z);
-				       		$desc = "大区直属总监邀店主获得金额";
+				       		$desc = "执行直属联合创始人邀合伙人获得金额";
 				       		 $log = $this->writeLog($ye['user_id'],$commission_z,$desc,6); //写入日志
 				       		 $four =$four+1;
 
@@ -642,7 +642,7 @@ class FanliLogic extends Model
 				       	   }
 
 					 	}
-	                    elseif($zongjing==1)//证明这条线有总监和大区
+	                    elseif($zongjing==1)//证明这条线有联合创始人和执行
 						{
 						  if($ke>=1)
 					      {
@@ -653,13 +653,13 @@ class FanliLogic extends Model
 						 	if($commission_z>0)
 						 	{
 				        	$bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission_z);
-				       		$desc = "大区直属总监的店主邀店主获得金额";
+				       		$desc = "执行直属联合创始人的合伙人邀合伙人获得金额";
 				       		 $log = $this->writeLog($ye['user_id'],$commission_z,$desc,6); //写入日志
 				       		 $four =$four+1;
 				       		}
 				       	   }
 
-						}else //只有大区
+						}else //只有执行
 						{
 						    if($ke>=1)
 					        {
@@ -669,7 +669,7 @@ class FanliLogic extends Model
 					             if($commission_z>0)
 							 	{
 					       		 $bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission_z);
-					       		 $desc = "大区直属店主邀店主获得金额";
+					       		 $desc = "执行直属合伙人邀合伙人获得金额";
 					       		 $log = $this->writeLog($ye['user_id'],$commission_z,$desc,6); //写入日志
 					       		 $four =$four+1;
 					       		}

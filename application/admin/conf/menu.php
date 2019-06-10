@@ -156,7 +156,7 @@ return array(
             array('name'=>'业绩列表','act'=>'yejiList','op'=>'User'),
             array('name' => '快速更改等级', 'act' => 'changelevel', 'op' => 'User'),
             array('name'=>'会员等级','act'=>'levelList','op'=>'User'),
-            array('name'=>'申请大区董事列表','act'=>'lists','op'=>'Largearea'),
+            array('name'=>'申请执行董事列表','act'=>'lists','op'=>'Largearea'),
            // array('name'=>'会员升级日志','act'=>'lists','op'=>'Upgrade'),
         )),
 		array('name' => '团队管理','child'=>array(

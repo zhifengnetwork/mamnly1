@@ -1655,9 +1655,9 @@ class UsersLogic extends Model
             
             // if ($order > 0) {
                 $data['distribut_free_num'] = $num['receive_num']; //免费领取
-                $data['sign_free_num'] = $num['get_num']; // 店主以上领取
+                $data['sign_free_num'] = $num['get_num']; // 合伙人以上领取
                 $user['distribut_new'] = $num['receive_num']; //免费领取
-                $user['sign_new'] = $num['get_num']; // 店主以上领取
+                $user['sign_new'] = $num['get_num']; // 合伙人以上领取
             // }
 
             $user['time'] = time();

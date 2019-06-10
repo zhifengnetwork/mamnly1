@@ -1456,7 +1456,7 @@ function update_pay_status($order_sn,$ext=array())
 /**
  * 设置分享返利
  * 
- * 登记会vip返利，店主返利，总监返利，大区董事返利
+ * 登记会vip返利，合伙人返利，联合创始人返利，执行董事返利
  */
  function fanli($order_id){
 
@@ -2212,9 +2212,9 @@ function provingReceive($user, $type, $num = 1)
             }
         }
 
-        //店主以上可领取
+        //合伙人以上可领取
         if ($user['level'] < 3) {
-            $result = array('status' => 0, 'msg' => '店主以上级别才可领取', 'result' => array());
+            $result = array('status' => 0, 'msg' => '合伙人以上级别才可领取', 'result' => array());
             return $result;
         }
 
