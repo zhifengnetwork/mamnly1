@@ -59,7 +59,7 @@ $(function () {
         }
         $('.danmu').animate({
             opacity: '1',
-            top: '5.8rem',
+            top: '3.8rem',
         },
             1000, function () {
                 setTimeout(

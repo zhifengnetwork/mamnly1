@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-* {
+html,body,div,img,p,span {
     margin: 0;
     padding: 0;
 }
@@ -14,15 +14,15 @@
 .danmu {
     z-index: 999999;
     position: fixed;
-    left: 1rem;
+    left: .55rem;
     top: 10%;
     background-color: #322400;
     color: #FFF;
-    height: 1.3rem;
-    line-height: 1.3rem;
+    height: .65rem;
+    line-height: .65rem;
     border-radius: .6rem;
     padding-right: 10px;
-    padding-left: 1.5rem;
+    padding-left: .75rem;
     font-size: 18px;
     opacity: 0;
 }
@@ -31,12 +31,14 @@
 
 .danmu img {
     border-radius: 50%;
-    width: 1.3rem;
+    width: .65rem;
     position: absolute;
     top: 0;
     left: 0;
 }
 
 .dan_mc{
-    font-size: .5rem;
+    font-size: .24rem;
+    line-height: .65rem;
+    vertical-align: top;
 }
