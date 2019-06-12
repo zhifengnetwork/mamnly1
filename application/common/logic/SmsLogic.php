@@ -57,37 +57,66 @@ class SmsLogic
         //发送记录存储数据库
         $log_id = M('sms_log')->insertGetId(array('mobile' => $sender, 'code' => $code, 'add_time' => time(), 'session_id' => $session_id, 'status' => 0, 'scene' => $scene, 'msg' => $msg));
         if ($sender != '' && check_mobile($sender)) {//如果是正常的手机号码才发送
-            try {
-                $resp = $this->realSendSms($sender, $smsTemp['sms_sign'], $smsParam, $smsTemp['sms_tpl_code']);
-                
-                // 创蓝 start
 
-                // $account = M('config')->where(['name'=>'sms_appkey'])->value('value');
-                // $password = M('config')->where(['name'=>'sms_secretKey'])->value('value');
-                // $logic = new SmsChuanglanLogic($account,$password);
+            try {
+                //阿里云
+                //$resp = $this->realSendSms($sender, $smsTemp['sms_sign'], $smsParam, $smsTemp['sms_tpl_code']);
+            
+
+                //亿淼 start
+                $account = M('config')->where(['name'=>'sms_appkey'])->value('value');
+                $password = M('config')->where(['name'=>'sms_secretKey'])->value('value');
                 
+                $post_data = array();
+                $post_data['userid'] = 2979;
+                $post_data['account'] = $account;
+                $post_data['password'] = $password;
+                $post_data['content'] = '【曼梦丽】您的手机验证码：'.$code.'。若非您本人操作，请忽略本短信。'; //短信内容
+                $post_data['mobile'] = $sender;
+                $post_data['sendtime'] = ''; //时定时发送，输入格式YYYY-MM-DD HH:mm:ss的日期值
+                $url='http://120.25.105.164:8888/sms.aspx?action=send';
+                $o='';
+                foreach ($post_data as $k=>$v)
+                {
+                   $o.="$k=".urlencode($v).'&';
+                }
+                $post_data=substr($o,0,-1);
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_URL,$url);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //如果需要将结果直接返回到变量里，那加上这句。
+                $result = curl_exec($ch);
+                $res = $this->xmlToArray($result);
+              
+                $status = $res['returnstatus'] == 'Success' ? 1 : -1;;
+                $msg = $res['message'];
+               
+                $resp = array('status' => $status, 'msg' => $msg);
+                // 亿淼 end
+
+               
+                // 创蓝 start
+                // $logic = new SmsChuanglanLogic($account,$password);
                 // $message = '【'.$smsTemp['sms_sign'].'】'.$msg;
                 // $res = $logic->sendSMS($sender, $message, 'true');
                 // $res = json_decode($res,true);
-
                 // "{"code":"0","msgId":"19031122454723995","time":"20190311224547","errorMsg":""}"
-                
                 // if((int)$res['code'] == 0 ){
                 //     $status = 1;
                 // }else{
                 //     $status = 0;
                 // }
-
                 // if((int)$res['code'] == 0 ){
                 //     $msg = '发送成功';
-                    
                 // }else{
                 //     $msg = $res['errorMsg'];
                 // }
-
                 //return array('status' => $status, 'msg' => $msg);
-
                 // 创蓝end
+
+
 
             } catch (\Exception $e) {
                 $resp = ['status' => -1, 'msg' => $e->getMessage()];
@@ -105,6 +134,18 @@ class SmsLogic
         }
         
     }
+
+
+    /**
+	 * 	作用：将xml转为array
+	 */
+	public function xmlToArray($xml)
+	{
+        //将XML转为array
+        $array_data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+		return $array_data;
+	}
+
 
     /**
      * 消息通知时，使用
