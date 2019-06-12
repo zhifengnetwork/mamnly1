@@ -10,14 +10,14 @@
             		<span class="ico ico-username"></span>
                     <input type="hidden"  name="source" value="{$Request.param.source}" placeholder="请输入账号或手机号"/>
 					<span class="ico ico-telephone"></span>
-                    <if condition="$user.mobile && $status neq 1">
+                    <!-- <           if condition="$user.mobile && $status neq 1">
                         <input type="text"  name="mobile" value="{$user.mobile}" id="tel" readonly/>
                         <input type="hidden"  name="status" value="1"/>
-                    <else/>
-                        <input type="text"  name="mobile"  id="tel" onBlur="checkMobilePhone(this.value);" maxlength="11"/>
+                    <            else        /> -->
+                        <input type="text"  name="mobile"  id="tel" onBlur="checkMobilePhone(this.value);" maxlength="11" value="{$user.mobile}"/>
                         <input type="hidden" name="validate" value="1"/>
                         <input type="hidden"  name="status" value="0"/>
-                    </if>
+                    <!-- < /if > -->
 				</div>
                 <div class="zjy_lu">
                     <div class="v-cont-wrap">
