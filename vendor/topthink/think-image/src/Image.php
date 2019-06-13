@@ -34,6 +34,7 @@ class Image
     const WATER_SOUTH     = 8; //常量，标识下居中水印
     const WATER_SOUTHEAST = 9; //常量，标识右下角水印
     const DCHQZG = 10;
+    const ERWEIMA = 11;
     /* 翻转相关常量定义 */
     const FLIP_X = 1; //X轴翻转
     const FLIP_Y = 2; //Y轴翻转
@@ -450,12 +451,17 @@ class Image
                 break;
 
             /* 头像 */
-              case self::DCHQZG:
-              $x = 160;
-              //$y = ($this->info['height'] - $info[1]) / 2;
-              $y = 30;
+            case self::DCHQZG:
+                $x = 168;
+                //$y = ($this->info['height'] - $info[1]) / 2;
+                $y = 78;
+                break;
 
-              break;
+            /** 二维码 */
+            case self::ERWEIMA:
+                $x = ($this->info['width'] - $info[0]) / 2;
+                $y = 378;
+                break;
 
             default:
                 /* 自定义水印坐标 */
@@ -555,10 +561,12 @@ class Image
             case self::WATER_WEST:
                 $y += ($this->info['height'] - $h) / 2;
                 break;
+
+
             /* 自定义 */
             case self::DCHQZG:
-                  $x = 200;
-                  $y = 150;
+                $x += ($this->info['width'] - $w) / 2;
+                $y = 210;
                 break;
 
             default:

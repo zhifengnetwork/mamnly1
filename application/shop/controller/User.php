@@ -2207,7 +2207,7 @@ class User extends MobileBase
         if($logo_height > 100 || $logo_width > 100){
             // 压缩图片
              $url_head_file = ROOT_PATH.'public/share/head/'.$user_id.'.png';
-             $logo->thumb(90, 90)->save($url_head_file , null, 50);
+             $logo->thumb(85, 85)->save($url_head_file , null, 50);
         }
 
         //3.得到二维码的绝对路径
@@ -2220,7 +2220,7 @@ class User extends MobileBase
         {
         	$image = \think\Image::open(ROOT_PATH.'public/share/bgok.png');
         	// 给原图中间添加水印
-            $image->water($url_code,\think\Image::WATER_CENTER)->save(ROOT_PATH.'public/share/picture_ok44/'.$user_id.'.png');
+            $image->water($url_code,\think\Image::ERWEIMA)->save(ROOT_PATH.'public/share/picture_ok44/'.$user_id.'.png');
 
             // 给图片添加头像
             $images = \think\Image::open(ROOT_PATH."/public/share/picture_ok44/".$user_id.".png");
