@@ -39,6 +39,21 @@ function access_token(){
     return $return['access_token'];
 }
 
+
+//二维数组排序
+function towArraySort ($data,$key,$order = SORT_ASC) {
+    try{
+        //        dump($data);
+        $last_names = array_column($data,$key);
+        array_multisort($last_names,$order,$data);
+//        dump($data);
+        return $data;
+    }catch (\Exception $e){
+        return false;
+    }
+
+}
+
 function write_log($content)
 {
     $content = "[" . date('Y-m-d H:i:s') . "]" . $content . "\r\n";

@@ -19,6 +19,82 @@ class Index extends Base {
         $this->assign('menu',getMenuArr());   //view2
         return $this->fetch();
     }
+
+
+    public function shop(){
+        $res  = $list = array();
+        $p    = empty($_REQUEST['p']) ? 1 : $_REQUEST['p'];
+        $size = empty($_REQUEST['size']) ? 20 : $_REQUEST['size'];
+        $where = "status >= 0 ";
+        $list       = M('diy_ewei_shop')
+                    ->where($where)
+                    ->order('id')
+                    ->page("$p,$size")->select();
+        $this->assign('list', $list);
+        $count = M('diy_ewei_shop')->where($where)->count();// 查询满足要求的总记录数
+        $pager = new Page($count,$size);// 实例化分页类 传入总记录数和每页显示的记录数
+     
+        //$page = $pager->show();//分页显示输出
+
+        $admin_info=getAdminInfo(session('admin_id'));
+        $this->assign('list',$list);// 赋值数据集
+        $this->assign('pager',$pager);// 赋值分页输出        
+		return $this->fetch('shop');
+    }
+   
+    /***
+     * 页面修改
+     */
+    public function pageedit(){
+        $id  =  I('id');
+        $this->assign('id',$id);
+        $this->assign('meta_title', '页面编辑');
+        return $this->fetch();
+    }
+     /***
+     * 页面新增
+     */
+    public function pageadd(){
+        $this->assign('meta_title', '页面新增');
+        return $this->fetch();
+    }
+
+
+
+
+    public function getShopData () {
+        echo 111;
+        die;
+
+        $res = model('DiyEweiShop')->getShopData();
+        if (!empty($res)){
+            return json(['code'=>1,'msg'=>'','data'=>$res]);
+        }else{
+            return json(['code'=>0,'msg'=>'没有数据，请添加','data'=>'']);
+        }
+        
+    }
+
+    public function gooodsList () {
+        $keyword = request()->param('keyword','');
+        $cat_id = request()->param('cat_id',0,'intval');
+        $page = request()->param('page',0,'intval');
+        $goods = new Goods();
+        $list = $goods->getGoodsList($keyword,$cat_id,$page);
+        if (!empty($list)){
+            return json(['code'=>1,'msg'=>'','data'=>$list]);
+        }else{
+            return json(['code'=>0,'msg'=>'没有数据哦','data'=>$list]);
+        }
+    }
+
+    public function getGoodsData () {
+        $goods_id = request()->param('goods_id',0,'intval');
+        $data = model('Goods')->where('goods_id',$goods_id)->find();
+        $sku =  Db::table('goods_sku')->where('goods_id',$data['goods_id'])->select();
+        $data['sku'] = $sku;
+        return json(['code'=>1,'msg'=>'','data'=>$data]);
+    }
    
     public function welcome(){
     	$this->assign('sys_info',$this->get_sys_info());

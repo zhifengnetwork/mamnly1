@@ -112,6 +112,10 @@ return array(
             array('name' => '素材列表', 'act' => 'materialList', 'op' => 'Material'),
             array('name' => '素材分类', 'act' => 'materialClass', 'op' => 'Material'),
         )),
+
+        array('name' => '首页自定义','child'=>array(
+            array('name' => '首页自定义', 'act'=>'shop', 'op'=>'Index'),
+        )),
     )),
 
     /*'marketing' => array('name' => '营销', 'child' => array(

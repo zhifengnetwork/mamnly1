@@ -73,8 +73,16 @@ class Index extends MobileBase {
         $this->assign('end_time',$end_time);
         $this->assign('favourite_goods',$favourite_goods);
         $this->assign('is_new',$is_new);
+
+        $res = Db::name('diy_ewei_shop')->where(['status' => 1])->find();
+
+        if(!empty($res)){
+            return $this->fetch('mamnly');
+        }else{
+            return $this->fetch('index');
+         }
        
-        return $this->fetch();
+       
     }
 
     //商品列表板块参数设置

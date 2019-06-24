@@ -269,6 +269,131 @@ class Shop extends Base
         }
     }
 
+
+    public function page_delete () {
+        $id = request()->param('id',0,'intval');
+        if (!empty($id)) {
+            $getPage = model('DiyEweiShop')->where(['id' => $id])->find();
+            if (!empty($getPage)){
+                $delete = model('DiyEweiShop')->where(['id'=>$id])->update(['status'=>-1]);
+                if ($delete){
+                    return json(['code'=>1, 'msg'=>'操作成功','data'=>[]]);
+                }else{
+                    return json(['code'=>0, 'msg'=>'操作失败','data'=>[]]);
+                }
+            }else{
+                return json(['code'=>0, 'msg'=>'页面不存在！','data'=>[]]);
+            }
+        }else{
+            return json(['code'=>0, 'msg'=>'id不存在','data'=>[]]);
+        }
+    }
+
+    public function editShop () {
+            $id        = I('id');
+            $page_name = I('page_name');
+            $data      = I('data/a');
+
+            if (empty($page_name)){
+                return json(['code'=>0,'msg'=>'请填写页面名称']);
+            }
+            if (!empty($data)){
+                
+                $res = model('DiyEweiShop')->edit($data,$this->admin_id,$page_name,$id);
+
+                if ($res){
+                    return json(['code'=>1,'msg'=>'保存成功','data'=>['id'=>$res]]);
+                }else{
+                    return json(['code'=>0,'msg'=>'保存失败']);
+                }
+
+            }else{
+                return json(['code'=>0,'msg'=>'首页不能为空，请您添加组件']);
+            }
+
+    }
+
+    public function getShopData () {
+        $id = request()->param('id');
+
+        $res = model('DiyEweiShop')->getShopData($id);
+        if (!empty($res)){
+            return json(['code'=>1,'msg'=>'','data'=>$res]);
+        }else{
+            return json(['code'=>0,'msg'=>'没有数据，请添加','data'=>'']);
+        }
+    }
+
+    public function gooodsList () {
+        $keyword = request()->param('keyword');
+        $page    = request()->param('page');
+     
+        if($page < 0 || empty($page)){ $page = 1;}
+        $data    = model('Goods')->getGoodsList($keyword,0,$page);
+       
+        if (!empty($data['list'])){
+            foreach ( $data['list'] as &$v){
+                $v['original_img'] = SITE_URL.$v['original_img'];
+            }
+        }
+        if (!empty($data['list'])){
+            $this->ajaxReturn(['code'=>1,'msg'=>"操作成功",'total' => $data['total'],'per_page'=>$data['per_page'],'last_page' => $data['last_page'],'current_page' => $data['current_page'],'data' =>$data['list']]);
+        }else{
+            $this->ajaxReturn(['code'=>0,'msg'=>'还没有商品哦','data'=>'']);
+        }
+    }
+
+
+    public function page_enable () {
+        $id     = request()->param('id',0,'intval');
+        $status = request()->param('status',0,'intval');
+        if (!empty($id)){
+            $getPage = model('DiyEweiShop')->where(['id'=>$id])->find();
+            if (!empty($getPage)){
+                if ($getPage['status'] == $status){
+                    model('DiyEweiShop')->where(['id'=>$getThisEnablePage['id']])->update(['status'=>$status]);
+                }else{
+                    if ($status == 1){
+                        $getThisEnablePage = model('DiyEweiShop')->where(['status'=>1])->find();
+                        if (!empty($getThisEnablePage)){
+                            model('DiyEweiShop')->where(['id'=>$getThisEnablePage['id']])->update(['status'=>0]);
+                        }
+                    }
+                    $updateThisPage = model('DiyEweiShop')->where(['id'=>$id])->update(['status'=>$status]);
+                    if ($updateThisPage){
+                        $this->ajaxReturn(['code'=>1, 'msg'=>'操作成功','data'=>[]]);
+                    }else{
+                        $this->ajaxReturn(['code'=>0, 'msg'=>'操作失败','data'=>[]]);
+                    }
+                }
+            }else{
+                $this->ajaxReturn(['code'=>0, 'msg'=>'页面不存在！','data'=>[]]);
+            }
+        }else{
+            $this->ajaxReturn(['code'=>0, 'msg'=>'id不存在','data'=>[]]);
+        }
+    }
+
+
+    public function shop_img(){
+        $img      = I('img');
+        if(empty($img)){
+            $this->ajaxReturn(['code'=>0,'msg'=>'上传图片不能为空','data'=>'']);
+        }
+        $saveName       = request()->time().rand(0,99999) . '.png';
+        $base64_string  = explode(',', $img);
+        $imgs           = base64_decode($base64_string[1]);
+        //生成文件夹
+        $names = "shops";
+        $name  = "shops/" .date('Ymd',time());
+        if (!file_exists(ROOT_PATH .UPLOAD_PATH.$names)){ 
+            mkdir(ROOT_PATH .UPLOAD_PATH.$names,0777,true);
+        }
+        //保存图片到本地
+        $r   = file_put_contents(ROOT_PATH .UPLOAD_PATH.$name.$saveName,$imgs);
+        $this->ajaxReturn(['code'=>1,'msg'=>'ok','data'=>SITE_URL.'/public/upload/'.$name.$saveName]);
+    }
+
     public function shopImageDel()
     {
         $path = input('filename','');
