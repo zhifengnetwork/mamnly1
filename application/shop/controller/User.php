@@ -1489,10 +1489,16 @@ class User extends MobileBase
         //用户信息
         $user = M('users')->field('user_id,nickname,mobile')->where(['user_id'=>$first_leader])->find();
         //下级信息
-        $users = M('users')->field('user_id,nickname,mobile')->where(['first_leader'=>$first_leader])->select();
-        
+        $users = M('users')->field('user_id,nickname,mobile,level')->where(['first_leader'=>$first_leader])->select();
+        $list=[];
+        $level=M('user_level')->getField('level,level_name');
+        foreach ($users as $key=>$value){
+            $value['level']=$level[$value['level']];
+            $value['level']=mb_substr($value['level'],0,2,'utf-8');
+            $list[]=$value;
+        }
         $this->assign('user', $user);
-        $this->assign('lists', $users);
+        $this->assign('lists', $list);
 
         return $this->fetch();
     }

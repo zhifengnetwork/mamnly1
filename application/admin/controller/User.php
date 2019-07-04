@@ -128,7 +128,6 @@ class User extends Base
         $this->assign('pager', $Page);
         return $this->fetch();
     }
-
     /**
      * 业绩列表
      */
@@ -200,8 +199,45 @@ class User extends Base
         $this->assign('page', $show);// 赋值分页输出
         $this->assign('pager', $Page);
         return $this->fetch();
-    }    
-
+    }
+    /**
+     * 业绩明细
+     */
+    public function achievement(){
+        $uid = I('get.id');
+        $uid=3;
+        $Yeji = M('Yeji');
+        $where['uid']=$uid;
+        $order_list=$Yeji->field('order_id')->where($where)->select();
+        $ids='';
+        foreach ($order_list as $key=>$value){
+            if(!$ids){
+                $ids=$value['order_id'];
+            }else{
+                $ids=$ids.','.$value['order_id'];
+            }
+        }
+        $yejo_where['o.order_id'] = array('in',$ids);
+        $count = $yeji = Db::table('tp_order')->alias('o')
+            ->join('tp_order_goods og','og.order_id=o.order_id','LEFT')
+            ->where($yejo_where)
+            ->group('og.goods_id')
+            ->count();
+        $Page = new AjaxPage($count, 10);
+        $yeji = Db::table('tp_order')->alias('o')
+            ->join('tp_order_goods og','og.order_id=o.order_id','LEFT')
+            ->where($yejo_where)
+            ->group('og.goods_id')
+            ->order('yeji_num DESC')
+            ->field('og.goods_id,og.goods_price,og.goods_name,sum(og.goods_num) yeji_num')
+            ->limit($Page->firstRow . ',' . $Page->listRows)
+            ->select();
+        $show = $Page->show();
+        $this->assign('yeji', $yeji);
+        $this->assign('page', $show);// 赋值分页输出
+        $this->assign('pager', $Page);
+        return $this->fetch();
+    }
     /**
      * 会员详细信息查看
      */
