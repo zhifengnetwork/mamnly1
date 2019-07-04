@@ -205,7 +205,6 @@ class User extends Base
      */
     public function achievement(){
         $uid = I('get.id');
-        $uid=3;
         $Yeji = M('Yeji');
         $where['uid']=$uid;
         $order_list=$Yeji->field('order_id')->where($where)->select();
