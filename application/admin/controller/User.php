@@ -205,15 +205,18 @@ class User extends Base
      */
     public function achievement(){
         $uid = I('get.id');
+        $uid=3;
         $Yeji = M('Yeji');
         $where['uid']=$uid;
-        $order_list=$Yeji->field('order_id')->where($where)->select();
+        $order_list=$Yeji->field('order_id,money')->where($where)->select();
         $ids='';
         foreach ($order_list as $key=>$value){
-            if(!$ids){
-                $ids=$value['order_id'];
-            }else{
-                $ids=$ids.','.$value['order_id'];
+            if($value['money']!=0){
+                if(!$ids){
+                    $ids=$value['order_id'];
+                }else{
+                    $ids=$ids.','.$value['order_id'];
+                }
             }
         }
         $yejo_where['o.order_id'] = array('in',$ids);
