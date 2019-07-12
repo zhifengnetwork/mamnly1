@@ -4,6 +4,16 @@ body{
 .wrapper{
     padding-bottom: 1.1rem;
 }
+.toubu{
+	width: 100%;
+	text-align: center;
+	padding:.1rem 0;
+	background: #e2e3e5;
+	}
+.toubu img{
+	width: 3.4rem;
+	height: 1rem;
+}
 /* 头部 */
 .header{
     width: 100%;
@@ -13,7 +23,7 @@ body{
 	background: -webkit-linear-gradient(top, #fe44a0 0%, #e81295 100%);
 	background: -o-linear-gradient(top, #fe44a0 0%, #e81295 100%);
     background: -ms-linear-gradient(top, #fe44a0 0%, #e81295 100%); */
-    background-color: rgb(31,31,31);
+    background-color:#7a868c;
     display: flex;
     display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */ 
     display: -moz-box; /* Firefox 17- */ 
@@ -23,13 +33,13 @@ body{
     align-items: center;
     padding: 0 0.2rem;
     box-sizing: border-box;
-    position: fixed;
+    position: absolute;
     left: 0;
-    top: 0;
+    top: 1.2rem;
     z-index: 99;
 }
 .header .scan img{
-    width: .65rem;
+    width: .45rem;
 }
 .header .search{
 	position: relative;
@@ -54,7 +64,8 @@ body{
     width: 0.36rem;
 }
 .header .search .logo-btn img{
-    width: 0.55rem;
+    width: 0.2rem;
+    height: .4rem;
     margin: 0.1rem 0.15rem 0.1rem .2rem;
 }
 .header .search .search-input{
@@ -67,7 +78,17 @@ body{
     box-sizing: border-box;
 }
 .header .login-btn img{
-    width: .75rem;
+    width: .45rem;
+}
+.hhh_pic{
+	width: 94%;
+	margin: 0 auto;
+	margin-top:.15rem;
+	margin-bottom: .15rem;
+}
+.hhh_pic img{
+	width: 100%;
+	height: 100%;
 }
 
 /* 轮播图 */
@@ -90,7 +111,16 @@ body{
 }
 
 /* 菜单导航 */
+.nav-wrap-zp{
+	width: 94%;
+	height: 3.3rem;
+	margin: 0 auto;
+	background: white;
+	margin-top :.5rem;
+	
+}
 .nav-wrap-zp ul{
+	height: 100%;
     display: flex;
     display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */ 
     display: -moz-box; /* Firefox 17- */ 
@@ -106,10 +136,14 @@ body{
     margin-top: 0.2rem;
 }
 .nav-wrap-zp ul li a{
-    color: #151515;
+    color: #8e969b;
+    width: 100%;
+    height: .6rem;
+    box-sizing: border-box;
 }
 .nav-wrap-zp ul li img{
-    width: .6rem;
+    width: 40%;
+    height: 100%;
     margin: 0 auto 0.1rem;
     display: block;
 }
@@ -218,6 +252,7 @@ body{
     width: 7.1rem;
     /*margin: .3rem auto;*/
      margin: 0 auto;
+     margin-top: .12rem;
    
    
 }

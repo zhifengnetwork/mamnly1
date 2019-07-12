@@ -15,11 +15,15 @@
 
 <body>
 	<div class="wrapper">
-		<!-- 头部 -->
+		<!--头部图片区域-->
+		<div class="toubu">
+			<img src="__STATIC__/images/home_zp/sidi.png?v=1" />
+		</div>
+		<!-- 头部-搜索区域 -->
 		<div class="header">
 			<div class="scan">
 				<a href="/shop/Goods/categoryList.html">
-					<img src="__STATIC__/images/home_zp/caidangg.png?v=1" />
+					<img src="__STATIC__/images/home_zp/caidang.png?v=1" />
 				</a>
 			</div>
 
@@ -27,7 +31,7 @@
 			<div class="search">
 				<span class="logo-btn"><img src="__STATIC__/images/home_zp/logo.png?v=2" /></span>
 				<span class="search-input">面膜</span>
-				<span class="search-btn"><img src="__STATIC__/images/home_zp/search-icon-index@2x.png?v=1" /></span>
+				<!--<span class="search-btn"><img src="__STATIC__/images/home_zp/search-icon-index@2x.png?v=1" /></span>-->
 			</div>
 
 			<div class="login-btn">
@@ -44,7 +48,7 @@
 		<!--首页滚动内容-e-->
 
 		<!-- 轮播图 -->
-		<div class="swiper-container banner-wrap-zp">
+		<div class="swiper-container banner-wrap-zp" >
 			
 			<div class="swiper-wrapper">
 				<adv pid="9" limit="5" item="v">
@@ -60,6 +64,14 @@
 			<!--<div class="swiper-bg"><img src="__STATIC__/images/home_zp/swiper-bg.png" /></div>-->
 		</div>
 		
+		
+		<!--图片区域-->
+		<!--<div class="hhh_pic">
+			<img src="__STATIC__/images/home_zp/firs.png" class="picha"/>
+		</div>-->
+		
+		
+		
 		<!-- 菜单导航 -->
 		<div class="nav-wrap-zp">
 			<ul>
@@ -68,6 +80,7 @@
 						<img src="__STATIC__/images/home_zp/1.png?v=1">
 						<span>竞拍</span>
 					</a>
+					
 				</li>
 				<li>
 					<a href="{:U('shop/groupbuy/grouplist')}">
@@ -121,12 +134,18 @@
 			</ul>
 		</div>
 
-
-		<div class="floors">
+    	<!--图片区域-->
+        <div class="hhh_pic">
+			<img src="__STATIC__/images/home_zp/secd.png" class="picha"/>
+		</div>
+    
+    
+    
+		<!--<div class="floors">
 			
 			<img src="__STATIC__/images/home_zp/manmenlili.jpg?v=1"  style="width: 100%;height: 2.4rem;"/>
 			
-		</div>
+		</div>-->
 
 		<!-- 为你推荐 -->
 		<div class="recommend-wrap">
@@ -134,7 +153,7 @@
 				<h3>&nbsp;为你推荐</h3>
 			</div>-->
 		
-			<img src="__STATIC__/images/home_zp/weinin.png?v=3" class="imgimg" />
+			<!--<img src="__STATIC__/images/home_zp/weinin.png?v=3" class="imgimg" />-->
             
 			<div class="recommend-list">
 				<ul>
@@ -155,7 +174,7 @@
 							</div>
 							
 								<div class="g_btn">
-									<a href="{:U('Shop/Goods/goodsInfo',array('id'=>$v[goods_id]))}" style="display:block;margin:.35rem auto .1rem;width:95%;height:.55rem;background:#FC5101;border-radius: 6px;font-size: .26rem;text-align: center;line-height: .55rem;color: #fff;">立即购买</a>
+									<a href="{:U('Shop/Goods/goodsInfo',array('id'=>$v[goods_id]))}" style="display:block;margin:.35rem auto .1rem;width:95%;height:.55rem;background:#7a868c;border-radius: 6px;font-size: .26rem;text-align: center;line-height: .55rem;color: #fff;">立即购买</a>
 								</div>
 							
 						</li>
