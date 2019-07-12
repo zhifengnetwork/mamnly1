@@ -277,9 +277,7 @@
 	</div>
 </form>
 <!--底部-->
-< <include file="public/footer_nav"/>
-<script sr
-
+<include file="public/footer_nav"/>
 
 </div>	
 </body>
@@ -494,9 +492,11 @@
 				//拉起支付
 				pay(url){
 					if(url==''){
-						return false;
+						$('#recharge_form').submit();
+					}else{
+						window.location.href = url;
 					}
-					$('#recharge_form').submit();
+					
 				},
 				/*（轮播图）根据传过来的data=>创建 swiper 的分页器*/
 				carousel(res) {
