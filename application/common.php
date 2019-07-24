@@ -271,6 +271,7 @@ function getAllUp($invite_id,&$userList=array())
              ->select();
     foreach($order_goods as $k=>$vs)
     {
+        if($vs['cat_id'] == C('customize.special_cid'))continue;
         $order_amount = $vs['goods_price'] * $vs['goods_num'];
         $rec_id=$vs['rec_id'];
     //加个人业绩(下单人)
