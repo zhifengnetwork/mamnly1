@@ -71,7 +71,7 @@ class SmsLogic
                 $post_data['userid'] = 2979;
                 $post_data['account'] = $account;
                 $post_data['password'] = $password;
-                $post_data['content'] = '【曼梦丽】您的手机验证码：'.$code.'。若非您本人操作，请忽略本短信。'; //短信内容
+                $post_data['content'] = '【丝蒂芬妮娅】您的手机验证码：'.$code.'。若非您本人操作，请忽略本短信。'; //短信内容
                 $post_data['mobile'] = $sender;
                 $post_data['sendtime'] = ''; //时定时发送，输入格式YYYY-MM-DD HH:mm:ss的日期值
                 $url='http://120.25.105.164:8888/sms.aspx?action=send';
