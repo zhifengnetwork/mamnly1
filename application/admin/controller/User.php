@@ -1378,5 +1378,23 @@ exit("请联系DC环球直供网络客服购买高级版支持此功能");
 			}
 		}
 		return $this->fetch();
-	}
+    }
+    
+    public function ajaxupdate_first_leader(){
+        $first_leader = I('get.first_leader/d',0);
+        $uids = I('get.uids/s','');
+        if(!$first_leader)$this->ajaxReturn([status=>0,msg=>'上级不存在！']);
+        $uids = explode(',',$uids);
+        if(empty($uids))$this->ajaxReturn([status=>0,msg=>'没有选中的用户！']);
+
+        $info = M('Users')->field('user_id,nickname')->find($first_leader);
+        if(!$info)$this->ajaxReturn([status=>0,msg=>'上级不存在！']);
+
+        $res = M('Users')->where(['user_id'=>['in',$uids]])->update(['first_leader'=>$first_leader]);
+        if($res !== false){
+            $this->ajaxReturn([status=>1,msg=>'操作成功！','data'=>$info['nickname']]);
+        }else{
+            $this->ajaxReturn([status=>0,msg=>'操作失败！']);
+        }
+    }
 }

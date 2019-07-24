@@ -123,6 +123,13 @@
                     </a>
                 </div>
                 <div class="fbutton">
+                    <a href="javascript:;" onclick="update_first_leader()">
+                        <div class="update" title="修改上级">
+                            <span><i class="fa fa-share"></i>修改上级</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="fbutton">
                     <a onclick="send_message();">
                         <div class="add" title="发送站内信">
                             <span><i class="fa fa-send"></i>发送站内信</span>
@@ -345,6 +352,36 @@
         }
         $('#search-form2').submit();
     }
+    function update_first_leader() {
+        $('input[name="user_ids"]').val('');
+        //$('#search-form2').attr('action',"{:U('User/export_user')}")
+        var selected_ids = '';
+        $('.trSelected' , '#flexigrid').each(function(i){
+            selected_ids += $(this).data('id')+',';
+        });
+
+        if(!selected_ids){
+            alert('没有选中的用户！');
+            return;
+        }else{
+            var first_leader = parseInt(window.prompt('请输入上级ID',''));
+            $.ajax({
+                type : "get",
+                dataType: "json",
+                url:"/Admin/user/ajaxupdate_first_leader/first_leader/" + first_leader + '/uids/' + selected_ids,//+tab,
+                success: function(data){
+                    if(data.status == 1){
+                        alert('上级已更改为 ' + data.data);   
+                        //alert({$pager});
+                        ajax_get_table('search-form2',cur_page);  
+                    }else{
+                        alert(data.msg);
+                        return;
+                    }
+                }
+            });            
+        }
+    }    
 </script>
 </body>
 </html>
