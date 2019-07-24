@@ -41,7 +41,7 @@ class FanliLogic extends Model
 		//获取返利数据
 	public function getgoodsinfo()
 	{
-         $goods_info = M('goods')->where(['goods_id'=>$this->goodId])->field('sign_free_receive,goods_name')->find();
+         $goods_info = M('goods')->where(['goods_id'=>$this->goodId])->field('cat_id,sign_free_receive,goods_name')->find();
          return $goods_info;
 	}
 	//获取用户购买特殊产品数量
@@ -81,7 +81,7 @@ class FanliLogic extends Model
 		$pro_num = $this->getproductnum();
 		//echo $this->goodId.'-'.$this->tgoodsid.'-'.$user_info['level'];exit;
 		$goods_info=$this->getgoodsinfo();
-		if($goods_info['sign_free_receive']==0) //免费领取，签到产品不参与返利
+		if(($goods_info['sign_free_receive']==0) && ($goods_info['cat_id']!= C('customize.special_cid'))) //免费领取，签到产品不参与返利
 		{
 			if($user_info['level']>=3)//自购只返利给合伙人以上级别
 				{
