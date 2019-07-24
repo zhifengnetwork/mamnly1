@@ -156,6 +156,17 @@
                     <span class="err" id="err_cat_id"></span>
                 </dd>
             </dl>
+
+            <dl class="row" id='level6_fanli_row'>
+                <dt class="tit">
+                    <label>创业包返利</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" value="{$goods.level6_fanli}" name="level6_fanli" class="input-txt"/>
+                    <span class="err" id="err_level6_fanli"></span>
+                </dd>
+            </dl>  
+
             <dl class="row">
                 <dt class="tit">
                     <label>商品简介</label>
@@ -766,6 +777,12 @@
 <script>
     /** 商品规格相关 js*/
     $(function(){
+        if({$goods.cat_id} == {$level6_cid}){
+            $('#level6_fanli_row').show();
+        }else{
+            $('#level6_fanli_row').hide();
+        }
+
         // 商品模型切换时 ajax 调用  返回不同的属性输入框
         $(document).on("change",'#goods_type',function(){
             var goods_id = $("input[name='goods_id']").val();
@@ -886,6 +903,12 @@
                 $('#cat_id_2').empty().html("<option value='0'>请选择商品分类</option>");
             }
             $('#cat_id_3').empty().html("<option value='0'>请选择商品分类</option>");
+
+            if(v == {$level6_cid}){
+            $('#level6_fanli_row').show();
+            }else{
+                $('#level6_fanli_row').hide();
+            }            
         })
     })
 

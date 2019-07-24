@@ -8,4 +8,5 @@
 		'KEY' => 'KXlt05RqoFShDPrLsTZxs6o1uWuudaag',
 
 		'special_cid'	=> 8,	//特殊商品分类ID
+		'level6_cid'	=> 11,	//创业包分类ID
 	];

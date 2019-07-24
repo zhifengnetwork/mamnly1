@@ -41,7 +41,7 @@ class FanliLogic extends Model
 		//获取返利数据
 	public function getgoodsinfo()
 	{
-         $goods_info = M('goods')->where(['goods_id'=>$this->goodId])->field('cat_id,sign_free_receive,goods_name')->find();
+         $goods_info = M('goods')->where(['goods_id'=>$this->goodId])->field('cat_id,sign_free_receive,goods_name,level6_fanli')->find();
          return $goods_info;
 	}
 	//获取用户购买特殊产品数量
@@ -81,6 +81,18 @@ class FanliLogic extends Model
 		$pro_num = $this->getproductnum();
 		//echo $this->goodId.'-'.$this->tgoodsid.'-'.$user_info['level'];exit;
 		$goods_info=$this->getgoodsinfo();
+
+		if(($goods_info['cat_id'] == C('customize.level6_cid')) && $goods_info['level6_fanli'])
+		{
+			//查找上级中level=6的用户
+			$UsersLogic = new \app\common\logic\UsersLogic();
+			$leader = $UsersLogic->getUserLevTop($this->userId,6);	
+			if($leader['user_id']){
+				$desc = "创业包返利";
+				$log = $this->writeLog($leader['user_id'],$goods_info['level6_fanli'],$desc,33); 				
+			}		
+		}
+
 		if(($goods_info['sign_free_receive']==0) && ($goods_info['cat_id']!= C('customize.special_cid'))) //免费领取，签到产品不参与返利
 		{
 			if($user_info['level']>=3)//自购只返利给合伙人以上级别

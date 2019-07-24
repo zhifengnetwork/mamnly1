@@ -376,6 +376,7 @@ class Goods extends Base {
         $this->assign('suppliersList', $suppliersList);
         $this->assign('cat_list', $cat_list);
         $this->assign('goodsType', $goodsType);
+        $this->assign('level6_cid', C('customize.level6_cid'));
         return $this->fetch('_goods');
     }
 

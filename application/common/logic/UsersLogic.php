@@ -1726,6 +1726,6 @@ class UsersLogic extends Model
 	public function get_team_num($user_id){
 		$arr = [];
 		return count($this->getUserLevBotAll($user_id,$arr));
-	}
+	}	
 
 }
