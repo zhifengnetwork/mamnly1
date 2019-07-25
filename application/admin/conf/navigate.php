@@ -17,7 +17,7 @@
             	    )
                ),             		
               'admin/index'=>array(
-                'name' =>'丝蒂芬妮娅国际',
+                'name' =>'丝蒂芬妮娅',
                 'action'=>array(
                      'index'=>'欢迎页面',                     
          	       )
