@@ -1,55 +1,74 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2019/3/13 0013
- * Time: 10:20
- */
+
 
 namespace app\cron\controller;
 
-
+use think\Controller;
 use think\Db;
 use app\common\util\Exception;
+use app\common\logic\UsersLogic;
 
-class Team extends Init
-{
-    public function __construct()
-    {
-        parent::__construct();
+class Team extends Controller{
+
+    //季度分红，每3月一次 ，2,5,8,11
+    public function quarter_bonus(){
+        $AgentPerformance = M('Agent_performance');
+        $AgentPerformance->field('performance_id,user_id,team_per')->chunk(100,function($list){
+
+            $Share = M('Share');
+            $AgentPerformance = M('Agent_performance');
+            $QuarterBonus = M('Quarter_bonus');
+            foreach($list as $v){
+                $n = $QuarterBonus->where(['user_id'=>$v['user_id'],'year_m'=>date('Y-m')])->count();
+                if($n)continue;
+                $grade = $Share->where(['lower'=>['egt',$v['team_per']]])->order('lower desc')->value('grade');
+                if(!$grade)continue;
+    
+                $price = floor($v['team_per'] * $grade)/100;
+    
+                //找出用户的下级
+                $childlist = $AgentPerformance->alias('ap')->join('users u','ap.user_id=u.user_id','left')->field('ap.performance_id,ap.user_id,ap.team_per')->where('u.first_leader='.$v['user_id'])->select();
+                foreach($childlist as $v1){
+                    $grade = $Share->where(['lower'=>['egt',$v1['team_per']]])->order('lower desc')->value('grade');
+                    if(!$grade)continue;  
+                    $price1 = floor($v1['team_per'] * $grade)/100;  
+                    $price -= $price1;
+                }
+    
+                $this->writeLog($v['user_id'],$price,date('Y-m').'季度分红',72,$v['performance_id']);
+            }  
+            //M()->query('TRUNCATE tp_agent_performance');
+        });
     }
 
-    /**
-     * 执行方法
-     */
-    public function run()
-    {
-
-        dump(15 * 0.2);
-        dump(12 * 0.25);
-
-        dump(11 - (11 * 0.2));
-        dump(8.8 + (8.8 * 0.25));
-
-        file_put_contents('cron.txt', date('Y-m-d H:i:s', time()) . PHP_EOL, FILE_APPEND);
-        echo date('Y-m-d H:i:s', time()) . PHP_EOL;
-    }
+	//记录日志
+	private function writeLog($userId,$money,$desc,$states,$id)
+	{
+		$data = array(
+			'user_id'=>$userId,
+			'user_money'=>$money,
+			'change_time'=>time(),
+			'desc'=>$desc,
+			'states'=>$states
+        );
+        
+        Db::startTrans();
+		$bool = $money ? M('account_log')->insert($data) : 1;
 
 
-    protected function sql()
-    {
-        try {
-            Db::startTrans();
-
-
-
-
-
-            Db::commit();
-        } catch (Exception $e) {
+		if($bool){
+            M('Users')->where('user_id',$userId)->setInc('user_money',$money);
+            $info = M('Agent_performance')->field('performance_id',true)->find($id);
+            $info['note'] = $info['note'] ? $info['note'] : '';
+            $info['msg'] = date('Y-m').'已执行季度分红';
+            M('Agent_performance')->delete($id);
+            $info['year_m'] = date('Y-m');
+            M('quarter_bonus')->insert($info);
+            Db::commit(); 
+		}else{
             Db::rollback();
-            return $e->getData();
         }
-    }
+		
+	}    
 
 }
