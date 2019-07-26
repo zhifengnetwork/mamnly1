@@ -18,7 +18,18 @@ class Team extends Controller{
             $Share = M('Share');
             $AgentPerformance = M('Agent_performance');
             $QuarterBonus = M('Quarter_bonus');
+            $Users = M('Users');
             foreach($list as $v){
+                $ach_pool = $Users->where(['user_id'=>$v['user_id']])->value('ach_pool');
+                if(!$ach_pool){
+                    $info = $AgentPerformance->field('performance_id',true)->find($v['performance_id']);
+                    $info['note'] = $info['note'] ? $info['note'] : '';
+                    $info['msg'] = date('Y-m').'未执行季度分红--0';
+                    M('Agent_performance')->delete($v['performance_id']);
+                    $info['year_m'] = date('Y-m');
+                    M('quarter_bonus')->insert($info);
+                    continue;
+                }
                 $n = $QuarterBonus->where(['user_id'=>$v['user_id'],'year_m'=>date('Y-m')])->count();
                 if($n)continue;
                 $grade = $Share->where(['lower'=>['egt',$v['team_per']]])->order('lower desc')->value('grade');
