@@ -317,7 +317,7 @@ class FanliLogic extends Model
 
 	          //按上一级等级各自比例分享返利
 	        $bool = M('users')->where('user_id',$user_info['user_id'])->setInc('user_money',$commission);
-	       	$desc = "平级领导奖";
+	       	$desc = "平级津贴";
 	        $log = $this->writeLog($user_info['user_id'],$commission,$desc,5); //写入日志
 
 			}
@@ -553,16 +553,16 @@ class FanliLogic extends Model
 				         /*
 				         if(!empty($commission_z))
 		             	{
-		             	  //平级领导奖
-			 			  $this->jintienew($ye['user_id'],$commission_z);//平级领导奖
+		             	  //平级津贴
+			 			  $this->jintienew($ye['user_id'],$commission_z);//平级津贴
 
 		             	}*/
 
 	
-		             	//平级领导奖
+		             	//平级津贴
 				        $fanli = M('user_level')->where('level',$parent_info['level'])->field('reward')->find();
 			 			$commission = $fanli['reward']; //计算金额
-			 			$this->jintienew($ye['user_id'],$commission);//平级领导奖
+			 			$this->jintienew($ye['user_id'],$commission);//平级津贴
 
 		             	
 				         $pingji_5 =1;
@@ -607,8 +607,8 @@ class FanliLogic extends Model
 
                   	    if(!empty($commission_z))
 		             	{		             	 
-		             	   //平级领导奖
-			 			   $this->jintienew($ye['user_id'],$commission_z);//平级领导奖
+		             	   //平级津贴
+			 			   $this->jintienew($ye['user_id'],$commission_z);//平级津贴
 			 			   $four =$four+1;
 			 			   $pingji_5 =1;
 		             	}
