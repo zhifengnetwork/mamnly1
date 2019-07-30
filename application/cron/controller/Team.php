@@ -32,7 +32,7 @@ class Team extends Controller{
                 }
                 $n = $QuarterBonus->where(['user_id'=>$v['user_id'],'year_m'=>date('Y-m')])->count();
                 if($n)continue;
-                $grade = $Share->where(['lower'=>['elt',$v['team_per']],'upper'=>['egt',$v['team_per']]])->order('lower desc')->value('grade');
+                $grade = $Share->where(['lower'=>['elt',$v['team_per']],'upper'=>['egt',$v['team_per']]])->order('lower desc')->value('rate');
                 if(!$grade)continue;
     
                 $price = floor($v['team_per'] * $grade)/100;
