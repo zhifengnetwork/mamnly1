@@ -3,16 +3,15 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,viewport-fit=cover">
     <title>我的分享--{$tpshop_config['shop_info_store_title']}</title>
     <link rel="stylesheet" href="__STATIC__/css/style.css">
     <link rel="stylesheet" type="text/css" href="__STATIC__/css/iconfont.css" />
     <script src="__STATIC__/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
-    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weui.min.css" />    
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weui.min.css" />
     <script src="__STATIC__/js/style.js" type="text/javascript" charset="utf-8"></script>
     <script src="__STATIC__/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
     <script src="__PUBLIC__/js/global.js"></script>
-    
-   
 </head>
 
 <body>
@@ -36,23 +35,23 @@
     </div>
 
     <script>
-        function show(){
+        function show() {
             $("#androidDialog1").show();
         }
 
-        function cancel(){
+        function cancel() {
             $("#androidDialog1").hide();
         }
 
-        function queding(){
+        function queding() {
             $('#loadingToast').show();
             $("#androidDialog1").hide();
-            window.location.href='/Shop/User/fenxiang?refresh=1';
+            window.location.href = '/Shop/User/fenxiang?refresh=1';
         }
     </script>
 
-     <!--BEGIN dialog3-->
-     <div class="js_dialog" id="androidDialog1" style="display: none;">
+    <!--BEGIN dialog3-->
+    <div class="js_dialog" id="androidDialog1" style="display: none;">
         <div class="weui-mask"></div>
         <div class="weui-dialog weui-skin_android">
             <div class="weui-dialog__hd"><strong class="weui-dialog__title">是否重新生成海报</strong></div>
@@ -74,7 +73,8 @@
     </div>
 
     <div style="display:none;">
-        <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
+        <script type="text/javascript">
+            var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");
             document.write(unescape("%3Cspan id='cnzz_stat_icon_3790269'%3E%3C/span%3E%3Cscript src='" +
                 cnzz_protocol + "s19.cnzz.com/stat.php%3Fid%3D3790269%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));
         </script>
