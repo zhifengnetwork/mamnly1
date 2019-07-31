@@ -35,7 +35,7 @@ body{
     box-sizing: border-box;
     position: absolute;
     left: 0;
-    top: 1.2rem;
+    top: 0;
     z-index: 99;
 }
 .header .scan img{
