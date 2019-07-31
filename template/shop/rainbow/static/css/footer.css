@@ -37,7 +37,8 @@
    letter-spacing:.14rem;
    padding-left: .05rem;
 }
-.footer-zp ul li:nth-last-of-type(2) span{
+.footer-zp ul li:nth-of-type(3) span{
+	letter-spacing:.08rem;
 	text-indent: .2rem;
 }
 .footer-zp ul li.on span{
