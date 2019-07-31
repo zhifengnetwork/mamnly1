@@ -942,6 +942,17 @@ class User extends MobileBase
                 if ($check_code['status'] != 1)
                     $this->error($check_code['msg']);
             }
+            if (!empty($post['nickname'])) {
+                if (!preg_match('/^[\x{4e00}-\x{9fa5}a-zA-Z0-9]{4,20}$/u', $post['nickname'])) {
+                    $this->error('昵称只能是4-20位的中英文和数字');
+                }
+                //每月只能修改一次
+                $monthFirst = mktime(0, 0, 0, date('m'), 1, date('Y'));
+                if ($user_info['nickname_edit'] && ($user_info['nickname_edit'] >= $monthFirst)) {
+                    $this->error('一个月只能修改一次昵称');
+                }
+                $post['nickname_edit'] = time();
+            }
 
             if (!$userLogic->update_info($this->user_id, $post))
                 $this->error("保存失败");
