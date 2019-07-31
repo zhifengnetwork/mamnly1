@@ -2,7 +2,7 @@
 /*底部菜单*/
 .footer-zp{
 	width: 100%;
-	height:1.3rem;
+	height:1.2rem;
 	background: #7a868c;
 	position: fixed;
 	bottom: 0;
@@ -25,7 +25,7 @@
 }
 .footer-zp ul li a{
 	display: block;
-	margin-top:.4rem
+	margin-top:.2rem
 }
 .footer-zp ul li span{
     display: block;
