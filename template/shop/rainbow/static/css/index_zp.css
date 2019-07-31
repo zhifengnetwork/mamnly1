@@ -81,10 +81,11 @@ body{
     width: .45rem;
 }
 .hhh_pic{
-	width: 94%;
+    width: 7.26rem;
+    height: 3.34rem;
 	margin: 0 auto;
-	margin-top:.15rem;
-	margin-bottom: .15rem;
+	margin-top:.1rem;
+	margin-bottom: .1rem;
 }
 .hhh_pic img{
 	width: 100%;
@@ -112,7 +113,7 @@ body{
 
 /* 菜单导航 */
 .nav-wrap-zp{
-	width: 94%;
+	width: 7.26rem;
 	height: 3rem;
 	margin: 0 auto;
 	background: white;
@@ -306,7 +307,7 @@ body{
 
 /* 推荐列表 */
 .recommend-wrap .recommend-list{
-    padding: 0 0.2rem .4rem;
+    padding: 0 0.12rem .1rem;
     box-sizing: border-box;
 }
 .recommend-wrap .recommend-list ul{
@@ -320,7 +321,7 @@ body{
     flex-wrap: wrap;
 }
 .recommend-wrap .recommend-list ul li{
-    width: 49%;
+    width: 3.58rem;
     padding: 0.1rem;
     box-sizing: border-box;
     background-color: #fff;

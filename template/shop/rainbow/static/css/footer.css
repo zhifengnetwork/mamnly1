@@ -20,7 +20,7 @@
 	align-items: center;
 }
 .footer-zp ul li{
-	width: 25%;
+	width: 24%;
 	text-align: center;
 }
 .footer-zp ul li a{
@@ -37,7 +37,9 @@
    letter-spacing:.14rem;
    padding-left: .05rem;
 }
-
+.footer-zp ul li:nth-last-of-type(2) span{
+	text-indent: .2rem;
+}
 .footer-zp ul li.on span{
 	/*选中的颜色*/
 	color: white;
