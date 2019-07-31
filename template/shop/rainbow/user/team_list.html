@@ -23,8 +23,8 @@
             <li style="width:20%"><span>用户ID</span></li>
             <li style="width:20%"><span>等级</span></li>
             <li style="width:20%"><span>名称</span></li>
-            <li style="width:20%"><span>电话</span></li>
-            <li style="width:20%"><span>订单</span></li>
+            <li style="width:30%"><span>电话</span></li>
+            <li style="width:10%"><span>订单</span></li>
         </ul>
             <empty name="lists">
                 <div class="juzhong">
@@ -35,15 +35,15 @@
                     <div onclick="team_list('{$v.user_id}');">
                         <ul class="series" >
                             <!-- <input type="hidden" name="series" value="{$i}"> -->
-                            <li style="width:20%"><span>{$v.user_id}</span></li>
-                            <li style="width:20%"><span>{$v.level}</span></li>
-                            <li style="width:20%"><span>{$v.nickname}</span></li>
+                            <li style="width:20%;font-size:.56rem;"><span>{$v.user_id}</span></li>
+                            <li style="width:20%;font-size:.56rem;"><span>{$v.level}</span></li>
+                            <li style="width:20%;font-size:.56rem;"><span>{$v.nickname}</span></li>
                             <if condition="$v.mobile">
-                                <li style="width:20%"><span>{$v.mobile}</span></li>
+                                <li style="width:30%;font-size:.56rem;"><span>{$v.mobile}</span></li>
                             <else>
-                                <li style="width:20%"><span>未绑定</span></li>
+                                <li style="width:30%;font-size:.56rem;"><span>未绑定</span></li>
                             </if>
-                            <li style="width:20%; margin:line-height;" >
+                            <li style="width:10%; margin:line-height;font-size:.56rem;" >
                                 <a href="{:url('Shop/User/order_list', array('user_id'=>$v.user_id))}">查看</a>
                             </li>
                         </ul>
