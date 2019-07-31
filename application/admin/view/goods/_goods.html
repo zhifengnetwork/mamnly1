@@ -156,17 +156,6 @@
                     <span class="err" id="err_cat_id"></span>
                 </dd>
             </dl>
-
-            <dl class="row" id='level6_fanli_row'>
-                <dt class="tit">
-                    <label>创业包返利</label>
-                </dt>
-                <dd class="opt">
-                    <input type="text" value="{$goods.level6_fanli}" name="level6_fanli" class="input-txt"/>
-                    <span class="err" id="err_level6_fanli"></span>
-                </dd>
-            </dl>  
-
             <dl class="row">
                 <dt class="tit">
                     <label>商品简介</label>
@@ -480,7 +469,7 @@
                 </dt>
                 <dd class="opt">
                         <input id="sign_free_receive" type="radio" name="sign_free_receive" value="0" <if condition="$goods['sign_free_receive'] eq 0">checked="checked"</if> ><label for="">不参与</label>
-                        <input id="sign_free_receive" type="radio" name="sign_free_receive" value="1" <if condition="$goods['sign_free_receive'] eq 1">checked="checked"</if>><label for="">合伙人以上领取</label>
+                        <input id="sign_free_receive" type="radio" name="sign_free_receive" value="1" <if condition="$goods['sign_free_receive'] eq 1">checked="checked"</if>><label for="">签到领取</label>
                         <input id="sign_free_receive" type="radio" name="sign_free_receive" value="2" <if condition="$goods['sign_free_receive'] eq 2">checked="checked"</if>><label for="">每天领取</label>
 
                     <span class="err" id="err_is_virtual"></span>
@@ -777,11 +766,11 @@
 <script>
     /** 商品规格相关 js*/
     $(function(){
-        if({$goods.cat_id} == {$level6_cid}){
-            $('#level6_fanli_row').show();
-        }else{
-            $('#level6_fanli_row').hide();
-        }
+        // if({$goods}!=''&&{$goods.cat_id} == {$level6_cid}){
+        //     $('#level6_fanli_row').show();
+        // }else{
+        //     $('#level6_fanli_row').hide();
+        // }
 
         // 商品模型切换时 ajax 调用  返回不同的属性输入框
         $(document).on("change",'#goods_type',function(){

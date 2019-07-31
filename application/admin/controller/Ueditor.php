@@ -529,40 +529,31 @@ class Ueditor extends Base
      */
     public function videoUp()
     {
+        // 上传图片框中的描述表单名称，
         $pictitle = I('pictitle');
         $dir = I('dir');
         $title = htmlspecialchars($pictitle , ENT_QUOTES);
         $path = htmlspecialchars($dir, ENT_QUOTES);
-        // 获取表单上传文件
+		// 获取表单上传文件
         $file = request()->file('file');
+        $editor = new EditorLogic;
+
         if (empty($file)) {
             $file = request()->file('upfile');
         }
         $result = $this->validate(
             ['file' => $file],
-            ['file'=>'fileSize:40000000|fileExt:mp4,3gp,flv,avi,wmv'],
-            ['file.fileSize' => '上传文件过大','file.fileExt'=>'上传文件后缀名必须为mp4,3gp,flv,avi,wmv']
+            ['file'=>'file|fileSize:40000000|fileExt:avi,mov,rmvb,rm,flv,mp4,3gp'],
+            ['file.image' => '上传文件必须为文件','file.fileSize' => '上传文件过大','file.fileExt'=>'上传文件后缀名必须为avi,mov,rmvb,rm,flv,mp4,3gp']
         );
-        
-         $upload_max_filesize = @ini_get('file_uploads') ? ini_get('upload_max_filesize') :'unknown';
+
+        $upload_max_filesize = @ini_get('file_uploads') ? ini_get('upload_max_filesize') :'unknown';
         if (true !== $result || !$file) {
-            $state = "ERROR 视频过大, 最大不能超过: $upload_max_filesize";
+            $state = "ERROR 图片过大, 最大不能超过: $upload_max_filesize";
         } else {
-            // 移动到框架应用根目录/public/uploads/ 目录下
-            $new_path = $this->savePath.date('Y').'/'.date('m-d').'/';
-            // 使用自定义的文件保存规则
-            $info = $file->rule(function ($file) {
-                return  md5(mt_rand());
-            })->move(UPLOAD_PATH.$new_path);
-			$return_data['url'] = '/'.UPLOAD_PATH.$new_path.$info->getSaveName();
-            if ($info) {
-                $state = "SUCCESS";
-				$img_url = $this->setVideoImg($return_data['url']);
-            } else {
-                $state = "ERROR" . $file->getError();
-				$img_url = '';
-            }
-			$return_data['img_url'] = $img_url;
+            $return = $editor->saveUploadFile($file, $this->savePath);
+            $state = $return['state'];
+            $return_data['url'] = $return['url'];
         }
 
         $return_data['title'] = $title;

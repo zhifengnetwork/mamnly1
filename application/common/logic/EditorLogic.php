@@ -177,4 +177,45 @@ class EditorLogic
 
         return $state;
     }
+
+    /**
+     * 保存上传的文件
+     * @param $file
+     * @param $save_path
+     * @return array
+     */
+    public function saveUploadFile($file, $save_path)
+    {
+        $return_url = '';
+        $state = "SUCCESS";
+        $new_path = $save_path.date('Y').'/'.date('m-d').'/';
+
+        $waterPaths = ['goods/', 'water/']; //哪种路径的图片需要放oss
+        if (in_array($save_path, $waterPaths) && tpCache('oss.oss_switch')) {
+            //商品图片可选择存放在oss
+            $object = UPLOAD_PATH.$new_path.md5(time()).'.'.pathinfo($file->getInfo('name'), PATHINFO_EXTENSION);
+            $ossClient = new \app\common\logic\OssLogic;
+            $return_url = $ossClient->uploadFile($file->getRealPath(), $object);
+            $real_path = $file->getRealPath();
+            $file = null;//关闭文件句柄，不然无法删除
+            @unlink($real_path); //上传后删除
+            if (!$return_url) {
+                $state = "ERROR" . $ossClient->getError();
+                $return_url = '';
+            }
+        } else {
+            // 移动到框架应用根目录/public/uploads/ 目录下
+            $info = $file->move(UPLOAD_PATH.$new_path);
+            if (!$info) {
+                $state = "ERROR" . $file->getError();
+            } else {
+                $return_url = '/'.UPLOAD_PATH.$new_path.$info->getSaveName();
+            }
+        }
+
+        return [
+            'state' => $state,
+            'url'   => $return_url
+        ];
+    }
 }
