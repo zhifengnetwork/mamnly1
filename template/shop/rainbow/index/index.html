@@ -174,7 +174,9 @@
 							</div>
 							
 								<div class="g_btn">
-									<a href="{:U('Shop/Goods/goodsInfo',array('id'=>$v[goods_id]))}" style="display:block;margin:.35rem auto .1rem;width:95%;height:.55rem;background:#7a868c;border-radius: 6px;font-size: .26rem;text-align: center;line-height: .55rem;color: #fff;">立即购买</a>
+									<a href="{:U('Shop/Goods/goodsInfo',array('id'=>$v[goods_id]))}" style="display:block;margin:.35rem auto .1rem;width:95%;height:.55rem;background:#7a868c;border-radius: 6px;font-size: .26rem;text-align: center;line-height: .55rem;color: #fff;">
+										<if condition="$v[sign_free_receive] eq 0" >立即购买<else/>免费领取</if>
+									</a>
 								</div>
 							
 						</li>
