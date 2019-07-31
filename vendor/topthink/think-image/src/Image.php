@@ -452,9 +452,9 @@ class Image
 
             /* 头像 */
             case self::DCHQZG:
-                $x = 168;
-                //$y = ($this->info['height'] - $info[1]) / 2;
-                $y = 78;
+               // $x = 168;
+               $x = ($this->info['width'] - $info[0]) / 2;
+                $y = 220;
                 break;
 
             /** 二维码 */
