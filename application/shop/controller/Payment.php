@@ -83,14 +83,17 @@ class Payment extends MobileBase
             exit($code_str);
 
         } elseif ($this->pay_code == 'weixinH5') {
+
+            $this->error('支付错误！请在微信中支付');
+
             //微信H5支付
-            $return = $this->payment->get_code($order, $config);
-            if ($return['status'] != 1) {
-                $this->error($return['msg']);
-            }
-            $this->assign('deeplink', $return['result']);
-            if(!isset($deeplink_flag)) $deeplink_flag = 1;
-            $this->assign('deeplink_flag', $deeplink_flag);
+            // $return = $this->payment->get_code($order, $config);
+            // if ($return['status'] != 1) {
+            //     $this->error($return['msg']);
+            // }
+            // $this->assign('deeplink', $return['result']);
+            // if(!isset($deeplink_flag)) $deeplink_flag = 1;
+            // $this->assign('deeplink_flag', $deeplink_flag);
 
         } elseif($this->pay_code == 'alipayMobile') {
 
