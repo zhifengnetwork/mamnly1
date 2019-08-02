@@ -89,7 +89,7 @@ class Goods extends MobileBase
            
             //如果不是字母
             if($id == 'DISTRIBUT'){
-                $con['sign_free_receive'] = 1;
+                $con['sign_free_receive'] = [['=', 1], ['=', 3], 'or'];
             }
             if($id == 'BONUS'){
                 $con['is_bonus'] = 1;
@@ -112,7 +112,6 @@ class Goods extends MobileBase
         $cat_id_arr = getCatGrandson($id);
         $goods_where = ['is_on_sale' => 1, 'exchange_integral' => 0, 'cat_id' => ['in', $cat_id_arr]];
         $filter_goods_id = Db::name('goods')->where($goods_where)->cache(true)->getField("goods_id", true);
-
         // 过滤帅选的结果集里面找商品
         if ($brand_id || $price)// 品牌或者价格
         {
@@ -620,6 +619,10 @@ class Goods extends MobileBase
     {
         $type = I('type/d');
         $goods_num = I('num', 0);
+        $id = I('id/d');
+        if(!Db::name('goods')->where(['goods_id'=>$id,'sign_free_receive'=>$type])->find()){
+            $this->ajaxReturn(['status' => -9, 'msg' => '未找到商品', 'result' => '']);
+        }
 
         $logic = new UsersLogic();
         $logic->update_receipt_num(); // 更新每月免费领取次数
@@ -628,12 +631,10 @@ class Goods extends MobileBase
         $user = Db::name('users')->where(['user_id' => cookie('user_id')])->find();
 
         if(empty($user)){
-            $result = ['status' => -9, 'msg' => '未找到用户', 'result' => ''];
+            $this->ajaxReturn(['status' => -9, 'msg' => '未找到用户', 'result' => '']);
+        }else{
+            $this->ajaxReturn(provingReceive($user, $type, $goods_num,$id));
         }
-
-        $result = provingReceive($user, $type, $goods_num);
-
-        $this->ajaxReturn($result);
     }
 
     /**

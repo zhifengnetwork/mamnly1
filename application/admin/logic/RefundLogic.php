@@ -66,6 +66,12 @@ class RefundLogic extends Model
                     accountLog($return_goods['user_id'],0,-$order_goods['give_integral'],'退货积分追回',0,$return_goods['order_id'],$return_goods['order_sn']);
                 }
             }
+            if($order_goods['leader_integral']>0){
+                $leader_id = Db::name('account_log')->where(['order_id'=>$return_goods['order_id'],'note'=>'下级签到免费领取'])->value('user_id');
+                if($leader_id>0&&($user = get_user_info($leader_id))&&$order_goods['leader_integral']<$user['pay_points']){
+                    accountLog($leader_id,0,-$order_goods['leader_integral'],'下级退货积分追回',0,$return_goods['order_id'],$return_goods['order_sn']);
+                }
+            }
             //追回订单商品赠送的优惠券
             $coupon_info = Db::name('coupon_list')->where(array('uid'=>$return_goods['user_id'],'get_order_id'=>$return_goods['order_id']))->find();
             if(!empty($coupon_info)){
@@ -153,6 +159,10 @@ class RefundLogic extends Model
             $update_coupon_data = ['status'=>0,'use_time'=>0,'order_id'=>0];
             Db::name('coupon_list')->where(['id'=>$coupon_list['id'],'status'=>1])->save($update_coupon_data);
         }
+
+        //免费领取的订单，删除领取记录
+        $commonOrder = new \app\common\logic\Order();
+        $commonOrder->delSignReceiveLog($order);
         
         //免费领取退回次数（如果是上月订单不退回次数）
         $Month = date('m',time()); //当前月

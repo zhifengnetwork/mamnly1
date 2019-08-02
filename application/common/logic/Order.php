@@ -139,8 +139,8 @@ class Order
      * @param $action_note|备注
      * @param $status_desc|状态描述
      * @param $action_user
-     * @return mixed
-     */
+* @return mixed
+*/
     public function orderActionLog($action_note, $status_desc, $action_user = 0)
     {
         $data = [
@@ -154,5 +154,13 @@ class Order
             'shipping_status' => $this->order['shipping_status'],
         ];
         return Db::name('order_action')->add($data);//订单操作记录
+    }
+
+    //免费领取的订单，删除领取记录
+    public function delSignReceiveLog($order){
+        $type = $order->OrderGoods[0]->goods->sign_free_receive;
+        if(($type==1||$type==3)&&($log = Db::name('sign_receive_log')->where(['order_id'=>$order->order_id])->find())){
+            Db::name('sign_receive_log')->where(['order_id'=>$order->order_id])->delete();
+        }
     }
 }

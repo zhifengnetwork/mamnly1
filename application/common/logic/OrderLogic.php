@@ -98,7 +98,8 @@ class OrderLogic
 		if($data['type'] < 2){
             $useRapplyReturnMoney = $order_goods['final_price']*$data['goods_num'];    //要退的总价 商品购买单价*申请数量
             $userExpenditureMoney = $order['goods_price']-$order['order_prom_amount']-$order['coupon_price'];    //用户实际使用金额
-            $rate = round($useRapplyReturnMoney/$userExpenditureMoney,8);
+
+            $rate = $userExpenditureMoney!=0?round($useRapplyReturnMoney/$userExpenditureMoney,8):0;
             $data['refund_integral'] = floor($rate*$order['integral']);//该退积分支付
 			//积分规则修改后的逻辑
 			$point_rate = tpCache('integral.point_rate');

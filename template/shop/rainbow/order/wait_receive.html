@@ -89,7 +89,7 @@
                         <a style="display: none" class="tuid" href="javascript:void(0);" onclick="expedite('{$order.order_id}')">我要催单</a>
                         <a href="{:U('Shop/Order/express_detail',array('id'=>$order.order_id))}">查看物流</a>
                         <if condition="$order.pay_status eq 1">
-                        <a class="red receipt" href="javascript:void(0);"  >确认收货</a>
+                        <a class="red receipt-s" href="javascript:void(0);" data-id="{$order.order_id}">确认收货</a>
                         </if>
                     </p>
                 </div>
@@ -120,6 +120,10 @@
 <div class="mask-filter-div" style="display: none;"></div>
 <script type="text/javascript" src="__STATIC__/js/sourch_submit.js"></script>
 <script>
+    $('.receipt-s').click(function(){
+        $('#surshko'+$(this).data('id')).show();
+        cover();
+    });
     var  page = 1;
     /**
      *加载更多

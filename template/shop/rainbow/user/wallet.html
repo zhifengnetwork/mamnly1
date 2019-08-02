@@ -31,9 +31,9 @@
                 <p>金库总额</p>
                 <p>{$user.user_money}</p>
                 <div class="wtf_jfquan">
-                    <!-- <div class="wtf_jf">
+                    <div class="wtf_jf">
                         积分<span>{$user.pay_points}分</span>
-                    </div> -->
+                    </div>
                     <div class="wtf_yhq">
                         优惠券<span>0张</span>
                     </div>
@@ -48,6 +48,10 @@
                 <p class="p1 p3">
                     提现明细
                     <a href="{:U('Shop/User/withdrawals_list')}"><img src="__STATIC__/images/wallet/wtf_Back2.png" /></a>
+                </p>
+                <p class="p1 p3">
+                    积分明细
+                    <a href="{:U('Shop/User/points_list')}"><img src="__STATIC__/images/wallet/wtf_Back2.png" /></a>
                 </p>
                 <!-- <p class="p1 p2">
                     我的银行卡

