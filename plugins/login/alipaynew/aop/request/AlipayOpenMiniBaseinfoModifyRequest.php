@@ -8,7 +8,7 @@
 class AlipayOpenMiniBaseinfoModifyRequest
 {
 	/** 
-	 * 11_12;12_13。小程序类目，格式为 第一个一级类目_第一个二级类目;第二个一级类目_第二个二级类目，详细类目可以参考https://docs.alipay.com/isv/10325
+	 * 11_12;12_13。小程序类目，格式为 第一个直属类目_第一个二级类目;第二个直属类目_第二个二级类目，详细类目可以参考https://docs.alipay.com/isv/10325
 	 **/
 	private $appCategoryIds;
 	

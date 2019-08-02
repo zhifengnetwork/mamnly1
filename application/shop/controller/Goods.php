@@ -21,16 +21,16 @@ class Goods extends MobileBase
         return $this->fetch();
     }
 
-       //20190320 直接显示一级分类及其图片名称
+       //20190320 直接显示直属分类及其图片名称
     public function categoryList(){
 
         $user = session('user');
-        //获取要访问的一级分类的ID  如果没有传ID默认展示为你推荐栏目
+        //获取要访问的直属分类的ID  如果没有传ID默认展示为你推荐栏目
 //        $id=I(id,31);
 
         $category=new GoodsCategory();
 
-        //获取所有要展示的一级分类
+        //获取所有要展示的直属分类
         // $secondCategoryList = $category->get_level_category(1);
         if ($user['level'] <= 2) {
 
@@ -105,7 +105,7 @@ class Goods extends MobileBase
         $goodsLogic = new GoodsLogic(); // 前台商品操作逻辑类
         // 分类菜单显示
         $goodsCate = M('GoodsCategory')->where("id", $id)->find();// 当前分类
-        //($goodsCate['level'] == 1) && header('Location:'.U('Home/Channel/index',array('cat_id'=>$id))); //一级分类跳转至大分类馆
+        //($goodsCate['level'] == 1) && header('Location:'.U('Home/Channel/index',array('cat_id'=>$id))); //直属分类跳转至大分类馆
         $cateArr = $goodsLogic->get_goods_cate($goodsCate);
 
         // 帅选 品牌 规格 属性 价格

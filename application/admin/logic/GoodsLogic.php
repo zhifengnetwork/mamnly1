@@ -87,7 +87,7 @@ class GoodsLogic extends Model
         // 刚新增的分类先把它的值重置一下
         if($cat['parent_id_path'] == '')
         {
-            ($cat['parent_id'] == 0) && Db::execute("UPDATE __PREFIX__goods_category set  parent_id_path = '0_$id', level = 1 where id = $id"); // 如果是一级分类               
+            ($cat['parent_id'] == 0) && Db::execute("UPDATE __PREFIX__goods_category set  parent_id_path = '0_$id', level = 1 where id = $id"); // 如果是直属分类               
             Db::execute("UPDATE __PREFIX__goods_category AS a ,__PREFIX__goods_category AS b SET a.parent_id_path = CONCAT_WS('_',b.parent_id_path,'$id'),a.level = (b.level+1) WHERE a.parent_id=b.id AND a.id = $id");                
             $cat = $GoodsCategory->where("id = $id")->find(); // 从新找出他自己
         }        

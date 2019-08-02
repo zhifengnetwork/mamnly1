@@ -105,7 +105,7 @@ function get_area(t,district,twon){
     });
 }
 
-// 获取最后一级乡镇
+// 获取最后直属乡镇
 function get_twon(obj,twon){
     var twon_id = 'twon';
     if(typeof(twon) != 'undefined' && twon != ''){

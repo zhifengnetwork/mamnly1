@@ -43,7 +43,7 @@ class User extends Base
         $account ? $condition['email|mobile'] = ['like', "%$account%"] : false;
         $nickname ? $condition['nickname'] = ['like', "%$nickname%"] : false;
 
-        I('first_leader') && ($condition['first_leader'] = I('first_leader')); // 查看一级下线人有哪些
+        I('first_leader') && ($condition['first_leader'] = I('first_leader')); // 查看直属下线人有哪些
         I('second_leader') && ($condition['second_leader'] = I('second_leader')); // 查看二级下线人有哪些
         I('third_leader') && ($condition['third_leader'] = I('third_leader')); // 查看三级下线人有哪些
         $sort_order = I('order_by') . ' ' . I('sort');

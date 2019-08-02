@@ -154,7 +154,7 @@
             </div>
         <!--筛选顶部-e-->
 
-        <!--一级筛选条件-s-->
+        <!--直属筛选条件-s-->
         <div class="list-se-all ma-to-20 one-related" >
             <!--全部分类-s-->
             <div class="myorder p" onclick="cateArr()">
@@ -233,7 +233,7 @@
             <!--价格-e-->
             <input type="hidden" id="key" value="" />
         </div>
-        <!--一级筛选条件-e-->
+        <!--直属筛选条件-e-->
 
         <!--二级刷选条件-->
         <div class="list-se-all ma-to-20 two-related">
@@ -530,7 +530,7 @@
                     $(o).find('.fr input').attr('checked',false);
                 });
                 $('#key').removeAttr('class');
-                //显示一级筛选
+                //显示直属筛选
                 $('.screen_wi,.popcover,.one-related').show();
                 $('.two-related').hide();
                 $('.sx_jsxz').html('筛选');
@@ -667,7 +667,7 @@ $(function(){
         })
 
 
-        // 一级筛选条件筛选2-one-related
+        // 直属筛选条件筛选2-one-related
         $('.one-related .myorder .order').click(function(){
             $('.two-related').show();
             $('.suce_ok').addClass('two');

@@ -36,7 +36,7 @@ class Users extends Model
     }
 
     /**
-     * 用户一级下线数
+     * 用户直属下线数
      * @param $value
      * @param $data
      * @return mixed

@@ -52,7 +52,7 @@ class Team extends MobileBase
 
     public function category()
     {
-        $id = input('id/d');//一级分类ID
+        $id = input('id/d');//直属分类ID
         $tid = input('tid/d');//二级分类ID
         $two_all_ids = input('tid/s');//二级分类全部id
         $goods_category_level_one = Db::name('goods_category')->where(['id' => $id])->find();
@@ -78,7 +78,7 @@ class Team extends MobileBase
     public function AjaxTeamList()
     {
         $p = Input('p', 1);
-        $id = input('id/d');//一级分类ID
+        $id = input('id/d');//直属分类ID
         $tid = input('tid/d');//二级分类ID
         $two_all_ids = input('two_all_ids/s');//二级分类全部id
         $goods_where = [];

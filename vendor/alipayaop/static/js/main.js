@@ -197,7 +197,7 @@ TreePanel.prototype.init = function(){
         return [$result,$addBtn]
     }
     
-    //渲染一级panel
+    //渲染直属panel
     var requiredAry = [],optionAry = [];
     for(var k in this.data){
         if (this.data[k].isMust=='1') {

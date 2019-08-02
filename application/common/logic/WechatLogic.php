@@ -101,7 +101,7 @@ class WechatLogic
                 'is_code'=>1,
 
             ];
-            // 由场景值获取分销一级id
+            // 由场景值获取分销直属id
             if (!empty($msg['EventKey'])) {
                 write_log('获取父id'.$msg['EventKey']);
                 $userData['first_leader'] = substr($msg['EventKey'], strlen('qrscene_'));
@@ -109,7 +109,7 @@ class WechatLogic
                     write_log('获取父erid'.$msg['EventKey']);
                     $first_leader = Db::name('users')->where('user_id', $userData['first_leader'])->find();
                     if ($first_leader) {
-                        $userData['second_leader'] = $first_leader['first_leader']; //  第一级推荐人
+                        $userData['second_leader'] = $first_leader['first_leader']; //  第直属推荐人
                         $userData['third_leader'] = $first_leader['second_leader']; // 第二级推荐人
                         //他上线分销的下线人数要加1
                         Db::name('users')->where('user_id', $userData['first_leader'])->setInc('underling_number');
@@ -178,8 +178,8 @@ class WechatLogic
             //有上级
             $nickname =  Db::name('users')->where('openid', $to)->value('nickname');
             $to1 =  Db::name('users')->where('user_id', $first_leader)->value('openid');
-           // $result_str = self::$wechat_obj->createReplyMsgOfText($from, $to1, "您的一级创客 [ $nickname ] 成功关注了本公众号1 \n：");
-            // $wx_content = "您的一级创客[" . $nickname . "][ID:" . $xiaji . "]成功关注了公众号";
+           // $result_str = self::$wechat_obj->createReplyMsgOfText($from, $to1, "您的直属创客 [ $nickname ] 成功关注了本公众号1 \n：");
+            // $wx_content = "您的直属创客[" . $nickname . "][ID:" . $xiaji . "]成功关注了公众号";
             // $wechat = new \app\common\logic\wechat\WechatUtil();
             // $wechat->sendMsg($to1, 'text', $wx_content);
 

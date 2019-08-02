@@ -63,7 +63,7 @@ class AlipayEbppBillAddRequest
 	private $serviceAmount;
 	
 	/** 
-	 * 子业务类型是业务类型的下一级概念，例如：WATER表示JF下面的水费，ELECTRIC表示JF下面的电费，GAS表示JF下面的燃气费。
+	 * 子业务类型是业务类型的下直属概念，例如：WATER表示JF下面的水费，ELECTRIC表示JF下面的电费，GAS表示JF下面的燃气费。
 	 **/
 	private $subOrderType;
 	

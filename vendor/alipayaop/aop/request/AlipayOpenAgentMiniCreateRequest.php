@@ -8,7 +8,7 @@
 class AlipayOpenAgentMiniCreateRequest
 {
 	/** 
-	 * 小程序应用类目，参数格式：一级类目_二级类目。
+	 * 小程序应用类目，参数格式：直属类目_二级类目。
 应用类目参考文档：https://docs.alipayaop.com/isv/10325
 	 **/
 	private $appCategoryIds;

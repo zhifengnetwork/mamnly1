@@ -293,7 +293,7 @@ class User extends MobileBase
         
         $this->assign('user_id', $user['user_id']);
         
-        //总一级
+        //总直属
         $underling_number = M('users')->where(['first_leader'=>$user['user_id']])->count();
         $this->assign('underling_number', $underling_number);
 

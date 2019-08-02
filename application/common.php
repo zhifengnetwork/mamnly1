@@ -107,7 +107,7 @@ function share_deal_after($xiaji, $shangji)
 
                 $xiaji_nickname = get_nickname_new($xiaji);
             }
-            $wx_content = "您的一级创客[" . $xiaji_nickname . "][ID:" . $xiaji . "]" . $before . "关注了公众号";
+            $wx_content = "您的直属创客[" . $xiaji_nickname . "][ID:" . $xiaji . "]" . $before . "关注了公众号";
 
             $wechat = new \app\common\logic\wechat\WechatUtil();
             $wechat->sendMsg($shangji_openid, 'text', $wx_content);
@@ -127,7 +127,7 @@ function share_deal_after($xiaji, $shangji)
                   write_log("xiaji55555555:" . $xiaji);
                 $xiaji_nickname = get_nickname_new($xiaji);
             }
-            $wx_content = "您的一级创客[" . $xiaji_nickname . "][ID:" . $xiaji . "]" . $before . "关注了公众号";
+            $wx_content = "您的直属创客[" . $xiaji_nickname . "][ID:" . $xiaji . "]" . $before . "关注了公众号";
              write_log("xiaji666666666:" . $xiaji);
             $wechat = new \app\common\logic\wechat\WechatUtil();
             $wechat->sendMsg($shangji_openid, 'text', $wx_content);

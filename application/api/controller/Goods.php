@@ -95,7 +95,7 @@ class Goods extends ApiBase
         $goodsLogic = new GoodsLogic(); // 前台商品操作逻辑类
         // 分类菜单显示
         $goodsCate = M('GoodsCategory')->where("id", $id)->find();  // 当前分类
-        //($goodsCate['level'] == 1) && header('Location:'.U('Home/Channel/index',array('cat_id'=>$id))); //一级分类跳转至大分类馆
+        //($goodsCate['level'] == 1) && header('Location:'.U('Home/Channel/index',array('cat_id'=>$id))); //直属分类跳转至大分类馆
         $cateArr = $goodsLogic->get_goods_cate($goodsCate);
 
         // 筛选 品牌 规格 属性 价格

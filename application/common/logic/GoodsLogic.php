@@ -314,8 +314,8 @@ class GoodsLogic extends Model
     }
 
     /**
-     * 传入当前分类 如果当前是 2级 找一级
-     * 如果当前是 3级 找2 级 和 一级
+     * 传入当前分类 如果当前是 2级 找直属
+     * 如果当前是 3级 找2 级 和 直属
      * @param  $goodsCate
      */
     function get_goods_cate(&$goodsCate)

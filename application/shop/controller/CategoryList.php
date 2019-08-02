@@ -21,12 +21,12 @@ class CategoryList extends MobileBase
     */
     public function categoryList(){
 
-        //获取要访问的一级分类的ID  如果没有传ID默认展示为你推荐栏目
+        //获取要访问的直属分类的ID  如果没有传ID默认展示为你推荐栏目
         $id=I(id,31);
 
         $category=new Category();
 
-        //获取所有要展示的一级分类
+        //获取所有要展示的直属分类
         $categoryList = $category->get_first_level_category();
         //获取当前要展示的分类的2，3级信息
         $categorys=$category->get_children_category($id);

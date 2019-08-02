@@ -3425,7 +3425,7 @@
                     // trace:870 chrome/safari后边是br对于闭合得range不能定位 所以去掉了判断
                     // this.startContainer.nodeType != 3 &&! ((child = this.startContainer.childNodes[this.startOffset]) && child.nodeType == 1 && child.tagName == 'BR'
                     if (this.collapsed && !notInsertFillData) {
-//                    //opear如果没有节点接着，原生的不能够定位,不能在body的第一级插入空白节点
+//                    //opear如果没有节点接着，原生的不能够定位,不能在body的第直属插入空白节点
 //                    if (notInsertFillData && browser.opera && !domUtils.isBody(this.startContainer) && this.startContainer.nodeType == 1) {
 //                        var tmp = this.document.createTextNode('');
 //                        this.insertNode(tmp).setStart(tmp, 0).collapse(true);
@@ -8200,7 +8200,7 @@
                         tmpRange.insertNode(para);
 
                         var parent = para.parentNode;
-                        //如果para上一级是一个block元素且不是body,td就删除它
+                        //如果para上直属是一个block元素且不是body,td就删除它
                         if (block(parent) && !domUtils.isBody(para.parentNode) && utils.indexOf(notExchange, parent.tagName) == -1) {
                             //存储dir,style
                             if (!(sourceCmdName && sourceCmdName == 'customstyle')) {

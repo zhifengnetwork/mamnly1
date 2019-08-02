@@ -292,10 +292,10 @@ class MiniApp3rd extends WxCommon
  
 //返回格式：如下：
 //      [{
-//          "first_class":"教育", //一级类目名称
+//          "first_class":"教育", //直属类目名称
 //			"second_class":"学历教育",
 //			"third_class":"高等"
-//          "first_id":3, //一级类目的ID编号
+//          "first_id":3, //直属类目的ID编号
 //          "second_id":4,
 //          "third_id":5,
 //		}]
@@ -331,10 +331,10 @@ class MiniApp3rd extends WxCommon
      * 示例：[{
                 "address":"page/logs/logs",//小程序的页面，可通过“获取小程序的第三方提交代码的页面配置”接口获得
                 "tag":"学习 工作",          //小程序的标签，多个标签用空格分隔，标签不能多于10个，标签长度不超过20
-                "first_class": "教育",      //一级类目名称，可通过“获取授权小程序帐号的可选类目”接口获得
+                "first_class": "教育",      //直属类目名称，可通过“获取授权小程序帐号的可选类目”接口获得
                 "second_class": "学历教育", //二级类目(同上)  
                 "third_class": "高等",      //三级类目(同上)
-                "first_id":3,               //一级类目的ID，可通过“获取授权小程序帐号的可选类目”接口获得
+                "first_id":3,               //直属类目的ID，可通过“获取授权小程序帐号的可选类目”接口获得
                 "second_id":4,              //二级类目的ID(同上)
                 "third_id":5,               //三级类目的ID(同上)
                 "title": "日志"             //小程序页面的标题,标题长度不超过32

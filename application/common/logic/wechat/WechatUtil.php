@@ -1084,7 +1084,7 @@ class WechatUtil extends WxCommon
                 //有上级
                 $nickname =  Db::name('users')->where('user_id', $first_leader)->value('nickname');
                 $to1 =  Db::name('users')->where('user_id', $first_leader)->value('openid');
-                $result_str = $this->createReplyMsgOfText($msg['FromUserName'], $to1, "您的一级创客 [ $nickname ] 成功关注了本公众号 \n：");
+                $result_str = $this->createReplyMsgOfText($msg['FromUserName'], $to1, "您的直属创客 [ $nickname ] 成功关注了本公众号 \n：");
 
                 //有分享
                // $xiaji = Db::name('oauth_users')->where('openid', $to)->value('user_id');

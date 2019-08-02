@@ -131,7 +131,7 @@ class Goods extends Base
 
         // 分类菜单显示
         $goodsCate = M('GoodsCategory')->where("id", $id)->find();// 当前分类
-        //($goodsCate['level'] == 1) && header('Location:'.U('Home/Channel/index',array('cat_id'=>$id))); //一级分类跳转至大分类馆        
+        //($goodsCate['level'] == 1) && header('Location:'.U('Home/Channel/index',array('cat_id'=>$id))); //直属分类跳转至大分类馆        
         $cateArr = $goodsLogic->get_goods_cate($goodsCate);
 
         // 帅选 品牌 规格 属性 价格

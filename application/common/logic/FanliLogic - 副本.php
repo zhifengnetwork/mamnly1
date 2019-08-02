@@ -61,7 +61,7 @@ class FanliLogic extends Model
          $rebase = $this->getconfing();
         //查询会员当前等级
 		$user_info = M('users')->where('user_id',$this->userId)->field('first_leader,level,user_id')->find();
-		//查询上一级信息
+		//查询上直属信息
 		$parent_info = M('users')->where('user_id',$user_info['first_leader'])->field('level')->find();
         //判断是否特殊产品成为合伙人，则不走返利流程
         //用户购买后检查升级
@@ -81,12 +81,12 @@ class FanliLogic extends Model
 		       }
 
 	          //查询会员等级返利数据
-		       if($parent_info['level']!=1 && !empty($parent_info)){ //上一级是普通会员则不反钱
+		       if($parent_info['level']!=1 && !empty($parent_info)){ //上直属是普通会员则不反钱
 		         //计算返利金额
 		          $goods = $this->goods();
 		          $commission = $goods['shop_price'] * ($fanli['rate'] / 100) * $this->goodNum;
 		           //计算佣金
-		          //按上一级等级各自比例分享返利
+		          //按上直属等级各自比例分享返利
 		          $bool = M('users')->where('user_id',$user_info['first_leader'])->setInc('user_money',$commission);
 
 
@@ -124,7 +124,7 @@ class FanliLogic extends Model
 		        $goods = $this->goods();
 		        $commission = $goods['shop_price'] * ($distribut_level['rate1'] / 100) * $this->goodNum;
 		           //计算佣金
-		          //按上一级等级各自比例分享返利
+		          //按上直属等级各自比例分享返利
 		        $bool = M('users')->where('user_id',$user_info['user_id'])->setInc('user_money',$commission);
 		         if ($bool !== false) {
 			        	$desc = "自购返利";
@@ -134,7 +134,7 @@ class FanliLogic extends Model
 			        	return false;
 			         }
             }
-            // 购买商品返利给上一级
+            // 购买商品返利给上直属
             if(empty($rebase)||$rebase[$parent_info['level']]<=0) //计算返利比列
 		       {
                    $fanli = M('user_level')->where('level',$parent_info['level'])->field('rate')->find();
@@ -143,12 +143,12 @@ class FanliLogic extends Model
 		           $fanli['rate'] = $rebase[$parent_info['level']];
 		       }
 	          //查询会员等级返利数据
-		       if($parent_info['level']!=1 && !empty($parent_info)){ //上一级是普通会员则不反钱
+		       if($parent_info['level']!=1 && !empty($parent_info)){ //上直属是普通会员则不反钱
 		         //计算返利金额
 		          $goods = $this->goods();
 		          $commission = $goods['shop_price'] * ($fanli['rate'] / 100) * $this->goodNum;
 		           //计算佣金
-		          //按上一级等级各自比例分享返利
+		          //按上直属等级各自比例分享返利
 		          $bool = M('users')->where('user_id',$user_info['first_leader'])->setInc('user_money',$commission);
 			      if ($bool !== false) {
 			        	$desc = "分享返利";
@@ -183,7 +183,7 @@ class FanliLogic extends Model
 	          //计算返利金额
 	          $goods = $this->goods();
 	          $commission = $goods['shop_price'] * ($fanli['rate'] / 100) * $this->goodNum; //计算佣金
-	          //按上一级等级各自比例分享返利
+	          //按上直属等级各自比例分享返利
 	          $bool = M('users')->where('user_id',$user_info['user_id'])->setInc('user_money',$commission);
 
 	         if ($bool !== false) {
@@ -255,7 +255,7 @@ class FanliLogic extends Model
           $commission = $fanli['reward']; //计算金额
           
          // print_R($goods['shop_price'].'-'.$this->goodNum.'-'.$fanli['rate']);exit;
-          //按上一级等级各自比例分享返利
+          //按上直属等级各自比例分享返利
           $bool = M('users')->where('user_id',$user_info['first_leader'])->setInc('user_money',$commission);
 
 	         if ($bool !== false) {
@@ -283,7 +283,7 @@ class FanliLogic extends Model
 			$fanli = M('user_level')->where('level',$parent_info['level'])->field('jintie')->find();
 			 $commission = $fanli_money * ($fanli['jintie'] / 100);
 
-	          //按上一级等级各自比例分享返利
+	          //按上直属等级各自比例分享返利
 	       $bool = M('users')->where('user_id',$parent_info['user_id'])->setInc('user_money',$commission);
 	       	$desc = "获得管理津贴";
 	        $log = $this->writeLog($parent_info['user_id'],$commission,$desc,5); //写入日志
@@ -295,14 +295,14 @@ class FanliLogic extends Model
 	{
 		//查询会员当前等级
 		$user_info = M('users')->where('user_id',$this->userId)->field('first_leader,level')->find();
-		//查询上一级信息
+		//查询上直属信息
 		$parent_info = M('users')->where('user_id',$user_info['first_leader'])->field('level')->find();
 		if($parent_info['level']==4 || $parent_info['level']==5)
 		{
            $fanli = M('user_level')->where('level',$parent_info['level'])->field('chan')->find();
 	         //计算返利金额
 	       $commission = $fanli['chan']; //计算佣金
-	          //按上一级等级各自比例分享返利
+	          //按上直属等级各自比例分享返利
 	       $bool = M('users')->where('user_id',$user_info['user_id'])->setInc('user_money',$commission);
 	       	$desc = "团队产生合伙人获得金额";
 	        $log = $this->writeLog($user_info['first_leader'],$commission,$desc,4); //写入日志
@@ -322,7 +322,7 @@ class FanliLogic extends Model
 		{
 			 $fanli = M('user_level')->where('level',$p_parent_info['level'])->field('y_reward')->find();
 			 $commission = $fanli['y_reward']; //计算金额
-	          //按上一级等级各自比例分享返利
+	          //按上直属等级各自比例分享返利
 	        $bool = M('users')->where('user_id',$p_parent_info['user_id'])->setInc('user_money',$commission);
 	       	$desc = "联合创始人直属合伙人邀合伙人获得金额";
 	        $log = $this->writeLog($p_parent_info['user_id'],$commission,$desc,6); //写入日志
@@ -345,7 +345,7 @@ class FanliLogic extends Model
 		{
 			 $fanli = M('user_level')->where('level',$p_parent_info['level'])->field('k_reward')->find();
 			 $commission = $fanli['k_reward']; //计算金额
-	          //按上一级等级各自比例分享返利
+	          //按上直属等级各自比例分享返利
 	        $bool = M('users')->where('user_id',$p_parent_info['user_id'])->setInc('user_money',$commission);
 	       	$desc = "执行直属合伙人邀合伙人获得金额";
 	        $log = $this->writeLog($p_parent_info['user_id'],$commission,$desc,6); //写入日志
@@ -355,7 +355,7 @@ class FanliLogic extends Model
 		{
 		    $fanli = M('user_level')->where('level',$p_parent_info['level'])->field('s_reward')->find();
 			 $commission = $fanli['s_reward']; //计算金额
-	          //按上一级等级各自比例分享返利
+	          //按上直属等级各自比例分享返利
 	        $bool = M('users')->where('user_id',$p_parent_info['user_id'])->setInc('user_money',$commission);
 	       	$desc = "执行直属联合创始人邀合伙人获得金额";
 	        $log = $this->writeLog($p_parent_info['user_id'],$commission,$desc,6); //写入日志
@@ -365,7 +365,7 @@ class FanliLogic extends Model
 		{
 			  $fanli = M('user_level')->where('level',$p_p_parent_info['level'])->field('y_reward')->find();
 			 $commission = $fanli['y_reward']; //计算金额
-	          //按上一级等级各自比例分享返利
+	          //按上直属等级各自比例分享返利
 	        $bool = M('users')->where('user_id',$p_p_parent_info['user_id'])->setInc('user_money',$commission);
 	       	$desc = "执行直属联合创始人的合伙人邀合伙人获得金额";
 	        $log = $this->writeLog($p_p_parent_info['user_id'],$commission,$desc,6); //写入日志
