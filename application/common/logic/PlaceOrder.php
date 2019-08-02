@@ -429,7 +429,7 @@ class PlaceOrder
     }
 
     /**
-     * 扣除免费领取记录，并增加积分
+     * 扣除免费领取记录
      * @param $order
      */
     public function addOrderSignReceive()
@@ -439,8 +439,7 @@ class PlaceOrder
         $payList = $this->pay->getPayList();
         $user = $this->pay->getUser();
         $goods = $payList[0]['goods'];
-        $status = Db::name('order')->where(['order_id'=>$this->order['order_id']])->value('pay_status');
-        if ($status==1&&($goods->sign_free_receive == 1||$goods->sign_free_receive == 3)) {
+        if ($goods->sign_free_receive == 1||$goods->sign_free_receive == 3) {
             $arr = [
                 'user_id'=>$user['user_id'],
                 'create_time'=>['like', date('').'%'],
