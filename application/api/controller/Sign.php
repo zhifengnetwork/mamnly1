@@ -187,18 +187,21 @@ class Sign extends ApiBase
             return ['status' => 1, 'msg' => '今日已签到', 'date' => $date];
         }
 		
-		$auth = $this->check_auth($user_id);
-		if(!$auth)return ['status' => -1, 'msg' => '您还没有签到权限', 'date' => null];
+//		$auth = $this->check_auth($user_id);
+//		if(!$auth)return ['status' => -1, 'msg' => '您还没有签到权限', 'date' => null];
         Db::startTrans();
         try{
 
             $r = M('sign_log')->save(['user_id' => $user_id, 'sign_day' => date('Y-m-d H:i:s')]);
+            if(!$r){
+                Db::rollback();
+                return ['status' => -1, 'msg' => '签到失败', 'date' => $date];
+            }
             $user = $user_model->where(['user_id' => $user_id])->field('is_agent,super_nsign,is_distribut')->find();
             //获取后台设置的签到天数
             $sign_distribut_days = M('config')->where(['name' => 'sign_distribut_days'])->value('value');
             $sign_agent_days = M('config')->where(['name' => 'sign_agent_days'])->value('value');
             //代理类型
-
             //更改成是否  有资格
             // is_agent
             if ($user['super_nsign'] == 1) {

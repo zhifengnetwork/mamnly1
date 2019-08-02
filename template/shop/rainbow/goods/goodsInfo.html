@@ -719,7 +719,7 @@
             // 免费领取
             if(is_sign != 0 ){
                 if (goods_num <= store_count) {
-                    sign_receive(is_sign,goods_num);
+                    sign_receive(is_sign,goods_num,goods_id);
                     return;
                 }
             }
@@ -742,16 +742,15 @@
             if ($(this).hasClass('buy_bt_disable')) {
                 return;
             }
-
+            var goods_id = $("input[name='goods_id']").val();
             // 免费领取
             if(is_sign != 0 ){
                 if (goods_num <= store_count) {
-                    cart_sign_receive(is_sign,goods_num);
+                    cart_sign_receive(is_sign,goods_num,goods_id);
                     return;
                 }
             }
 
-            var goods_id = $("input[name='goods_id']").val();
             AjaxAddCart(goods_id, 1);
 
         })
@@ -853,12 +852,12 @@
     }
     
     //验证是否可以免费领取
-    function sign_receive(type,num){
+    function sign_receive(type,num,id){
         $.ajax({
             type : "GET",
             dataType: "json",
             url:"/index.php?m=Shop&c=goods&a=sign_receive",//+tab,
-            data: {type:type,num:num},
+            data: {type:type,num:num,id:id},
             success: function(data){
                 if(data.status == 0){
                     layer.open({content:data.msg, time:3});
@@ -871,12 +870,12 @@
     }
 
     //加入购物车验证是否可以免费领取
-    function cart_sign_receive(type,num){
+    function cart_sign_receive(type,num,id){
         $.ajax({
             type : "GET",
             dataType: "json",
             url:"/index.php?m=Shop&c=goods&a=sign_receive",//+tab,
-            data: {type:type,num:num},
+            data: {type:type,num:num,id:id},
             success: function(data){
                 if(data.status == 0){
                     layer.open({content:data.msg, time:3});

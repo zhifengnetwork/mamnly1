@@ -401,13 +401,13 @@ class Pay
                 if (!empty($data)) {
                     $isReceive = ['status' => 0] ;
                 }else{
-                    $isReceive = provingReceive($this->user, $this->payList[0]['goods']->sign_free_receive, $this->totalNum);
+                    $isReceive = provingReceive($this->user, $this->payList[0]['goods']->sign_free_receive, $this->totalNum,$this->payList[0]['goods']->goods_id);
                 }
 
             }
 
             if ($this->user['level'] >= 2 && $this->payList[0]['goods']->sign_free_receive != 0) {
-                $isReceive = provingReceive($this->user, $this->payList[0]['goods']->sign_free_receive, $this->totalNum);
+                $isReceive = provingReceive($this->user, $this->payList[0]['goods']->sign_free_receive, $this->totalNum,$this->payList[0]['goods']->goods_id);
             }
             
             if($isReceive['status'] == 2){

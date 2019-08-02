@@ -63,7 +63,7 @@ class PlaceOrder
         }
         $this->addShopOrder();
         $this->deductionCoupon();//扣除优惠券
-        $this->addOrderSignReceive();//扣除免费领取记录
+        $this->addOrderSignReceive();//扣除免费领取记录，并增加积分
         $this->changUserPointMoney($this->order);//扣除用户积分余额
         $this->changAuctionPrice();//修改竞拍状态
         $this->queueDec();
@@ -331,7 +331,7 @@ class PlaceOrder
         }
         $payList = $this->pay->getPayList();
         $goods_ids = get_arr_column($payList,'goods_id');
-        $goodsArr = Db::name('goods')->where('goods_id', 'IN', $goods_ids)->getField('goods_id,cat_id,is_bonus,cost_price,give_integral');
+        $goodsArr = Db::name('goods')->where('goods_id', 'IN', $goods_ids)->getField('goods_id,cat_id,is_bonus,cost_price,give_integral,leader_integral,sign_free_receive');
         $orderGoodsAllData = [];
         foreach ($payList as $payKey => $payItem) {
             if($this->pay->getGoodsPrice() ==0){  //清华要求加上
@@ -364,6 +364,8 @@ class PlaceOrder
             $orderGoodsData['is_bonus'] = $goodsArr[$payItem['goods_id']]['is_bonus']; // 是否参加奖金池商品
             $orderGoodsData['member_goods_price'] = $payItem['member_goods_price']; // 会员折扣价
             $orderGoodsData['give_integral'] = $goodsArr[$payItem['goods_id']]['give_integral']; // 购买商品赠送积分
+            $orderGoodsData['leader_integral'] = $goodsArr[$payItem['goods_id']]['leader_integral']; // 购买商品赠送上级积分
+            $orderGoodsData['sign_free_receive'] = $goodsArr[$payItem['goods_id']]['sign_free_receive']; // 免费领取类型
             if ($payItem['prom_type']) {
                 $orderGoodsData['prom_type'] = $payItem['prom_type']; // 0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
                 $orderGoodsData['prom_id'] = $payItem['prom_id']; // 活动id
@@ -427,7 +429,7 @@ class PlaceOrder
     }
 
     /**
-     * 扣除免费领取记录
+     * 扣除免费领取记录，并增加积分
      * @param $order
      */
     public function addOrderSignReceive()
@@ -435,9 +437,28 @@ class PlaceOrder
         $signPrice = $this->pay->getSignPrice();
         $OrderPromAmount = $this->pay->getOrderPromAmount();
         $payList = $this->pay->getPayList();
+        $user = $this->pay->getUser();
+        $goods = $payList[0]['goods'];
+        $status = Db::name('order')->where(['order_id'=>$this->order['order_id']])->value('pay_status');
+        if ($status==1&&($goods->sign_free_receive == 1||$goods->sign_free_receive == 3)) {
+            $arr = [
+                'user_id'=>$user['user_id'],
+                'create_time'=>['like', date('').'%'],
+                'type'=>$goods->sign_free_receive,
+                'goods_id'=>$goods->goods_id,
+                'order_id'=>$this->order['order_id'],
+            ];
+            if(!Db::name('sign_receive_log')->where($arr)->find()){
+                unset($arr['create_time']);
+                $rs = Db::name('sign_receive_log')->insert($arr);
+                if($rs){
 
+                }
+            }
+
+        }
         if($signPrice > 0 || $OrderPromAmount > 0){
-            $user = $this->pay->getUser();
+
 
             $catId = Db::name('order_goods')->where('order_id', $this->order['order_id'])->find();
 

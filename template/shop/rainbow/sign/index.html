@@ -212,11 +212,11 @@
 				/*签到请求*/
 				$('.signInBut').on('click',function(){
 					/*后台传数据=> auth==1;可以签到 , auth==0;不可以签到*/
-					if(signObj['admin'] == 0){
-						/*对话框*/
-						suredAlert($('.wrap_signin'),'权限不足，无法签到！');
-						return false;
-					}
+					// if(signObj['admin'] == 0){
+					// 	/*对话框*/
+					// 	suredAlert($('.wrap_signin'),'权限不足，无法签到！');
+					// 	return false;
+					// }
 					/*判断用户签到状态=>ajax*/
 					if(!signObj['stateD']){
 						$.ajax({

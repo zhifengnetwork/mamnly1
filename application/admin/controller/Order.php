@@ -1262,6 +1262,7 @@ class Order extends Base {
         }
         $note ="退换货:{$type_msg[$return_goods['type']]}, 状态:{$status_msg[$post_data['status']]},处理备注：{$post_data['remark']}";
         $result = M('return_goods')->where(['id'=>$post_data['id']])->save($post_data);
+        $commonOrder = new \app\common\logic\Order();
         if($result && $post_data['status']==1 && $return_goods['type']!=2)
         {
             //审核通过才更改订单商品状态，进行退货，退款时要改对应商品修改库存
@@ -1275,9 +1276,11 @@ class Order extends Base {
                 //$messageLogic = $messageFactory->makeModule(['category' => 2]);
                 // 发退款消息
                 //$messageLogic->sendRefundNotice($return_goods['order_id'], $return_goods['refund_money'] + $return_goods['refund_deposit']);
+                //免费领取的订单，删除领取记录
+                $commonOrder->delSignReceiveLog($order);
             }
         }
-        $commonOrder = new \app\common\logic\Order();
+
         $commonOrder->setOrderById($return_goods['order_id']);
         $commonOrder->orderActionLog($note,'退换货',$this->admin_id);
         $this->ajaxReturn(['status'=>1,'msg'=>'修改成功','url'=>'']);

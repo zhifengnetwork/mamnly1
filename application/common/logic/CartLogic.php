@@ -121,7 +121,7 @@ class CartLogic extends Model
         // 是否可免费领取
         if ($this->goods['sign_free_receive'] != 0 ) {
 
-             $isReceive = provingReceive($this->user, $this->goods['sign_free_receive'], $this->goodsBuyNum); 
+             $isReceive = provingReceive($this->user, $this->goods['sign_free_receive'], $this->goodsBuyNum,$this->goods['goods_id']);
 
             if($isReceive['status'] == 0){
                 throw new TpshopException("立即购买",0, $isReceive);
