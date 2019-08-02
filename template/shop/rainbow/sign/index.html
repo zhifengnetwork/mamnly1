@@ -51,10 +51,9 @@
 					<div class="date"></div>
 				</div>
 				
-				<div style="width: 95%;margin: auto;margin-top: -1rem;font-size: .2rem;color: #747474;">
+				<div class="rule" style="width: 95%;margin: auto;margin-top: -1rem;font-size: .2rem;color: #747474;">
 					<h5>签到规则</h5>
-					<p><!--签到规则-->1.合伙人以上级别才可签到 </p>
-					<p><!--签到规则-->2.连续签到3天可以领取指定产品 </p>
+					<span><!--签到规则--></span>
 				</div>
 			</div>
 
@@ -197,7 +196,8 @@
 							/*弹框-连续签到*/
 							$('.dialog-sign-zp .time span').html(signObj['evenNum']);
 							/*签到规则*/
-							// $('.rule_box span').html(data['note']);
+							$('.rule_box span').html(data['note']);
+							$('.rule span').html(data['note']);
 							
 						}else {
 							console.log('无数据');

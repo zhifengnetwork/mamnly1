@@ -82,16 +82,16 @@ class FanliLogic extends Model
 		//echo $this->goodId.'-'.$this->tgoodsid.'-'.$user_info['level'];exit;
 		$goods_info=$this->getgoodsinfo();
 
-//		if(($goods_info['cat_id'] == C('customize.level6_cid')) && $goods_info['level6_fanli'])
-//		{
-//			//查找上级中level=6的用户
-//			$UsersLogic = new \app\common\logic\UsersLogic();
-//			$leader = $UsersLogic->getUserLevTop($this->userId,6);
-//			if($leader['user_id']){
-//				$desc = "创业包返利";
-//				$log = $this->writeLog($leader['user_id'],$goods_info['level6_fanli'],$desc,33);
-//			}
-//		}
+		if(($goods_info['cat_id'] == C('customize.level6_cid')) && $goods_info['level6_fanli'])
+		{
+			//查找上级中level=6的用户
+			$UsersLogic = new \app\common\logic\UsersLogic();
+			$leader = $UsersLogic->getUserLevTop($this->userId,6);
+			if($leader['user_id']){
+				$desc = "创业包返利";
+				$log = $this->writeLog($leader['user_id'],$goods_info['level6_fanli'],$desc,33);
+			}
+		}
 
 		if(($goods_info['sign_free_receive']==0) && ($goods_info['cat_id']!= C('customize.special_cid'))) //免费领取，签到产品不参与返利
 		{
