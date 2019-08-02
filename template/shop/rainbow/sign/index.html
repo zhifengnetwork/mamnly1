@@ -53,7 +53,7 @@
 				
 				<div class="rule" style="width: 95%;margin: auto;margin-top: -1rem;font-size: .2rem;color: #747474;">
 					<h5>签到规则</h5>
-					<span><!--签到规则--></span>
+					<pre><!--签到规则--></pre>
 				</div>
 			</div>
 
@@ -66,7 +66,7 @@
 					<p class="white">今日签到成功</p>
 					<div class="rule_box">
 						<p class="rule_box_title">签到奖励</p>
-						<span><!--签到规则--></span>
+						<pre><!--签到规则--></pre>
 					</div>
 				</div>
 			</div>
@@ -196,8 +196,8 @@
 							/*弹框-连续签到*/
 							$('.dialog-sign-zp .time span').html(signObj['evenNum']);
 							/*签到规则*/
-							$('.rule_box span').html(data['note']);
-							$('.rule span').html(data['note']);
+							$('.rule_box pre').html(data['note']);
+							$('.rule pre').html(data['note']);
 							
 						}else {
 							console.log('无数据');
