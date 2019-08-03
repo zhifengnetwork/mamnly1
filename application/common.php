@@ -7,6 +7,7 @@ use think\Db;
 use app\common\logic\BonusPoolLogic;
 use app\common\logic\BonusLogic;
 use app\common\logic\FanliLogic;
+use app\common\logic\UsersLogic;
 
 define('EXTEND_MODULE', 1);
 define('EXTEND_ANDROID', 2);
@@ -242,6 +243,7 @@ function getAllUp($invite_id,&$userList=array())
 				$Yeji->add(['uid'=>$leader['user_id'],'money'=>$num,'addtime'=>time(),'order_id'=>$order_id]);
         }
     }
+
  }
 
 
@@ -296,33 +298,34 @@ function getAllUp($invite_id,&$userList=array())
             agent_performance_log($user_id,$order_amount,$order_id,$rec_id);
         }
 
-        
+//        $first_leader = M('users')->where(['user_id'=>$user_id])->value('first_leader');
+//        $arr = get_uper_user($first_leader);
 
-        $first_leader = M('users')->where(['user_id'=>$user_id])->value('first_leader');
-        $arr = get_uper_user($first_leader);
+        //2019.8.3-zxl,之前是所有上级都加绩效，现改为最近3个等级在董事以上的上级
+        $arr = (new UsersLogic())->getUserLeader($user_id);
 
        // if($vs['cat_id']==8)
        // {
             //加 团队业绩
-           foreach($arr['recUser'] as $k => $v){
+           foreach($arr as $k => $v){
 
-                $cunzai = M('agent_performance')->where(['user_id'=>$v['user_id']])->find();
+                $cunzai = M('agent_performance')->where(['user_id'=>$v])->find();
                 //存在
                 if($cunzai){
                     $data11['team_per'] = $cunzai['team_per'] + $order_amount;
                     $data11['update_time'] = date('Y-m-d H:i:s');
-                    $res = M('agent_performance')->where(['user_id'=>$v['user_id']])->save($data11);
+                    $res = M('agent_performance')->where(['user_id'=>$v])->save($data11);
                 }else{
 
-                    $data1['user_id'] =  $v['user_id'];
+                    $data1['user_id'] =  $v;
                     $data1['team_per'] =  $order_amount;
                     $data1['create_time'] = date('Y-m-d H:i:s');
                     $data1['update_time'] = date('Y-m-d H:i:s');
                     $res = M('agent_performance')->add($data1);
                 }
 
-                
-                agent_performance_log($v['user_id'],$order_amount,$order_id,$rec_id);
+
+                agent_performance_log($v,$order_amount,$order_id,$rec_id);
             }
 
         //}else

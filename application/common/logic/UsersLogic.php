@@ -1726,6 +1726,45 @@ class UsersLogic extends Model
 	public function get_team_num($user_id){
 		$arr = [];
 		return count($this->getUserLevBotAll($user_id,$arr));
-	}	
+	}
+
+    /**
+     * 查找user_id的num位等级高于level的上级
+     * @param int $user_id
+     * @param int $level
+     * @param int $num
+     * @return array
+     */
+	public function getUserLeader($user_id = 0,$level = 4,$num = 3){
+        $res = [];
+	    $leadersArr = $this->leader($user_id);
+	    $count = 0;
+        foreach ($leadersArr as $leader){
+            $leader_level = M('users')->where(['user_id' => $leader])->value('level');
+            if($leader_level>=$level){
+                ++$count;
+                $res[] = $leader;
+            }
+            if($count==$num)break;
+        }
+        return $res;
+    }
+
+    /**
+     * 查找user_id的所有上级
+     * @param int $user_id
+     * @param int $level
+     * @param int $num
+     * @return array
+     */
+    public function leader($user_id, &$arr = array())
+    {
+        $user = M('users')->where(['user_id' => $user_id])->value('first_leader');
+        if ($user > 0) {
+            $arr[] = $user;
+            $this->leader($user, $arr);
+        }
+        return $arr;
+    }
 
 }
