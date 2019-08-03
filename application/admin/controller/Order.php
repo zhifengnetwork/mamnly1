@@ -1715,6 +1715,40 @@ class Order extends Base {
             }
     }
 
+    /**
+     * 更改收货地址
+     */
+    public function edit_address(){
+        //  获取省份
+        $province = M('region')->where(array('parent_id'=>0,'level'=>1))->select();
+        $this->assign('province',$province);
+
+        $order_id = I('order_id/d');// 用户id 可以为空
+        $order = M('order')->where(['order_id'=>$order_id])->find();
+        $city = M('region')->where(array('parent_id'=>$order['province'],'level'=>2))->select();
+        $this->assign('city',$city);
+        $area = M('region')->where(array('parent_id'=>$order['city'],'level'=>3))->select();
+        $this->assign('area',$area);
+
+        if(request()->isPost()){
+            $address['consignee'] = I('consignee');// 收货人
+            $address['province'] = I('province/d'); // 省份
+            $address['city'] = I('city/d'); // 城市
+            $address['district'] = I('district/d'); // 县
+            $address['address'] = I('address'); // 收货地址
+            $address['mobile'] = I('mobile'); // 手机
+
+            if(!$order) $this->error('找不到订单');
+            if(!M('order')->where(['order_id'=>$order_id])->update($address)){
+                $this->error('更改失败');
+            }
+            $this->success('更改收货地址成功',U("Admin/Order/detail",array('order_id'=>$order_id)));
+        }
+
+        $this->assign('order',$order);
+        return $this->fetch();
+    }
+
 
     /**
      * 订单编辑

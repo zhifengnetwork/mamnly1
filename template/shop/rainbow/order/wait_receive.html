@@ -68,7 +68,7 @@
                                 <notempty name="goods['return_goods']">
                                     <a class="applyafts">已申请售后</a>
                                     <else />
-                                    <if condition="($order.return_btn eq 1)">
+                                    <if condition="($order.return_btn eq 1) and false">
                                         <a href="{:U('Shop/Order/return_goods',['rec_id'=>$good['rec_id']])}">申请售后</a>
                                     </if>
                                 </notempty>

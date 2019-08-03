@@ -1,0 +1,157 @@
+<include file="public/layout" />
+
+<style type="text/css">
+    html, body {
+        overflow: visible;
+    }
+
+    a.btn {
+        background: #fff none repeat scroll 0 0;
+        border: 1px solid #f5f5f5;
+        border-radius: 4px;
+        color: #999;
+        cursor: pointer !important;
+        display: inline-block;
+        font-size: 12px;
+        font-weight: normal;
+        height: 20px;
+        letter-spacing: normal;
+        line-height: 20px;
+        margin: 0 5px 0 0;
+        padding: 1px 6px;
+        vertical-align: top;
+    }
+
+    a.red:hover {
+        background-color: #e84c3d;
+        border-color: #c1392b;
+        color: #fff;
+    }
+
+</style>
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="javascript:history.back();" title="返回列表"><i class="fa fa-arrow-circle-o-left"></i></a>
+            <div class="subject">
+                <h3>更改收货地址</h3>
+            </div>
+        </div>
+    </div>
+    <form class="form-horizontal" action="{:U('Admin/Order/edit_address')}" id="edit_address" method="post">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="consignee"><em>*</em>收货人</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="consignee" id="consignee" class="input-txt" placeholder="收货人名字" value="{$order.consignee}"/>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="consignee"><em>*</em>手机</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="mobile" id="mobile" class="input-txt" placeholder="收货人联系电话" value="{$order.mobile}" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" maxlength="11"/>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="consignee"><em>*</em>地址</label>
+                </dt>
+                <dd class="opt">
+                    <select onchange="get_city(this)" id="province" name="province"  title="请选择所在省份">
+                        <option value="">选择省份</option>
+                        <volist name="province" id="vo">
+                            <option value="{$vo.id}" <if $vo.id eq $order.province>selected</if>>{$vo.name}</option>
+                        </volist>
+                    </select>
+                    <select onchange="get_area(this)" id="city" name="city" title="请选择所在城市">
+                        <option value="">选择城市</option>
+                        <volist name="city" id="vo">
+                            <option value="{$vo.id}" <if $vo.id eq $order.city>selected</if>>{$vo.name}</option>
+                        </volist>
+                    </select>
+                    <select id="district" name="district" title="请选择所在区县">
+                        <option value="">选择区域</option>
+                        <volist name="area" id="vo">
+                            <option value="{$vo.id}"<if $vo.id eq $order.district>selected</if>>{$vo.name}</option>
+                        </volist>
+                    </select>
+                    <input type="text" name="address" id="address" value="{$order.address}" class="input-txt" placeholder="详细地址"/>
+                </dd>
+            </dl>
+            <input type="hidden" name="order_id" value="{$order.order_id}">
+            <div class="bot"><a href="JavaScript:void(0);" onClick="checkSubmit();" class="ncap-btn-big ncap-btn-green" id="submitBtn">确认提交</a></div>
+        </div>
+
+    </form>
+</div>
+<script type="text/javascript">
+
+    $(function () {
+        $("#order-add").validate({
+            debug: false, //调试模式取消submit的默认提交功能
+            focusInvalid: false, //当为false时，验证无效时，没有焦点响应
+            onkeyup: false,
+            submitHandler: function(form){   //表单提交句柄,为一回调函数，带一个参数：form
+                var mobile = $('#mobile').val();
+                if(!isMobile(mobile) || mobile.length != 11){
+                    layer.alert('请填写正确手机号', {icon: 2});
+                    return;
+                }
+            },
+            ignore:":button",	//不验证的元素
+            rules:{
+                consignee:{
+                    required:true
+                },
+                mobile:{
+                    required:true
+                },
+                province:{
+                    required:true
+                },
+                city:{
+                    required:true
+                },
+                district:{
+                    required:true
+                },
+                address:{
+                    required:true
+                },
+            },
+            messages:{
+                consignee:{
+                    required:"请填写收货人"
+                },
+                mobile:{
+                    required:"收货人联系电话"
+                },
+                province:{
+                    required:"请选择所在省份"
+                },
+                city:{
+                    required:"请选择所在城市"
+                },
+                district:{
+                    required:"请选择所在区县"
+                },
+                address:{
+                    required:"请填写详细地址"
+                },
+            }
+        });
+    });
+
+    function checkSubmit(){
+        $('#edit_address').submit();
+    }
+</script>
+</body>
+</html>

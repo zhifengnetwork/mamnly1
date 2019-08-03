@@ -859,7 +859,31 @@
             url:"/index.php?m=Shop&c=goods&a=sign_receive",//+tab,
             data: {type:type,num:num,id:id},
             success: function(data){
-                if(data.status == 0){
+                if(data.status == -2){
+                    layer.open({
+                        content: '今日未签到'
+                        ,btn: ['点击签到']
+                        ,yes: function(index, layero){
+                            $.ajax({
+                                type: "GET",
+                                url: "/api/sign/sign?user_id=" + {$user_id},
+                                async: true,
+                                success:function(data){
+                                    layer.close();
+                                    if(data.status==1){
+                                        layer.open({content:'签到成功', time:3});
+                                    }else{
+                                        layer.open({content:data.msg, time:3});
+                                    }
+                                }
+                            });
+                        }
+                        ,cancel: function(){
+                            layer.close();
+                        }
+                    });
+                    return false;
+                }else if(data.status == 0){
                     layer.open({content:data.msg, time:3});
                     return false;
                 }else{

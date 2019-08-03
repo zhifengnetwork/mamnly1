@@ -90,9 +90,12 @@ class Goods extends MobileBase
             //如果不是字母
             if($id == 'DISTRIBUT'){
                 $con['sign_free_receive'] = [['=', 1], ['=', 3], 'or'];
-            }
-            if($id == 'BONUS'){
+            }elseif($id == 'BONUS'){
                 $con['is_bonus'] = 1;
+            } elseif($id == 'free'){
+                $con['sign_free_receive'] = 3;
+            } elseif($id == 'level_free'){
+                $con['sign_free_receive'] = 1;
             }
         }
 
@@ -249,7 +252,6 @@ class Goods extends MobileBase
      */
     public function goodsInfo()
     {
-
         C('TOKEN_ON', true);
         $goodsLogic = new GoodsLogic();
         $goods_id = I("get.id/d");

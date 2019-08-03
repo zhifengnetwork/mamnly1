@@ -2210,7 +2210,7 @@ function confirm_order($id,$user_id = 0)
         $date = date('Y-m-d', time());
         if ($type == 1 || $type == 3) {// 必须签到
             if (!M('sign_log')->where(['user_id' => $user['user_id']])->where(['sign_day' => ['like', $date . '%']])->find()) {
-                return ['status' => 0, 'msg' => '今日未签到'];
+                return ['status' => -2, 'msg' => '今日未签到'];
             }
             if ($type == 1 && $user['level'] < 3) {
                 return ['status' => 0, 'msg' => '合伙人以上级别才可领取'];

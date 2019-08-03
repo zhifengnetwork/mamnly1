@@ -76,7 +76,7 @@
                                         <p class="weight"><span>数量</span>&nbsp;<span>{$goods[goods_num]}</span></p>
                                     </div>
                                     <div class="buttondde">
-                                        <if condition="($order[return_btn] eq 1) and ($goods[is_send] lt 2)">
+                                        <if condition="($order[return_btn] eq 1) and ($goods[is_send] lt 2) and false">
                                             <a href="{:U('Shop/Order/return_goods',['rec_id'=>$goods['rec_id']])}">申请售后</a>
                                         </if>
                                     </div>

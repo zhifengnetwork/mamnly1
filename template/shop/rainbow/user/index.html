@@ -119,21 +119,20 @@
                                 </a>
                             </li>
 
-                    
                             <li>
-                                <a href="{:U('/shop/Goods/goodsList/id/1')}">
+                                <a href="{:U('/shop/Goods/goodsList/id/free')}">
                                 <img src="__STATIC__/images/user_zp/商品.png" />
                                 <p>水光面膜</p>
-                                <p class="num">{$user.sign_free_num}</p>
+                                <p class="num">{$user.sign_free}</p>
                                 </a>
                             </li>
                 
                             <if condition="$user.level egt 3">
                                 <li>
-                                	<a href="{:U('/shop/Goods/goodsList/id/9')}">
+                                	<a href="{:U('/shop/Goods/goodsList/id/level_free')}">
                                     <img src="__STATIC__/images/user_zp/商品.png" />
                                     <p>修复面膜</p>
-                                    <p class="num">{$user.distribut_free_num}</p>
+                                    <p class="num">{$user.sign_hehuo_free}</p>
                                 	</a>
                                 </li>
                             </if>

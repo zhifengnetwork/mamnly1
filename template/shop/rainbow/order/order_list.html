@@ -84,7 +84,7 @@
                                         <div class="buttondde">
                                             <notempty name="goods['return_goods']">
                                                 <a class="applyafts">已申请售后</a><else />
-                                                <if condition="($order.return_btn eq 1)">
+                                                <if condition="($order.return_btn eq 1) and false">
                                                     <a href="{:U('Shop/Order/return_goods',['rec_id'=>$goods['rec_id']])}">申请售后</a>
                                                 </if>
                                             </notempty>
@@ -111,6 +111,9 @@
                             </if>
                             <if condition="$order.pay_status eq 1 and false">
                                 <a class="shop-rebuy" href="{:U('Order/refund_order', ['order_id'=>$order['order_id']])}">取消订单</a>
+                            </if>
+                            <if condition="$order.pay_status eq 1">
+                                <a class="shop-rebuy" href="tel:{$tpshop_config['phone']}">联系客服</a>
                             </if>
                         </if>
                         <if condition="$order.receive_btn eq 1 && order.pay_status eq 1">

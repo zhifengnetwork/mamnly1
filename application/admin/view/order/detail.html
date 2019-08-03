@@ -134,6 +134,9 @@ a.green:hover { color: #FFF; background-color: #1BBC9D; border-color: #16A086; }
             </div>
             <div class="addr-note">
                 <h4>收货信息</h4>
+                <p>
+                    <a class="ncap-btn-big ncap-btn-green" onclick="address({$order.order_id})">更改收货地址</a>
+                </p>
                 <dl>
                     <dt>{$order.consignee_desc}：</dt>
                     <dd>{$order.consignee}</dd>
@@ -150,7 +153,7 @@ a.green:hover { color: #FFF; background-color: #1BBC9D; border-color: #16A086; }
                 </dl>
                 <dl>
                     <dt>邮编：</dt>
-                    <dd>{$order.zipcode|default='N'}</dd>
+                    <dd>{$order.zipcode}</dd>
                     <if condition="$order['shop_id'] gt 0">
                         <dt>自提时间：</dt>
                         <dd>{$order.shop_order.take_time}</dd>
@@ -536,6 +539,10 @@ a.green:hover { color: #FFF; background-color: #1BBC9D; border-color: #16A086; }
     $(".z-ztfh-close").click(function  () {
         $(".z-ztfh-bg,.z-ztfh-pop").hide();
     })
+    
+    function address(id) {
+        window.location.href = '/index.php?m=Admin&c=order&a=edit_address&order_id='+id;
+    }
 
 </script>
 </body>
