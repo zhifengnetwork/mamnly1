@@ -1215,7 +1215,7 @@ class User extends MobileBase
         }
         //用户信息
         $user = M('users')->field('user_id,nickname,mobile')->where(['user_id'=>$first_leader])->find();
-        //下级信息
+        //直属信息
         $users = M('users')->field('user_id,nickname,mobile')->where(['first_leader'=>$first_leader])->select();
         
         $this->assign('user', $user);

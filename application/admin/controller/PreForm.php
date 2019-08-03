@@ -315,14 +315,14 @@ class Preform extends Base {
       {
         foreach($p_y as $k=>$v)
         {
-         $user_data =Db::name('users')->where('first_leader='.$k)->column('user_id');//查出没下级
+         $user_data =Db::name('users')->where('first_leader='.$k)->column('user_id');//查出没直属
          
          if(!empty($user_data))
          {
                 foreach($p_y as $py=>$ss)
                 {
 
-                   if(in_array($py,$user_data))// 证明有下级
+                   if(in_array($py,$user_data))// 证明有直属
                    {
                      
                       $steam_p_new+=$ss;
@@ -433,7 +433,7 @@ class Preform extends Base {
         foreach($p_y as $k=>$v)
         {
 
-          //判断下下级是否有业绩，减去下下级金额
+          //判断下直属是否有业绩，减去下直属金额
 
           if(!empty($s_y[$k]) && $p_y[$k]['team_par']>$s_y[$k]['team_par'])
           {
@@ -615,7 +615,7 @@ class Preform extends Base {
       
   }
      /*
-   * 获取所有下级
+   * 获取所有直属
    */
    public function getAlldp_p($invite_id,&$userList=array())
   {           
@@ -640,7 +640,7 @@ class Preform extends Base {
       
   }
 
-      //获取用户的所有下级ID
+      //获取用户的所有直属ID
    public  function get_downline($data,$mid,$level=0){
         $arr=array();
         foreach ($data as $key => $v) {

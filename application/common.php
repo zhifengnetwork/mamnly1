@@ -1416,7 +1416,7 @@ function update_pay_status($order_sn,$ext=array())
             //$first_leader_openid = Db::name('users')->where(['user_id' => $userinfo['first_leader']])->value('openid');
             $first_leader_openid = Db::name('users')->field('openid,nickname,user_id')->where(['user_id' => $userinfo['first_leader']])->find();
             if($first_leader_openid){
-                $wx_first_leader_content = "你的下级{$userinfo['nickname']}[ID:{$userinfo['user_id']}]订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商品：{$text}\n金额：{$order['total_amount']}";
+                $wx_first_leader_content = "你的直属{$userinfo['nickname']}[ID:{$userinfo['user_id']}]订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商品：{$text}\n金额：{$order['total_amount']}";
                 $wechat = new \app\common\logic\wechat\WechatUtil();
                 $wechat->sendMsg($first_leader_openid['openid'], 'text', $wx_first_leader_content);
             }
@@ -1537,7 +1537,7 @@ function confirm_order($id,$user_id = 0)
         ($leader = $user['first_leader'] > 0 ? Users::get($user['first_leader']) : null);
         if ($order_goods['leader_integral'] > 0 && ($leader = $user['first_leader'] > 0 ? Users::get($user['first_leader']) : null)) {
             //上级获得积分
-            accountLog($user['first_leader'], 0,+$order_goods['leader_integral'], '下级签到免费领取', 0,$order['order_id'] ,$order['order_sn']);
+            accountLog($user['first_leader'], 0,+$order_goods['leader_integral'], '直属签到免费领取', 0,$order['order_id'] ,$order['order_sn']);
         }
     }
 

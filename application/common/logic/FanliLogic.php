@@ -532,7 +532,7 @@ class FanliLogic extends Model
 					$f_2 =$first_leader[$next_k]['level'];
 					if($f_1>$f_2)
 					{
-                         $error =1; //判断上级比下级等级少，记录不循环
+                         $error =1; //判断上级比直属等级少，记录不循环
 					}
 		
 				   if($parent_info['level']==5 && $pingji_5!=1)//执行平级奖

@@ -95,7 +95,7 @@
                   <ul>
                     <li><a href="{:U('Goods/addEditCategory',array('id'=>$vo['id']))}">编辑分类信息</a></li>
                     <if condition="$vo[level] lt 3">                  
-                    <li><a href="{:U('Goods/addEditCategory',array('parent_id'=>$vo['id']))}">新增下级分类</a></li>
+                    <li><a href="{:U('Goods/addEditCategory',array('parent_id'=>$vo['id']))}">新增直属分类</a></li>
                     </if>
                     <li><a href="javascript:;" onclick="publicHandle({$vo['id']})">删除当前分类</a></li>
                   </ul>

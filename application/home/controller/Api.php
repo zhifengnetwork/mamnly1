@@ -97,7 +97,7 @@ class Api extends Base
     }
 
     /*
-     * 获取下级分类
+     * 获取直属分类
      */
     public function get_category()
     {

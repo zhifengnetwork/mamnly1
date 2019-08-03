@@ -13,7 +13,7 @@ class Region extends ApiBase
     /**
      * 获取地区
      *  
-     * 如果传ID，则  获取 下级
+     * 如果传ID，则  获取 直属
      * 如果没传ID，则获取 省
      * 
      */

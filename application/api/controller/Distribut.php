@@ -43,7 +43,7 @@ class Distribut extends Controller
     }
 
 
-    //获取用户的所有下级ID
+    //获取用户的所有直属ID
     function get_downline($data,$mid,$level=0){
         $arr=array();
         foreach ($data as $key => $v) {

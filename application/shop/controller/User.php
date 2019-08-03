@@ -1499,7 +1499,7 @@ class User extends MobileBase
         }
         //用户信息
         $user = M('users')->field('user_id,nickname,mobile')->where(['user_id'=>$first_leader])->find();
-        //下级信息
+        //直属信息
         $users = M('users')->field('user_id,nickname,mobile,level')->where(['first_leader'=>$first_leader])->select();
         $list=[];
         $level=M('user_level')->getField('level,level_name');

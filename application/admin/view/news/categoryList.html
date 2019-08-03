@@ -89,7 +89,7 @@
                   <ul>
                      <li><a href="{:U('News/category',array('act'=>'edit','cat_id'=>$vo['cat_id']))}">编辑分类信息</a></li>                  
                                      
-                     <li><a href="{:U('News/category',array('parent_id'=>$vo['cat_id']))}">新增下级分类</a></li>
+                     <li><a href="{:U('News/category',array('parent_id'=>$vo['cat_id']))}">新增直属分类</a></li>
 	                   
                      <li><a href="javascript:void(0)" data-url="{:U('News/categoryHandle')}" data-id="{$vo.cat_id}" onClick="delfun(this)">删除当前分类</a></li>                                   
                   </ul>

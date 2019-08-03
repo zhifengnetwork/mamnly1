@@ -1670,7 +1670,7 @@ class UsersLogic extends Model
 
 	}    
 
-    //获取用户下级
+    //获取用户直属
     private function getUserLevBot($uid){
         
         if(is_array($uid)){
@@ -1683,7 +1683,7 @@ class UsersLogic extends Model
         return $arr1;
     }
 
-    //获取用户下级链
+    //获取用户直属链
     public function getUserLevBotAll($uid,&$arr){
         if(!$arr)$arr = [];
         $arr1 = $this->getUserLevBot($uid); 

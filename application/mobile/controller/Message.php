@@ -49,7 +49,7 @@ class Message extends Controller
         }
 
         if(!$xiaji_openid){
-            $this->write_log('------下级openid不存在----'.$xiaji_openid);
+            $this->write_log('------直属openid不存在----'.$xiaji_openid);
         }
 
         if(!$shangji_user_id){

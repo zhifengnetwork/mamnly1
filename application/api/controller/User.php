@@ -574,7 +574,7 @@ class User extends ApiBase
             $this->ajaxReturn(['status' => -1 , 'msg'=>'提交方式错误','data'=>(object)null]);
         }
         // $user_info = $userLogic->get_info($user_id);  // 获取用户信息
-        //下级信息
+        //直属信息
 
 		$page = I('post.page/d',1);
 		$num = I('post.num/d',6);
@@ -1117,7 +1117,7 @@ class User extends ApiBase
         $this->ajaxReturn(['status' => 0 , 'msg'=>'请求成功','data'=>['list'=>$result['result']]]); 
     }
 
-    //下级分销订单
+    //直属分销订单
     public function distribut_order()
     {	
         $user_id = $this->get_user_id();
@@ -1141,7 +1141,7 @@ class User extends ApiBase
         $user_ids = array_column($orders, 'user_id');
         $lower = M('users')->where('user_id', ['in', $user_ids])->column('user_id, nickname');
 
-        //添加下级昵称
+        //添加直属昵称
 		$OrderGoods = M('Order_goods');
         foreach($orders as $key => $value){
             $orders[$key]['nickname'] = $lower[$value['user_id']];

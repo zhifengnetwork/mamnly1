@@ -19,7 +19,7 @@
 <div class="application-record">
     <div class="maleri30">
         <ul class="re_tit">
-            <li>{$user.nickname}[ID: {$user.user_id}]的下级</li>
+            <li>{$user.nickname}[ID: {$user.user_id}]的直属</li>
         </ul>
         <ul class="re_tit">
             <li style="width:25%"><span>用户ID</span></li>
@@ -29,7 +29,7 @@
         </ul>
             <empty name="lists">
                 <div class="juzhong">
-                    该用户没有下级
+                    该用户没有直属
                 </div>
             <else/>
                 <foreach name="lists" item="v">

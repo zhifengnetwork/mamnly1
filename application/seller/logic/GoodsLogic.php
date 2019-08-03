@@ -62,7 +62,7 @@ class GoodsLogic extends Model
              if($value['parent_id'] == $id)
              {                 
                 $this->get_cat_tree($value['id']);  
-                $goods_category2[$id]['have_son'] = 1; // 还有下级
+                $goods_category2[$id]['have_son'] = 1; // 还有直属
              }
         }               
     }

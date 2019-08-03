@@ -67,9 +67,9 @@ class RefundLogic extends Model
                 }
             }
             if($order_goods['leader_integral']>0){
-                $leader_id = Db::name('account_log')->where(['order_id'=>$return_goods['order_id'],'note'=>'下级签到免费领取'])->value('user_id');
+                $leader_id = Db::name('account_log')->where(['order_id'=>$return_goods['order_id'],'note'=>'直属签到免费领取'])->value('user_id');
                 if($leader_id>0&&($user = get_user_info($leader_id))&&$order_goods['leader_integral']<$user['pay_points']){
-                    accountLog($leader_id,0,-$order_goods['leader_integral'],'下级退货积分追回',0,$return_goods['order_id'],$return_goods['order_sn']);
+                    accountLog($leader_id,0,-$order_goods['leader_integral'],'直属退货积分追回',0,$return_goods['order_id'],$return_goods['order_sn']);
                 }
             }
             //追回订单商品赠送的优惠券

@@ -84,7 +84,7 @@ class DistributLogic
         global $result;
         $id_list = M('users')->field('user_id,first_leader')->select();
         // $series = $this->get_series($user_id,$id_list);
-        $this->get_next($user_id);  //获取下级信息
+        $this->get_next($user_id);  //获取直属信息
 
         $page = new Page(count($result),15);
         
@@ -109,11 +109,11 @@ class DistributLogic
     //     }
     // }
 
-    //获取下级信息
+    //获取直属信息
     public function get_next($user_id)
     {
         global $result;
-        // 下级
+        // 直属
         $next = M('users')->where('first_leader',$user_id)
             ->limit($Page->firstRow . ',' . $Page->listRows)
             ->field('user_id,nickname,mobile,first_leader')

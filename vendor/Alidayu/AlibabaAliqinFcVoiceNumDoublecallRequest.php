@@ -28,7 +28,7 @@ class AlibabaAliqinFcVoiceNumDoublecallRequest
 	private $callerShowNum;
 	
 	/** 
-	 * 公共回传参数，在“消息返回”中会透传回该参数；举例：用户可以传入自己下级的会员ID，在消息返回时，该会员ID会包含在内，用户可以根据该会员ID识别是哪位会员使用了你的应用
+	 * 公共回传参数，在“消息返回”中会透传回该参数；举例：用户可以传入自己直属的会员ID，在消息返回时，该会员ID会包含在内，用户可以根据该会员ID识别是哪位会员使用了你的应用
 	 **/
 	private $extend;
 	

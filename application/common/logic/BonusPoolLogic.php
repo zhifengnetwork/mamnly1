@@ -54,7 +54,7 @@ class BonusPoolLogic extends Model
 			//将邮费放进奖金池
 			$money = $this->put_in($order['shipping_price']);
 			
-			//记录下级领取的日志
+			//记录直属领取的日志
 			$this->write_log($nums, $money, $user, $order['order_id']);
 			
 			//给上级记录排名

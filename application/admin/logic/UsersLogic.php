@@ -138,7 +138,7 @@ class UsersLogic extends Model
              if(($value['is_distribut'] == 1 || $value['is_agent'] == 1) && $value['first_leader'] == $id)
              {
                 $this->get_cat_tree($value['user_id'], $level);  
-                $goods_category2[$id]['have_son'] = 1; // 还有下级
+                $goods_category2[$id]['have_son'] = 1; // 还有直属
                 $k++;
              }
         }            

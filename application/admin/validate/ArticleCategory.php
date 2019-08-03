@@ -57,7 +57,7 @@ class ArticleCategory extends Validate
         }
         
         $ArticleCat = new \app\admin\logic\ArticleCatLogic;
-        $children = array_keys($ArticleCat->article_cat_list($value, 0, false)); // 获得当前分类的所有下级分类
+        $children = array_keys($ArticleCat->article_cat_list($value, 0, false)); // 获得当前分类的所有直属分类
         if (in_array($data['parent_id'], $children)) {
             return '所选分类的上级分类不能是当前分类的子分类';
         }
