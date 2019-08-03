@@ -41,7 +41,7 @@ class FanliLogic extends Model
 		//获取返利数据
 	public function getgoodsinfo()
 	{
-         $goods_info = M('goods')->where(['goods_id'=>$this->goodId])->field('cat_id,sign_free_receive,goods_name')->find();
+         $goods_info = M('goods')->where(['goods_id'=>$this->goodId])->field('cat_id,sign_free_receive,goods_name,level6_fanli')->find();
          return $goods_info;
 	}
 	//获取用户购买特殊产品数量
