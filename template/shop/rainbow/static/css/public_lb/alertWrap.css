@@ -3,6 +3,15 @@ div,p {
 	margin: 0;
 	padding: 0;
 }
+pre{ 
+	line-height: .4rem;
+	text-align: left;
+	white-space:pre-wrap;
+	white-space:-moz-pre-wrap;
+	white-space:-pre-wrap;
+	white-space:-o-pre-wrap;
+	word-wrap:break-word;
+} 
 /*蒙版,弹框*/
 .maskWrap {
 	/*display: none;*/
