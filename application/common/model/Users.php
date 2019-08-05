@@ -68,18 +68,21 @@ class Users extends Model
         return  $third_leader;
     }
 
-    // 剩余免费领取面膜数量
+    // 当月剩余免费领取面膜数量
     public function getSignFreeAttr($value, $data){
         $count = Db::name('goods')->where(['is_on_sale' => 1, 'exchange_integral' => 0,'sign_free_receive'=>3])->count();
-        $free_count = Db::name('sign_receive_log')->where(['user_id'=>$data['user_id'],'create_time'=>['like', date('Y-m-d', time()) . '%']])->count();
-        return  ($count-$free_count>-1)?$count-$free_count:0;
+        $free_count = Db::name('sign_receive_log')->where(['user_id'=>$data['user_id'],'type'=>3,'create_time'=>['like', date('Y-m-d', time()) . '%']])->count();
+        return (($count-$free_count>-1)?$count-$free_count:0)+month_less_day()*$count;
     }
 
-    // 合伙人剩余免费领取面膜数量
+
+    // 当月合伙人剩余免费领取面膜数量
     public function getSignHehuoFreeAttr($value, $data){
+        if($data['level']<3) return 0;
         $count = Db::name('goods')->where(['is_on_sale' => 1, 'exchange_integral' => 0,'sign_free_receive'=>1])->count();
-        $free_count = Db::name('sign_receive_log')->where(['user_id'=>$data['user_id'],'create_time'=>['like', date('Y-m-d', time()) . '%']])->count();
-        return  ($count-$free_count>-1)?$count-$free_count:0;
+        $free_count = Db::name('sign_receive_log')->where(['user_id'=>$data['user_id'],'type'=>1,'create_time'=>['like', date('Y-m-d', time()) . '%']])->count();
+        return (($count-$free_count>-1)?$count-$free_count:0)+month_less_day()*$count;
     }
+
 
 }

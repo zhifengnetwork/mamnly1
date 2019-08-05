@@ -40,9 +40,8 @@ function AjaxAddCart(goods_id, num) {
 				}
 				var cart_num = parseInt(cart_quantity.html()) + parseInt($('#number').val());
 				cart_quantity.html(cart_num);
-				var addpop ='<div class="addpop-warp"><img src="/public/images/cartAdd.png"style="width: 2rem;margin-bottom: .63rem;" /><div style="color: #fff;font-size: .58rem;text-align: center;width: 100%;height:  .64rem;line-height: .64rem" >加入购物车成功</div></div>';
 				layer.open({
-					content: addpop,
+					content: data.msg,
 					shadeClose: true,
 				});
 

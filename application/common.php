@@ -223,7 +223,7 @@ function getAllUp($invite_id,&$userList=array())
         $model = new BonusLogic($userId, $goodId,$goodNum,$orderSn,$order_id);
         $res = $model->bonusModel();
 
-        if(!$v['prom_type'] && !$v['prom_id'] && ($v['cat_id'] != C('customize.special_cid'))){
+        if(!$v['prom_type'] && !$v['prom_id'] && ($v['cat_id'] != C('customize.special_cid')||$v['cat_id'] != C('customize.level6_cid'))){
             $num +=  ($goodNum * $v['final_price']); 
         }
     }
@@ -274,7 +274,7 @@ function getAllUp($invite_id,&$userList=array())
              ->select();
     foreach($order_goods as $k=>$vs)
     {
-        if($vs['cat_id'] == C('customize.special_cid'))continue;
+        if($vs['cat_id'] == C('customize.special_cid')||$vs['cat_id'] == C('customize.level6_cid'))continue;
         $order_amount = $vs['goods_price'] * $vs['goods_num'];
         $rec_id=$vs['rec_id'];
     //加个人业绩(下单人)
@@ -2380,3 +2380,17 @@ function confirm_order($id,$user_id = 0)
             }
         }
     }
+
+/**
+ * 当月剩余天数，不包括今日
+ * @return float
+ */
+function month_less_day()
+{
+    $now = time();
+    $year = date('Y', $now);
+    $next_month = date('m', time()) + 1;
+    $next = strtotime("$year-{$next_month}-01");
+    $date_diff = $next - $now;
+    return round($date_diff / (60 * 60 * 24));
+}
