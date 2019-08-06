@@ -2392,5 +2392,5 @@ function month_less_day()
     $next_month = date('m', time()) + 1;
     $next = strtotime("$year-{$next_month}-01");
     $date_diff = $next - $now;
-    return round($date_diff / (60 * 60 * 24));
+    return floor($date_diff / (60 * 60 * 24));
 }

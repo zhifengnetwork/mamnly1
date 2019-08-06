@@ -186,7 +186,7 @@ class MobileBase extends Controller {
            $user_id = $users['user_id'];
            $uname = $users['nickname'];
        }
-       $this->assign('user_id',$user_id);
+       $this->assign('user_id',$user_id?:0);
        $this->assign('uname',$uname);
       
     }      
