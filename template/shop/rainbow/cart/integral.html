@@ -981,7 +981,7 @@
         $("#payables").text(data.result.order_amount);// 应付
         $("#pay_points").val(data.result.pay_points);// 积分支付
         $("#goods_price").text(data.result.goods_price);// 商品总额
-        $('#goods_p').text((data.result.goods_price-data.result.integral_money) / data.result.total_num+'+'+data.result.pay_points / data.result.total_num); //积分商品价格
+        $('#goods_p').text(round(((data.result.goods_price-data.result.integral_money) / data.result.total_num),2)+'+'+data.result.pay_points / data.result.total_num); //积分商品价格
     }
     //设置自提时间
     function initShopTime() {
