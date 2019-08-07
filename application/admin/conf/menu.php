@@ -198,10 +198,10 @@ return array(
 					array('name' => '拼团管理','act'=>'index', 'op'=>'Team'),
 					// array('name' => '搭配购管理','act'=>'index', 'op'=>'Combination'),
 			)),
-			// array('name' => '优惠积分','child' => array(
+			 array('name' => '优惠积分','child' => array(
 			// 		array('name' => '优惠券','act'=>'index', 'op'=>'Coupon'),
-			// 		array('name' => '积分兑换','act'=>'index', 'op'=>'IntegralMall'),
-			// )),
+			 		array('name' => '积分兑换','act'=>'index', 'op'=>'IntegralMall'),
+			 )),
 	)),
 		
 	'distribution'=>array('name'=>'分销','child'=>array(

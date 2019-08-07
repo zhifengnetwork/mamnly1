@@ -976,7 +976,7 @@
     //刷新价格
     function refresh_price(data) {
         $("#balance").text(data.result.user_money);// 余额
-        $("#pointsFee").text(Math.round(data.result.integral_money,2));// 积分支付
+        $("#pointsFee").text(data.result.integral_money);// 积分支付
         $("#postFee").text(data.result.shipping_price); // 物流费
         $("#payables").text(data.result.order_amount);// 应付
         $("#pay_points").val(data.result.pay_points);// 积分支付

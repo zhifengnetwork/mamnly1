@@ -438,7 +438,7 @@ class PlaceOrder
         $OrderPromAmount = $this->pay->getOrderPromAmount();
         $payList = $this->pay->getPayList();
         $user = $this->pay->getUser();
-        $goods = $payList[0]['goods'];
+        $goods = is_object($payList[0])?$payList[0]:$payList[0]['goods'];
         if ($goods->sign_free_receive == 1||$goods->sign_free_receive == 3) {
             $arr = [
                 'user_id'=>$user['user_id'],
