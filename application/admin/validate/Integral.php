@@ -20,6 +20,7 @@ class Integral extends Validate
             || ($field_name=='point_min_limit' && $data['is_point_min_limit'])
             || ($field_name=='point_rate' && $data['is_point_rate'])
             || ($field_name=='point_use_percent' && $data['is_point_use_percent'])
+            || ($field_name=='point_money_rate' && $data['point_money_rate'])
         ){
             return $this->checkHandle($value,$field_name);
         }else{
@@ -41,7 +42,8 @@ class Integral extends Validate
             'invitee_integral'=>'请输入注册成功被邀请人可获得的积分！',
             'point_min_limit'=>'请输入小于的积分数！',
             'point_rate'=>'请选择积分兑换现金比列！',
-            'point_use_percent'=>'请输入单笔订单最多可抵扣的百分比！'
+            'point_use_percent'=>'请输入单笔订单最多可抵扣的百分比！',
+            'point_money_rate'=>'请选择提取积分的比例！'
         ];
         if ($value == '') {
             return $fieldNameArr["".$field_name.""];
@@ -49,8 +51,10 @@ class Integral extends Validate
             if (!is_int($value+0) || $value <= 0) {
                 if($field_name == 'point_use_percent'){
                     return '请输入正确的百分比格式1！';
-                }else{
+                }elseif($field_name != 'point_money_rate'){
                     return '请输入正确的积分格式！';
+                }else{
+                    return true;
                 }
             }else{
                 if($field_name == 'point_use_percent' && $value>100){

@@ -82,6 +82,15 @@ class IntegralMall extends Base
             $list[] = ['name'=>'is_point_use_percent','value'=>$param['is_point_use_percent'],'inc_type'=>"{$param['inc_type']}"];
             $list[] = ['name'=>'point_use_percent','value'=>$param['point_use_percent'],'inc_type'=>"{$param['inc_type']}"];
         }
+
+        $list[] = ['name'=>'is_integral_money','value'=>$param['is_integral_money'],'inc_type'=>"{$param['inc_type']}"];
+        $pointMoneyRate =  $integralValidate->checkIntegral($param['point_money_rate'],'',$param,'point_money_rate');
+        if($pointMoneyRate !== true){
+            $this->ajaxReturn(['status' => 0, 'msg' => $pointMoneyRate, 'result' => '']);
+        }else {
+            $list[] = ['name' => 'point_money_rate', 'value' => $param['point_money_rate'], 'inc_type' => "{$param['inc_type']}"];
+        }
+
         foreach($list as $key=>$val){
             $confInfo = Db::name("config")->where("name='{$val['name']}' and inc_type='{$param['inc_type']}'")->find();
             if(!empty($confInfo)){

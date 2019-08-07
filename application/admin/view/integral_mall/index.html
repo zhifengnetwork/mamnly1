@@ -51,7 +51,7 @@
                     &nbsp;日，凌晨0：00，清零之前的所有积分
                 </dd>
             </dl>
-            <dl class="row">
+            <dl class="row" style="display: none">
                 <dd class="opt">
                     积分赠送规则
                 </dd>
@@ -76,7 +76,7 @@
                 <dd class="opt">
                     <input type="radio" name="is_use_integral" value="1" <if condition="($confArr['is_use_integral'] eq 1) or ($confArr['is_use_integral'] eq '')">checked</if>>     可以使用积分
                 </dd>
-                <dd class="opt son">
+                <dd class="opt son" style="display: none">
                     <input type="checkbox" name="is_point_min_limit" value="1" <if condition="$confArr['is_point_min_limit'] eq 1">checked</if>>     积分小于 <input type="text" name="point_min_limit" size="8" value="{$confArr['point_min_limit']}"> 时 ，不能使用积分
                 </dd>
                 <dd class="opt son">
@@ -101,6 +101,29 @@
                     <span style="color: #e30000">   &nbsp;&nbsp;（注：范围在1-100之间，没勾选则可100%抵扣）</span>
                 </dd>
                 <span class="err" id="err_deductible"></span>
+            </dl>
+            <dl class="row">
+                <dd class="opt">
+                    <span style="color: #ff0000;">*</span>   积分提取规则
+                </dd>
+                <dd class="opt">
+                    <input type="radio" name="is_integral_money" value="0" <if condition="$confArr['is_integral_money'] eq 0">checked</if> >     不能使用积分提取
+                </dd>
+                <dd class="opt">
+                    <input type="radio" name="is_integral_money" value="1" <if condition="($confArr['is_integral_money'] eq 1) or ($confArr['is_integral_money'] eq '')">checked</if>>    可以使用积分提取
+                </dd>
+                <dd class="opt son">
+                    提取时，1积分换算成
+                    <select name="point_money_rate">
+                        <option value="">请选择</option>
+                        <option value="0.01" <if condition="$confArr.point_money_rate eq 0.01">selected</if> >0.01</option>
+                        <option value="0.1" <if condition="$confArr.point_money_rate eq 0.1">selected</if> >0.1</option>
+                        <option value="1" <if condition="($confArr.point_money_rate eq 1) or ($confArr.point_money_rate eq '')">selected</if> >1</option>
+                        <option value="10" <if condition="$confArr.point_money_rate eq 10">selected</if>>10</option>
+                        <option value="100" <if condition="$confArr.point_money_rate eq 100">selected</if>>100</option>
+                    </select>
+                    元余额
+                </dd>
             </dl>
             <div class="bot"><a href="JavaScript:void(0);" onclick="verifyForm()" class="ncap-btn-big ncap-btn-green" >确认提交</a></div>
         </div>

@@ -204,6 +204,8 @@ class User extends MobileBase
         $this->assign('account_log', $account_log);
         $this->assign('page', $data['show']);
 
+        $config = tpCache('integral');
+        $this->assign('wd_points', isset($config['is_integral_money'])?$config['is_integral_money']:1);
         // if ($_GET['is_ajax']) {
         //     return $this->fetch('ajax_account_list');
         //     exit;
@@ -1214,6 +1216,46 @@ class User extends MobileBase
         if ($_GET['is_ajax']) {
              return $this->fetch('ajax_points');
         }
+        return $this->fetch();
+    }
+
+    public function points_money()
+    {
+        C('TOKEN_ON', true);
+        $config = tpCache('integral');
+        if (isset($config['is_integral_money']) && $config['is_integral_money'] != 1) {
+            $this->error('积分提取功能已关闭,请联系商家');
+        }
+        if (IS_POST) {
+            $integral = I('post.integral/d');
+            $pwd = I('post.paypwd');
+            if ($integral <= 0) {
+                $this->ajaxReturn(['status' => 0, 'msg' => '提取积分必须大于0']);
+            }
+            if ($integral > $this->user['pay_points']) {
+                $this->ajaxReturn(['status' => 0, 'msg' => "本次提取积分不足"]);
+            }
+            if (encrypt($pwd) != $this->user['paypwd']) {
+                $this->ajaxReturn(['status' => 0, 'msg' => '支付密码错误']);
+            }
+            $rate = isset($config['point_money_rate']) ? $config['point_money_rate'] : 1;
+            $money = bcadd($integral * $rate, 0, 2);
+            if (M('withdrawal_integral')->add([
+                'user_id' => $this->user['user_id'], 'integral' => $integral, 'money' => $money
+            ])) {
+                //扣积分
+                $res = accountLog($this->user['user_id'], 0, -$integral, '提取积分');
+                //加钱
+                $res && $res = accountLog($this->user['user_id'], +$money, 0, '提取积分到账');
+                if ($res) {
+                    $this->ajaxReturn(['status' => 1, 'msg' => "提交成功", 'url' => U('User/wallet')]);
+                } else {
+                    $this->ajaxReturn(['status' => 0, 'msg' => '提交失败,联系客服!']);
+                }
+            }
+        }
+        $this->assign('integral_config', $config);
+        $this->assign('points', $this->user['pay_points']);
         return $this->fetch();
     }
     

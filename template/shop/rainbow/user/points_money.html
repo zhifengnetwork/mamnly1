@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="__STATIC__/css/withdraw-style.css"/>
+		<link rel="stylesheet" type="text/css" href="__STATIC__/css/withdraw-cash.css"/>
+		<script src="__STATIC__/js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="__STATIC__/js/style.js" type="text/javascript" charset="utf-8"></script>
+		<script src="__STATIC__/js/mobile-util.js" type="text/javascript" charset="utf-8"></script>
+	    <script src="__STATIC__/js/layer.js"  type="text/javascript" ></script><!-- 弹窗js 参考文档 http://layer.layui.com/-->
+	    <script src="__PUBLIC__/js/global.js"></script>
+	    <script src="__STATIC__/js/swipeSlide.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="withdraw-cash-view">
+			<form method="post" id="returnform">
+			<div class="withdraw-header-wrap withdraw-bg-color">
+				<div class="withdraw-heade">
+					<div class="withdraw-heade-cont">
+			 			<a class="withdraw-left-icon" href="javascript:history.back(-1)">
+			 			</a>
+			 			<h5>积分提取</h5>
+					</div>
+		 		</div>
+				<div class="withdraw-heade-money">
+					 <div class="heade-money p">
+					 	<span class="fl heade-money-span">￥</span>
+					 	<p class="fl heade-money-name">可提取积分</p>
+					 </div>
+					 <div class="heade-money2 p">
+					 	<p class="fl heade-money2-name">{$points}</p>
+					 </div>
+				</div>				
+			</div>
+
+			<div class="withdraw-cont-wrap withdraw-border16">
+				<p class="withdraw-cont-p1">提现积分&nbsp;&nbsp;</p>
+				<div class="withdraw-moneys-one p">
+					<div class="withdraw-moneys-cont fl">
+						<input type="text" name="integral" id="integral" value="" />
+						<input type="hidden" name="points" value="{$points}" id="points">
+					</div>
+				</div>
+				<div class="withdraw-moneys-two p">
+					<div class="withdraw-moneys-cont fl">
+					<span>到账余额:<i id="money">0</i></span>
+				</div>
+					<div class="withdraw-moneys-btn fr">
+						<input id="all_cash" type="button" value="全部提取" />
+					</div>
+				</div>
+			</div>
+			<div class="withdraw-cont-wrap withdraw-border16">
+				<ul class="withdraw-cont-ul">
+					<li class="p">
+						<span class="withdraw-cont-ul-name fl">支付密码：</span>
+						<div class="withdraw-cont-input fl">
+							<input name="paypwd" id="paypwd" type="password" placeholder="请填写支付密码"/>
+							<label></label>
+						</div>
+					</li>
+					<div class="withdraw-cont-pwd p">
+						<div class="fr withdraw-pwd-btn"><a href="{:U('User/paypwd')}"><input type="button" value="前往设置或修改交易密码" /></a></div>
+						<span class="withdraw-pwd-span fr"></span> 
+					</div>
+					<div class="withdraw-cont-btn cont-btn-two" style="margin-bottom: 0;">
+						<input type="button" onclick="checkSubmit()" value="提交" />
+						<label></label>
+					</div>
+				</ul>
+			</div>
+			<div class="withdraw-foot-wrap">
+				<div <if condition="$integral_config['is_integral_money'] neq '1'">style="display: none;"</if>>
+				<p class="withdraw-foot-p">温馨提示：</p>
+				<dl class="withdraw-foot-dl">
+					<dd>每一积分可转化为{$integral_config['point_money_rate']}元余额</dd>
+				</dl>
+				</div>
+			</div>
+		 	</form>
+		</div>
+		<div class="withdraw-bg-opacity" style="display: none;"></div>
+		<div class="withdraw-pop p " style="display: none;">
+			<div class="withdraw-pop-cheng">
+				<i class="withdraw-pop-icon"></i>
+			</div>
+			<p class="withdraw-pop-p">提现申请已提交</p>
+			<span class="withdraw-pop-span">
+				提现审核一般3 - 5个工作日到账，提现进度可在提现记录中查看（双休日及法定节假日顺延）
+			</span>
+			<div class="withdraw-pop-btn" >
+				<a class="withdraw-pop-a">
+					我知道了
+				</a>
+			</div>
+		</div>
+		 	</form>
+		</div>
+	</body>
+
+ <script type="text/javascript">
+	var ratio = '{$integral_config.point_money_rate}',
+			points = parseInt('{$points}');
+	//全部提取
+	$('#all_cash').click(function(){
+		$('#integral').val(points);
+		get_money(points);
+	})
+
+
+	$('input#integral').keyup(function(){
+		var c=$(this),val = c.val();
+		if (/[^/d]/g.test(val)) {
+			var integral = parseInt(val.replace(/[^\d]/g, ''));
+			integral = integral > 0 ? (integral > points ? points : integral) : '';
+			$(this).val(integral);
+			get_money(integral);
+		}
+	})
+
+	// 获取手续费
+	function get_money(m) {
+		var r='';
+		if (m > 0){
+			r = parseFloat((m*ratio).toFixed(2));
+		}
+		$('#money').html(r);
+		$("#user_money").val(r);
+	}
+
+	function checkSubmit(){
+        var integral = parseInt($.trim($('#integral').val()));
+		var paypwd= $.trim($('#paypwd').val());
+
+        if(integral<0){
+            layer.open({content:'请填写提现积分',time:2});
+            return false;
+        }
+        if(integral > points){
+            layer.open({content:'提现积分大于您的积分',time:2});
+            return false;
+        }
+        if(paypwd == ''){
+            layer.open({content:'请输入支付密码',time:2});
+            return false;
+        }
+        $.ajax({
+            type: "post",
+            url :"{:U('Shop/User/points_money')}",
+            dataType:'json',
+            data:$('#returnform').serialize(),
+            success: function(data)
+            {
+                if(data.status == 1){
+                    layer.open({content: data.msg,time:2,end:function () {
+                        window.location.href=data.url;
+                    }});
+                }else{
+                	layer.open({content:data.msg,time:2});
+                }
+            }
+        });
+    }
+
+	
+	//提现成功弹窗
+	$("#save_data").click(function  () {
+		//$(".withdraw-bg-opacity, .withdraw-pop").css("display","block");
+	})
+	$(".withdraw-pop-btn .withdraw-pop-a").click(function  () {
+		$(".withdraw-bg-opacity, .withdraw-pop").css("display","none")
+	})
+
+
+
+ </script>
+</html>

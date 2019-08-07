@@ -53,6 +53,12 @@
                     积分明细
                     <a href="{:U('Shop/User/points_list')}"><img src="__STATIC__/images/wallet/wtf_Back2.png" /></a>
                 </p>
+                <if condition="$wd_points eq 1">
+                <p class="p1 p3"data-address="{$wd_points}">
+                    提取积分
+                    <a href="{:U('Shop/User/points_money')}"><img src="__STATIC__/images/wallet/wtf_Back2.png" /></a>
+                </p>
+                </if>
                 <!-- <p class="p1 p2">
                     我的银行卡
                     <a href="#"><span>未添加</span><img src="__STATIC__/images/wallet/wtf_Back2.png" /></a>
