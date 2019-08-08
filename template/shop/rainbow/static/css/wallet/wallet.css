@@ -22,7 +22,7 @@ body{max-width:7.5rem;min-width:3.2rem;width:7.5rem;margin:0 auto;background:#f5
 .wtf_jfquan .wtf_yhq{background:url(/template/shop/rainbow/static/images/waller/wtf_quan.png)no-repeat;float:right;background-size: contain;}
 .wtf_jf span ,.wtf_yhq span{color:#0f0f0f;letter-spacing:0.01rem;margin-left:0.05rem;}
 .wtf_list{color:#333;}
-.wtf_list .p1{width:6.86rem;height:0.9rem;background:#fff;font-size:0.28rem;line-height:0.9rem;text-indent:0.4rem;margin-top:0.3rem;border-radius:0.07rem;}
+.wtf_list .p1{position: relative;width:6.86rem;height:0.9rem;background:#fff;font-size:0.28rem;line-height:0.9rem;text-indent:0.4rem;margin-top:0.3rem;border-radius:0.07rem;}
 .wtf_list .p1 a{float:right;}
 .wtf_list .p1 a img{margin-right:0.4rem;margin-top:0.35rem;float:left;width:0.12rem;height:0.2rem;}
 .wtf_list .p1 a span {color:#ff5600;font-size:0.24rem;line-height:0.9rem;display:inline-block;float:left;margin-right:0.16rem;}
