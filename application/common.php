@@ -2212,11 +2212,14 @@ function confirm_order($id,$user_id = 0)
         $levelGetNum = M('UserLevel')->where('level', $user['level'])->value('receive_num');
         $date = date('Y-m-d', time());
         if ($type == 1 || $type == 3) {// 必须签到
-            if (!M('sign_log')->where(['user_id' => $user['user_id']])->where(['sign_day' => ['like', $date . '%']])->find()) {
-                return ['status' => -2, 'msg' => '今日未签到'];
-            }
             if ($type == 1 && $user['level'] < 3) {
                 return ['status' => 0, 'msg' => '合伙人以上级别才可领取'];
+            }
+            if (1 < $num) {
+                return ['status' => 0, 'msg' => '超过领取数量，目前只可领取1件！'];
+            }
+            if (!M('sign_log')->where(['user_id' => $user['user_id']])->where(['sign_day' => ['like', $date . '%']])->find()) {
+                return ['status' => -2, 'msg' => '今日未签到'];
             }
             // 判断今日是否已领取
             if (Db::name('sign_receive_log')->where([
@@ -2226,9 +2229,6 @@ function confirm_order($id,$user_id = 0)
                 'type' => $type
             ])->find()) {
                 return ['status' => 0, 'msg' => '今日已领取过'];
-            }
-            if (1 < $num) {
-                return ['status' => 0, 'msg' => '超过领取数量，目前只可领取1件！'];
             }
 
         }

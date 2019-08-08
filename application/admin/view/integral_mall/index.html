@@ -27,7 +27,7 @@
     <form method="post" enctype="multipart/form-data" id="handleposition" name="form1" action="{:U('IntegralMall/handle')}">
         <input type="hidden" name="inc_type" value="integral">
         <div class="ncap-form-default">
-            <dl class="row">
+            <dl class="row" style="display: none">
                 <dd class="opt">
                     <span style="color: #ff0000;">*</span>   积分过期设置
                 </dd>
@@ -96,7 +96,7 @@
                     积分抵扣1元
                     <span style="color: #e30000">   &nbsp;&nbsp;（注：此项若不勾选，则不能使用积分）</span>
                 </dd>
-                <dd class="opt son">
+                <dd class="opt son" style="display: none">
                     <input type="checkbox" name="is_point_use_percent" value="1" <if condition="$confArr.is_point_use_percent eq 1">checked</if> >     每笔消费，抵扣比例最多不能超过该笔订单应付金额的 <input type="text" name="point_use_percent" size="8" value="{$confArr['point_use_percent']}"> %
                     <span style="color: #e30000">   &nbsp;&nbsp;（注：范围在1-100之间，没勾选则可100%抵扣）</span>
                 </dd>

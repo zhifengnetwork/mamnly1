@@ -204,55 +204,55 @@ class Sign extends ApiBase
             //代理类型
             //更改成是否  有资格
             // is_agent
-            if ($user['super_nsign'] == 1) {
-                //查询签到记录看已经连续签到是次数是否达到了设置的值
-                $agent_continue_sign_num = $this->goods_continue_sign($user_id, 'sign_agent');
-                if ($agent_continue_sign_num >= $sign_agent_days) {
-
-                    //使得user表中代理领礼物次数+1
-                    $agent_free_num = $user_model->where(['user_id' => $user_id])->value('agent_free_num');
-                   
-                    $agent_free_num = (int) $agent_free_num + 1;
-                    $user_model->where(['user_id' => $user_id])->update(['agent_free_num' => $agent_free_num]);
-
-                    // //变更这几次的签到记录中的标志值
-                    M('sign_log')->where(['user_id' => $user_id])->order('sign_day desc')->limit($sign_agent_days)->update(['sign_agent' => 1]);
-
-                    // 写日志
-                    $log = array(
-                        'user_id' => $user_id,
-                        'type' => 'AGENT'
-                    );
-                    M('log_receive_sign_free')->add($log);
-                }
-            }
-
-            //分销员类型
-            if ($user['is_distribut'] == 1) {
-                //查询签到记录看已经连续签到是次数是否达到了设置的值
-                $distribut_continue_sign_num = $this->goods_continue_sign($user_id, 'sign_distribut');
-               
-                if ($distribut_continue_sign_num >= $sign_distribut_days) {
-                    //使得user表中代理领礼物次数+1
-                    //M('user')->where(['user_id'=>$user_id])->save(['distribut_free_num'=>'distribut_free_num+1']);
-
-                    $distribut_free_num = M('users')->where(['user_id' => $user_id])->value('distribut_free_num');
-
-                    $distribut_free_num = (int) $distribut_free_num + 1;
-
-                    $user_model->where(['user_id' => $user_id])->save(['distribut_free_num' => $distribut_free_num]);
-
-                    // //变更这几次的签到记录中的标志值
-                    M('sign_log')->where(['user_id' => $user_id])->order('sign_day desc')->limit($sign_distribut_days)->save(['sign_distribut' => 1]);
-
-                    // 写日志
-                    $log = array(
-                        'user_id' => $user_id,
-                        'type' => 'DISTRIBUT'
-                    );
-                    M('log_receive_sign_free')->add($log);
-                }
-            }
+//            if ($user['super_nsign'] == 1) {
+//                //查询签到记录看已经连续签到是次数是否达到了设置的值
+//                $agent_continue_sign_num = $this->goods_continue_sign($user_id, 'sign_agent');
+//                if ($agent_continue_sign_num >= $sign_agent_days) {
+//
+//                    //使得user表中代理领礼物次数+1
+//                    $agent_free_num = $user_model->where(['user_id' => $user_id])->value('agent_free_num');
+//
+//                    $agent_free_num = (int) $agent_free_num + 1;
+//                    $user_model->where(['user_id' => $user_id])->update(['agent_free_num' => $agent_free_num]);
+//
+//                    // //变更这几次的签到记录中的标志值
+//                    M('sign_log')->where(['user_id' => $user_id])->order('sign_day desc')->limit($sign_agent_days)->update(['sign_agent' => 1]);
+//
+//                    // 写日志
+//                    $log = array(
+//                        'user_id' => $user_id,
+//                        'type' => 'AGENT'
+//                    );
+//                    M('log_receive_sign_free')->add($log);
+//                }
+//            }
+//
+//            //分销员类型
+//            if ($user['is_distribut'] == 1) {
+//                //查询签到记录看已经连续签到是次数是否达到了设置的值
+//                $distribut_continue_sign_num = $this->goods_continue_sign($user_id, 'sign_distribut');
+//
+//                if ($distribut_continue_sign_num >= $sign_distribut_days) {
+//                    //使得user表中代理领礼物次数+1
+//                    //M('user')->where(['user_id'=>$user_id])->save(['distribut_free_num'=>'distribut_free_num+1']);
+//
+//                    $distribut_free_num = M('users')->where(['user_id' => $user_id])->value('distribut_free_num');
+//
+//                    $distribut_free_num = (int) $distribut_free_num + 1;
+//
+//                    $user_model->where(['user_id' => $user_id])->save(['distribut_free_num' => $distribut_free_num]);
+//
+//                    // //变更这几次的签到记录中的标志值
+//                    M('sign_log')->where(['user_id' => $user_id])->order('sign_day desc')->limit($sign_distribut_days)->save(['sign_distribut' => 1]);
+//
+//                    // 写日志
+//                    $log = array(
+//                        'user_id' => $user_id,
+//                        'type' => 'DISTRIBUT'
+//                    );
+//                    M('log_receive_sign_free')->add($log);
+//                }
+//            }
 
             // 提交事务
             Db::commit();    
