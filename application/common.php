@@ -1419,10 +1419,13 @@ function update_pay_status($order_sn,$ext=array())
         if ($userinfo['openid']) {
             $goods = Db::name('OrderGoods')->where(['order_id'=>$order['order_id']])->select();
                 $text = '';
+                $give_integral=$leader_integral = 0;
                 foreach ($goods as $key => $value) {
                     $text .= $value['goods_name'].'(规格：'.$value['spec_key_name'].',数量：'.$value['goods_num'].',价格：'.$value['final_price'].');';
+                    $give_integral += $value['give_integral']*$value['goods_num'];
+                    $leader_integral += $value['leader_integral']*$value['goods_num'];
                 }
-            $wx_content = "订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商户：丝蒂芬妮娅\n商品：{$text}\n金额：{$order['total_amount']}\n\n【丝蒂芬妮娅】欢迎您的再次购物！";
+            $wx_content = "订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商户：丝蒂芬妮娅\n商品：{$text}\n金额：{$order['total_amount']}\n您获得{$give_integral}积分\n\n【丝蒂芬妮娅】欢迎您的再次购物！";
             $wechat = new \app\common\logic\wechat\WechatUtil();
             $wechat->sendMsg($userinfo['openid'], 'text', $wx_content);
 
@@ -1430,7 +1433,7 @@ function update_pay_status($order_sn,$ext=array())
             //$first_leader_openid = Db::name('users')->where(['user_id' => $userinfo['first_leader']])->value('openid');
             $first_leader_openid = Db::name('users')->field('openid,nickname,user_id')->where(['user_id' => $userinfo['first_leader']])->find();
             if($first_leader_openid){
-                $wx_first_leader_content = "你的直属{$userinfo['nickname']}[ID:{$userinfo['user_id']}]订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商品：{$text}\n金额：{$order['total_amount']}";
+                $wx_first_leader_content = "你的直属{$userinfo['nickname']}[ID:{$userinfo['user_id']}]订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商品：{$text}\n金额：{$order['total_amount']}\n您获得{$leader_integral}积分\n";
                 $wechat = new \app\common\logic\wechat\WechatUtil();
                 $wechat->sendMsg($first_leader_openid['openid'], 'text', $wx_first_leader_content);
             }
