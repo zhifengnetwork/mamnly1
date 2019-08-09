@@ -1390,6 +1390,17 @@ function update_pay_status($order_sn,$ext=array())
         change_role($order['order_id']);
         fanli($order['order_id']);
 
+        // 赠送用户积分
+        $points = M('order_goods')->where("order_id", $order['order_id'])->sum("give_integral * goods_num");
+        $points && accountLog($order['user_id'], 0, $points, "下单赠送积分", 0, $order['order_id'], $order['order_sn']);
+
+        // 赠送用户上级积分
+        $integral = M('order_goods')->where(['order_id' => $order['order_id']])->value('leader_integral');
+        $first_leader = M('users')->where(['user_id' => $order['user_id']])->value('first_leader');
+        if ($integral> 0 && $first_leader > 0) {
+            accountLog($first_leader, 0,+$integral, '直属下单赠送积分', 0,$order['order_id'] ,$order['order_sn']);
+        }
+
         //奖金池
         // $BonusPoolLogic = new BonusPoolLogic();
         // $BonusPoolLogic->is_receive($order);
@@ -1442,8 +1453,6 @@ function update_pay_status($order_sn,$ext=array())
         $wechat->sendTemplateMsgOnPaySuccess($order);
     }
 }
-
-
 
 /**
  * 修改某个人的分销、代理
@@ -1532,17 +1541,6 @@ function confirm_order($id,$user_id = 0)
     if (!$row)
         return array('status' => -3, 'msg' => '操作失败');
 
-    //免费领取订单，根据商品赠送用户或上级积分
-    $order_goods = M('order_goods')->where(['order_id' => $id])->find();
-    $user = Users::get($order['user_id']);
-    ($leader = $user['first_leader'] > 0 ? Users::get($user['first_leader']) : null);
-    if ($order_goods && ($order_goods['sign_free_receive'] == 1 || $order_goods['sign_free_receive'] == 3)) {
-        ($leader = $user['first_leader'] > 0 ? Users::get($user['first_leader']) : null);
-        if ($order_goods['leader_integral'] > 0 && ($leader = $user['first_leader'] > 0 ? Users::get($user['first_leader']) : null)) {
-            //上级获得积分
-            accountLog($user['first_leader'], 0,+$order_goods['leader_integral'], '直属签到免费领取', 0,$order['order_id'] ,$order['order_sn']);
-        }
-    }
 
         // 商品待评价提醒
         $order_goods = M('order_goods')->field('goods_id,goods_name,rec_id')->where(["order_id" => $id])->find();
@@ -1638,8 +1636,9 @@ function confirm_order($id,$user_id = 0)
             }
             break;
         }
-        $points = M('order_goods')->where("order_id", $order['order_id'])->sum("give_integral * goods_num");
-        $points && accountLog($order['user_id'], 0, $points, "下单赠送积分", 0, $order['order_id'], $order['order_sn']);
+        //2019.8.8-zxl-改动，下单时就返积分
+//        $points = M('order_goods')->where("order_id", $order['order_id'])->sum("give_integral * goods_num");
+//        $points && accountLog($order['user_id'], 0, $points, "下单赠送积分", 0, $order['order_id'], $order['order_sn']);
         //商城内每消费1元，赠送相应积分
         /*$isConsumeIntegral = tpCache("integral.is_consume_integral");
         $consumeIntegral = tpCache("integral.consume_integral");
