@@ -35,17 +35,14 @@
     <div class="banner ban1 detailban">
         <div class="mslide" id="slideTpshop">
             <ul>
-                <!--
+                <if condition="$goods.video">
                 <li>
-                <video width="360" height="375" controls="" id="videoArea"> 
-
-                   <source src="http://www.datangintel.com/Uploads/article/original_img/1495425161.jpg" type="video/ogg">  
- 
-                   <source src="http://www.datangintel.com/Uploads/download/file_material/1493967861f2a99d2b4bc072d2.mp4" type="video/mp4">  
-
-                   <embed src="http://www.datangintel.com/Uploads/download/file_material/1493967861f2a99d2b4bc072d2.mp4" type="application/x-shockwave-flash" width="1024" height="798" allowscriptaccess="always" allowfullscreen="true">   
+                <video width="360" height="375" controls="" id="videoArea">
+                   <source src="{$goods[video]}" type="video/mp4">
+                   <embed src="{$goods[video]}" type="application/x-shockwave-flash" width="1024" height="798" allowscriptaccess="always" allowfullscreen="true">
                 </video>
-                </li>-->
+                </li>
+                </if>
                 <!--图片-s-->
                 <foreach name="goods['goods_images']" item="pic">
                     <li><a href="javascript:void(0)"><img src="{$pic[image_url]}" alt=""></a></li>
