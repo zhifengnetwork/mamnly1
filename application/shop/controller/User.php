@@ -2174,6 +2174,24 @@ class User extends MobileBase
     }
 
     /**
+     * 我的二维码
+     */
+    public function qrcode(){
+        
+        $user_id = session('user.user_id');
+        $logic = new ShareLogic();
+        $ticket = $logic->get_ticket($user_id);
+        if( strlen($ticket) < 3){
+            $this->error("ticket不能为空");
+            exit;
+        }
+        $pic= "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=".$ticket;
+       
+        $this->assign('pic',$pic);
+        return $this->fetch();
+    }
+
+    /**
      * 新的分享
      */
     public function fenxiang()
