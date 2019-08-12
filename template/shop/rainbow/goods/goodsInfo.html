@@ -585,6 +585,7 @@
 <include file="public/wx_share"/>
 <!--优惠卷弹窗打开和关闭-->
 <script type="text/javascript">
+
     // var video= document.getElementById('videoArea');
     // var canvas = document.createElement('canvas');
     // var img = document.getElementById('videoImg');
@@ -616,6 +617,20 @@
     
     initialize();
 
+
+    var video = document.getElementById("video");
+
+    var captureImage = function() {
+        var canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth * 0.8;
+        canvas.height = video.videoHeight * 0.8;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        var img = document.createElement("img");
+        img.src = canvas.toDataURL("image/png");
+    };
+
+    video.addEventListener('loadeddata',captureImage);
 
     $(document).on("click","#zYHJ-POP",function  () {
         $("#recive_aready_pop").show();
