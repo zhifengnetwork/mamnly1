@@ -321,6 +321,28 @@
             </dl>
             <dl class="row">
                 <dt class="tit">
+                    <label>视频封面</label>
+                </dt>
+                <dd class="opt">
+                    <div class="input-file-show">
+                        <span class="show">
+                                <a id="img_v" target="_blank" class="nyroModal" rel="gal" href="{$goods.video_img}">
+                                    <i id="img_f" class="fa fa-picture-o"
+                                       onMouseOver="layer.tips('<img src={$goods.video_img}>',this,{tips: [1, '#fff']});" onMouseOut="layer.closeAll();"></i>
+                                </a>
+                        </span>
+                        <span class="type-file-box">
+                            <input type="text" id="imagetext1" name="video_img" value="{$goods.video_img}" class="type-file-text">
+                            <input type="button" name="button" id="button2" value="选择上传..." class="type-file-button">
+                            <input class="type-file-file" onClick="GetUploadify(1,'video_img','goods','video_img_call_back')" size="30"
+                                   title="点击前方预览图可查看大图，点击按钮选择文件并提交表单后上传生效">
+                        </span>
+                    </div>
+                    <span class="err"></span>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
                     <label>视频上传</label>
                 </dt>
                 <dd class="opt">
@@ -1062,6 +1084,13 @@
         $("#imagetext").val(fileurl_tmp);
         $("#img_a").attr('href', fileurl_tmp);
         $("#img_i").attr('onmouseover', "layer.tips('<img src=" + fileurl_tmp + ">',this,{tips: [1, '#fff']});");
+    }
+
+    //上传视频封面回调事件
+    function video_img_call_back(fileurl_tmp) {
+        $("#imagetext1").val(fileurl_tmp);
+        $("#img_v").attr('href', fileurl_tmp);
+        $("#img_f").attr('onmouseover', "layer.tips('<img src=" + fileurl_tmp + ">',this,{tips: [1, '#fff']});");
     }
 
     //上传视频回调事件

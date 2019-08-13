@@ -38,10 +38,10 @@
                 <if condition="$goods.video">
                 <li>
                 <video style="width:100%;height:16rem;" controls="controls" id="videoArea">
+                    <source src="{$goods[video_img]}" type="video/ogg">
                     <source src="{$goods[video]}" type="video/mp4">
                    <embed src="{$goods[video]}" type="application/x-shockwave-flash" width="1024" height="798" allowscriptaccess="always" allowfullscreen="true">
                 </video>
-                <div id="output"></div>
                 </li>
                 </if>
                 <!--图片-s-->
@@ -584,28 +584,6 @@
 <include file="public/wx_share"/>
 <!--优惠卷弹窗打开和关闭-->
 <script type="text/javascript">
-
-    var video, output;
-    var scale = 0.8;
-    var initialize = function() {
-        output = document.getElementById("output");
-        video = document.getElementById("videoArea");
-        video.addEventListener('loadeddata',captureImage);
-    };
-    
-    var captureImage = function() {
-        var canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth * scale;
-        canvas.height = video.videoHeight * scale;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        var img = document.createElement("img");
-        img.src = canvas.toDataURL("image/png");
-        output.appendChild(img);
-    };
-    
-    initialize();
-
     $(document).on("click","#zYHJ-POP",function  () {
         $("#recive_aready_pop").show();
     })
