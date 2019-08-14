@@ -37,11 +37,138 @@
             <ul>
                 <if condition="$goods.video">
                 <li>
-                <video style="width:100%;height:16rem;" controls="controls" id="videoArea">
-                    <source src="{$goods[video_img]}" type="video/ogg">
-                    <source src="{$goods[video]}" type="video/mp4">
-                   <embed src="{$goods[video]}" type="application/x-shockwave-flash" width="1024" height="798" allowscriptaccess="always" allowfullscreen="true">
-                </video>
+                    <style>
+                        /* 大播放按钮 */
+                        .prism-player .prism-big-play-btn {
+                            width: .67rem;
+                            height: .67rem;
+                            background: url(../images/home_zp/playBtn-big.png) no-repeat;
+                            background-size: 100%;
+                            position: absolute;
+                            left: 50%!important;
+                            top: 50%!important;
+                            z-index: 1000;
+                            transform: translate(-50%,-50%);
+                        }
+                        .prism-player .prism-big-play-btn .outter{
+                            display: none;
+                        }
+
+                        .bannerWrap .prism-player{
+                            border-radius: .3rem;
+                            overflow: hidden;
+                        }
+
+                        .bannerWrap .swiper-slide img{
+                            width: 100%;
+                            display: block;
+                            border-radius: .24rem;
+                        }
+                        .bannerWrap .playBtn{
+                            width: .67rem;
+                            height: .67rem;
+                            background: url(../images/home_zp/playBtn-big.png) no-repeat;
+                            background-size: 100%;
+                            position: absolute;
+                            left: 50%;
+                            top: 50%;
+                            z-index: 3;
+                            transform: translate(-50%,-50%);
+                        }
+
+                    </style>
+                    <div class="playWrap">
+                        <div class="prism-player" id="player"></div>
+                    </div>
+                    <link rel="stylesheet" href="//g.alicdn.com/de/prismplayer/2.4.0/skins/default/aliplayer-min.css" />
+                    <script type="text/javascript" charset="utf-8" src="https://g.alicdn.com/de/prismplayer/2.8.2/aliplayer-min.js"></script>
+                    <!--优惠卷弹窗打开和关闭-->
+                    <script type="text/javascript">
+                        var player = new Aliplayer({
+                                "id": "player",
+                                "source": "https://www.mamnly.com/public/upload/goods/2019/08-12/20190812/f6ebadb902b92a7ae91f6170e8974a51.mp4",//视频地址
+                                "width": "100%",
+                                "height": "16rem",
+                                "autoplay": true,
+                                "isLive": false,
+                                "rePlay": false,
+                                "playsinline": true,
+                                "preload": false,
+                                "cover": "{$goods['video_img']}",//视频封面
+                                "controlBarVisibility": "always",//控制面板的实现
+                                "videoWidth": "100%",
+                                "useH5Prism": true,
+                                "skinLayout": [
+                                    {
+                                        "name": "bigPlayButton"//大播放按钮
+                                    },
+                                    {
+                                        "name": "H5Loading",
+                                        "align": "cc"
+                                    },
+                                    {
+                                        "name": "errorDisplay",
+                                        "align": "tlabs",
+                                        "x": 0,
+                                        "y": 0
+                                    },
+                                    {
+                                        "name": "infoDisplay"
+                                    },
+                                    {
+                                        "name": "tooltip",
+                                        "align": "blabs",
+                                        "x": 0,
+                                        "y": 56
+                                    },
+                                    {
+                                        "name": "thumbnail"
+                                    },
+                                    {
+                                        "name": "controlBar",
+                                        "align": "blabs",
+                                        "x": 0,
+                                        "y": 0,
+                                        "children": [
+                                            {
+                                                "name": "progress",//进度条
+                                                "align": "blabs",
+                                                "x": 0,
+                                                "y": 44
+                                            },
+                                            {
+                                                "name": "playButton",//播放按钮
+                                                "align": "tl",
+                                                "x": 15,
+                                                "y": 12
+                                            },
+                                            {
+                                                "name": "timeDisplay",//进度时间
+                                                "align": "tl",
+                                                "x": 10,
+                                                "y": 7
+                                            },
+                                            {
+                                                "name": "fullScreenButton",//全屏
+                                                "align": "tr",
+                                                "x": 10,
+                                                "y": 12
+                                            },
+                                            {
+                                                "name": "volume",//声音
+                                                "align": "tr",
+                                                "x": 5,
+                                                "y": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }, function (player) {
+                                player._switchLevel = 0;
+                            }
+                        );
+
+                    </script>
                 </li>
                 </if>
                 <!--图片-s-->
