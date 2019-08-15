@@ -500,16 +500,44 @@
                 </dt>
                 <dd class="opt">
                     <input type="radio" name="sign_free_receive" value="0" <if condition="$goods['sign_free_receive'] eq 0">checked="checked"</if> ><label for="">不参与</label>
-                    <input type="radio" name="sign_free_receive" value="3" <if condition="$goods['sign_free_receive'] eq 3">checked="checked"</if>><label for="">签到领取</label>
-                    <input type="radio" name="sign_free_receive" value="1" <if condition="$goods['sign_free_receive'] eq 1">checked="checked"</if>><label for="">合伙人级别以上签到领取</label>
-
-                    <!--                    <input id="sign_free_receive" type="radio" name="sign_free_receive" value="2" <if condition="$goods['sign_free_receive'] eq 2">checked="checked"</if>><label for="">每天领取</label>-->
-
+                    <input type="radio" name="sign_free_receive" value="1" <if condition="$goods['sign_free_receive'] eq 1">checked="checked"</if>><label for="">签到免费领取</label>
                     <span class="err" id="err_sign_free_receive"></span>
                     <p class="notic"></p>
                 </dd>
             </dl>
-
+            <dl class="row sign_free">
+                <dt class="tit">
+                    <label>  </label>
+                </dt>
+                <dd class="opt">
+                    <table border="1">
+                        <tr>
+                            <th>Month</th>
+                            <th>每月领取数量上限</th>
+                            <th>每月领取次数</th>
+                            <th>每次领取数量最小值</th>
+                            <th>每次领取数量最大值</th>
+                        </tr>
+                        <foreach name="userLevel" item="vo" key="k" >
+                        <tr>
+                            <td>{$vo.level_name}</td>
+                            <td><input type="text" value="{$goods.sign_free_object.month_max[$vo.level]}" class="t_mane" name="month_max[{$vo.level}]"
+                                       onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+                                       onblur="checkInputNum(this.name,0,100,'',1);" /></td>
+                            <td><input type="text" value="{$goods.sign_free_object.month_times[$vo.level]}" class="t_mane" name="month_times[{$vo.level}]"
+                                       onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+                                       onblur="checkInputNum(this.name,0,100,'',1);" /></td>
+                            <td><input type="text" value="{$goods.sign_free_object.min_num[$vo.level]}" class="t_mane" name="min_num[{$vo.level}]"
+                                       onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+                                       onblur="checkInputNum(this.name,0,100,'',1);" /></td>
+                            <td><input type="text" value="{$goods.sign_free_object.max_num[$vo.level]}" class="t_mane" name="max_num[{$vo.level}]"
+                                       onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+                                       onblur="checkInputNum(this.name,0,100,'',1);" /></td>
+                        </tr>
+                        </foreach>
+                    </table>
+                </dd>
+            </dl>
             <!-- <dl class="row">
                 <dt class="tit">
                     <label>购买后得10天签到权限</label>
@@ -781,11 +809,18 @@
     $(function(){
 
         var id = $("input:hidden[name='goods_id']").val(),
-            cat_id = parseInt($('#cat_id option:selected') .val());
+            cat_id = parseInt($('#cat_id option:selected') .val()),
+            sign_free = parseInt($("input[name='sign_free_receive']:checked") .val());
         if(id!=''&&cat_id == {$level6_cid}){
             $('#level6_fanli_row').show();
         }else{
             $('#level6_fanli_row').hide();
+        }
+
+        if(id!=''&&sign_free == 1){
+            $('.sign_free').show();
+        }else{
+            $('.sign_free').hide();
         }
 
         // 商品模型切换时 ajax 调用  返回不同的属性输入框
@@ -914,6 +949,14 @@
             }else{
                 $('#level6_fanli_row').hide();
             }            
+        })
+
+        $(document).on("click",'input:radio[name="sign_free_receive"]',function(){
+            if(parseInt($(this).val()) == 1){
+                $('.sign_free').show();
+            }else{
+                $('.sign_free').hide();
+            }
         })
     })
 

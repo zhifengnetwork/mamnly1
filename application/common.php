@@ -2213,24 +2213,36 @@ function confirm_order($id,$user_id = 0)
 
         $levelGetNum = M('UserLevel')->where('level', $user['level'])->value('receive_num');
         $date = date('Y-m-d', time());
-        if ($type == 1 || $type == 3) {// 必须签到
-            if ($type == 1 && $user['level'] < 3) {
-                return ['status' => 0, 'msg' => '合伙人以上级别才可领取'];
-            }
-            if (1 < $num) {
-                return ['status' => 0, 'msg' => '超过领取数量，目前只可领取1件！'];
-            }
+        if ($type == 1) {// 必须签到
             if (!M('sign_log')->where(['user_id' => $user['user_id']])->where(['sign_day' => ['like', $date . '%']])->find()) {
                 return ['status' => -2, 'msg' => '今日未签到'];
             }
-            // 判断今日是否已领取
-            if (Db::name('sign_receive_log')->where([
+            // 判断领取数量，次数
+            $where = [
                 'user_id' => $user['user_id'],
-                'create_time' => ['like', $date . '%'],
                 'goods_id' => $goods_id,
-                'type' => $type
-            ])->find()) {
-                return ['status' => 0, 'msg' => '今日已领取过'];
+                'create_time' => ['like', date('Y-m', time()) . '%'],
+            ];
+            $data = Db::name('goods')->where(['goods_id'=>$goods_id])->value('sign_free_data');
+            $data  = $data?json_decode($data,true):[];
+
+            $min_num = (int)$data['min_num'][$user['level']];
+            $max_num = (int)$data['max_num'][$user['level']];
+            if(($min_num>0&&$num<$min_num)||($max_num>0&&$num>$max_num)){
+                return ['status' => 0, 'msg' => "领取数量区间：{$min_num}-{$max_num}",'data'=>[$min_num,$max_num,$num]];
+            }
+
+            $month_max = (int)$data['month_max'][$user['level']];
+            $goods_num = Db::name('sign_receive_log')->where($where)->value('sum(num) as sum');
+            if($month_max>0&&$month_max<($goods_num+$num)){
+                $less = $month_max-$goods_num;
+                return ['status' => 0, 'msg' => "超过可领取数量，本月剩余可领取：{$less}",'data'=>[$month_max,$goods_num,$num]];
+            }
+
+            $month_times = (int)$data['month_times'][$user['level']];
+            $count = Db::name('sign_receive_log')->where($where)->count();
+            if($month_times>0&&$month_times<($count+1)){
+                return ['status' => 0, 'msg' => '领取失败，本月领取次数已用完','data'=>[$month_times,$count]];
             }
 
         }
@@ -2273,9 +2285,6 @@ function confirm_order($id,$user_id = 0)
             if ($num > $levelGetNum) {
                 return array('status' => 0, 'msg' => '您当前等级可领' . $levelGetNum . '盒，已超过领取次数', 'result' => array());
             }
-        } elseif ($type == 3) {
-            //签到领取
-
         }
         //下单领取
 //    if ($type>=3) {

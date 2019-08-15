@@ -159,7 +159,7 @@ class Order
     //免费领取的订单，删除领取记录
     public function delSignReceiveLog($order){
         $type = $order->OrderGoods[0]->goods->sign_free_receive;
-        if(($type==1||$type==3)&&($log = Db::name('sign_receive_log')->where(['order_id'=>$order->order_id])->find())){
+        if(($type==1)&&($log = Db::name('sign_receive_log')->where(['order_id'=>$order->order_id])->find())){
             Db::name('sign_receive_log')->where(['order_id'=>$order->order_id])->delete();
         }
     }

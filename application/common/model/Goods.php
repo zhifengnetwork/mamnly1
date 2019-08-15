@@ -199,4 +199,9 @@ class Goods extends Model
             return $price = round($data['shop_price'] - $data['exchange_integral'] / 10, 2);
         }
     }
+    public function getSignFreeObjectAttr($value, $data)
+    {
+        return $data['sign_free_data']?json_decode($data['sign_free_data'],true):[];
+    }
+
 }

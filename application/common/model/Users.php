@@ -68,20 +68,40 @@ class Users extends Model
         return  $third_leader;
     }
 
-    // 当月剩余免费领取面膜数量
+    // 水光面膜
     public function getSignFreeAttr($value, $data){
-        $count = Db::name('goods')->where(['is_on_sale' => 1, 'exchange_integral' => 0,'sign_free_receive'=>3])->count();
-        $free_count = Db::name('sign_receive_log')->where(['user_id'=>$data['user_id'],'type'=>3,'create_time'=>['like', date('Y-m-d', time()) . '%']])->count();
-        return (($count-$free_count>-1)?$count-$free_count:0)+month_less_day()*$count;
+        return month_less_day();
+        $sign_free_data = Db::name('goods')->where(['goods_id' => 59])->value('sign_free_data');
+        $sign_free = json_decode($sign_free_data,true);
+        $count = 0;
+        if(isset($sign_free['month_max'][$data['level']])){
+            $month_max = $sign_free['month_max'][$data['level']];
+            $free_count = Db::name('sign_receive_log')->where([
+                'user_id' => $data['user_id'],
+                'goods_id' => 59,
+                'create_time' => ['like', date('Y-m', time()) . '%']
+            ])->value('sum(num) as sum')?:0;
+            $count = ($month_max-$free_count>-1)?$month_max-$free_count:0;
+        }
+        return $count;
     }
 
-
-    // 当月合伙人剩余免费领取面膜数量
+    // 修复面膜
     public function getSignHehuoFreeAttr($value, $data){
-        if($data['level']<3) return 0;
-        $count = Db::name('goods')->where(['is_on_sale' => 1, 'exchange_integral' => 0,'sign_free_receive'=>1])->count();
-        $free_count = Db::name('sign_receive_log')->where(['user_id'=>$data['user_id'],'type'=>1,'create_time'=>['like', date('Y-m-d', time()) . '%']])->count();
-        return (($count-$free_count>-1)?$count-$free_count:0)+month_less_day()*$count;
+        return month_less_day();
+        $sign_free_data = Db::name('goods')->where(['goods_id' => 58])->value('sign_free_data');
+        $sign_free = json_decode($sign_free_data,true);
+        $count = 0;
+        if(isset($sign_free['month_max'][$data['level']])){
+            $month_max = $sign_free['month_max'][$data['level']];
+            $free_count = Db::name('sign_receive_log')->where([
+                'user_id' => $data['user_id'],
+                'goods_id' => 58,
+                'create_time' => ['like', date('Y-m', time()) . '%']
+            ])->value('sum(num) as sum')?:0;
+            $count = ($month_max-$free_count>-1)?$month_max-$free_count:0;
+        }
+        return $count;
     }
 
 

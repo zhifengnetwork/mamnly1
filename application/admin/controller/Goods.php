@@ -377,6 +377,7 @@ class Goods extends Base {
         $this->assign('cat_list', $cat_list);
         $this->assign('goodsType', $goodsType);
         $this->assign('level6_cid', C('customize.level6_cid'));
+        $this->assign('userLevel', Db::name("user_level")->field('level,level_name')->order('level ASC')->select());
         return $this->fetch('_goods');
     }
 
@@ -404,6 +405,16 @@ class Goods extends Base {
             $error_msg = array_values($error);
             $return_arr = ['status' => 0, 'msg' => $error_msg[0], 'result' => $error];
             $this->ajaxReturn($return_arr);
+        }
+
+        if($data['sign_free_receive']==1){
+            $data['sign_free_data'] = json_encode([
+                'month_max'=>$data['month_max'],
+                'month_times'=>$data['month_times'],
+                'min_num'=>$data['min_num'],
+                'max_num'=>$data['max_num']
+            ]);
+//            $data['month_max']  $data['month_times']  $data['min_num']  $data['max_num']
         }
         if ($data['goods_id'] > 0) {
             $goods = \app\common\model\Goods::get($data['goods_id']);
