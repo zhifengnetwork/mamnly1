@@ -2228,20 +2228,26 @@ function confirm_order($id,$user_id = 0)
 
             $min_num = (int)$data['min_num'][$user['level']];
             $max_num = (int)$data['max_num'][$user['level']];
-            if(($min_num>0&&$num<$min_num)||($max_num>0&&$num>$max_num)){
+            if($min_num<1||$max_num<1){
+                return ['status' => 0, 'msg' => "领取数量为0",'data'=>[$min_num,$max_num,$num]];
+            }elseif(($min_num>0&&$num<$min_num)||($max_num>0&&$num>$max_num)){
                 return ['status' => 0, 'msg' => "领取数量区间：{$min_num}-{$max_num}",'data'=>[$min_num,$max_num,$num]];
             }
 
             $month_max = (int)$data['month_max'][$user['level']];
             $goods_num = Db::name('sign_receive_log')->where($where)->value('sum(num) as sum');
-            if($month_max>0&&$month_max<($goods_num+$num)){
+            if($month_max<1){
+                return ['status' => 0, 'msg' => "可领取数量小于1",'data'=>[$month_max]];
+            }elseif($month_max<($goods_num+$num)){
                 $less = $month_max-$goods_num;
                 return ['status' => 0, 'msg' => "超过可领取数量，本月剩余可领取：{$less}",'data'=>[$month_max,$goods_num,$num]];
             }
 
             $month_times = (int)$data['month_times'][$user['level']];
             $count = Db::name('sign_receive_log')->where($where)->count();
-            if($month_times>0&&$month_times<($count+1)){
+            if($month_times<1){
+                return ['status' => 0, 'msg' => "领取次数小于1",'data'=>[$month_times]];
+            }elseif($month_times<($count+1)){
                 return ['status' => 0, 'msg' => '领取失败，本月领取次数已用完','data'=>[$month_times,$count]];
             }
 

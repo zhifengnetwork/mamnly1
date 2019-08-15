@@ -70,7 +70,6 @@ class Users extends Model
 
     // 水光面膜
     public function getSignFreeAttr($value, $data){
-        return month_less_day();
         $sign_free_data = Db::name('goods')->where(['goods_id' => 59])->value('sign_free_data');
         $sign_free = json_decode($sign_free_data,true);
         $count = 0;
@@ -88,7 +87,6 @@ class Users extends Model
 
     // 修复面膜
     public function getSignHehuoFreeAttr($value, $data){
-        return month_less_day();
         $sign_free_data = Db::name('goods')->where(['goods_id' => 58])->value('sign_free_data');
         $sign_free = json_decode($sign_free_data,true);
         $count = 0;
