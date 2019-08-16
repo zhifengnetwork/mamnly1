@@ -1061,12 +1061,12 @@ class Order extends Base {
         $arr=array();
         foreach($data as $key=>$val){
             for($i=0;$i<$fieldnum-1;$i++) {
-                if ($val[1] && $val[12] && $val[15] && $val[13]) {
+                if ($val[1] && $val[20] && $val[19] && $val[21]) {
                     //手动修改字段与值
                     $arr[$key]['order_sn'] = preg_replace('/\D/s', '', $val[1]);
-                    $arr[$key]['mobile'] = strval(trim($val[15]));
-                    $arr[$key]['consignee'] = $val[14];
-                    $arr[$key]['address'] = $val[16];
+                    $arr[$key]['mobile'] = strval(trim($val[20]));
+                    $arr[$key]['consignee'] = $val[19];
+                    $arr[$key]['address'] = $val[21];
                     $arr[$key]['invoice_no'] = $val[13];
                     $arr[$key]['add_time'] = time();
                     //快递信息
@@ -1104,7 +1104,6 @@ class Order extends Base {
             }else{
                 foreach($order as $val){
                     $res = Db::name('order')->where('order_sn',$val['order_sn'])->update($update);
-                    
                     if($res == 1){
                         // 记录订单操作日志
                         $action_info = array(
@@ -1572,7 +1571,7 @@ class Order extends Base {
                 $strTable .= '<td style="text-align:left;font:14px 宋体;">'."{$region[$val['province']]},{$region[$val['city']]},{$region[$val['district']]},{$region[$val['twon']]}{$val['address']}".' </td>';
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['mobile'].'</td>';
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['goods_price'].'</td>';
-	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['order_amount'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.bcsub($val['total_amount'],$val['integral_money'],2).'</td>';
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['pay_name'].'</td>';
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">丝蒂芬妮娅</td>';
                 $strTable .= '<td style="text-align:left;font-size:14px;">'.$this->shipping_status[$val['shipping_status']].'</td>';
