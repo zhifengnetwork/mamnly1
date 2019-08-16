@@ -1042,52 +1042,40 @@ class Order extends Base {
         //获取表中的第一个工作表，如果要获取第二个，把0改为1，依次类推
         $currentSheet = $PHPExcel->getSheet(0);
         //获取总列数
-        $allColumn = $currentSheet->getHighestColumn();
+        $allColumn = \PHPExcel_Cell::columnIndexFromString($currentSheet->getHighestColumn());
         //获取总行数
         $allRow = $currentSheet->getHighestRow();
-    
+
         //循环获取表中的数据，$currentRow表示当前行，从哪行开始读取数据，索引值从0开始
-        for ($currentRow = 1; $currentRow <= $allRow; $currentRow++) {
+        for ($currentRow = 2; $currentRow <= $allRow; $currentRow++) {
             //从哪列开始，A表示第一列
-            for ($currentColumn = 'A'; $currentColumn <= $allColumn; $currentColumn++) {
-                //数据坐标
-                $address = $currentColumn . $currentRow;
-                //读取到的数据，保存到数组$data中
-                $cell = $currentSheet->getCell($address)->getValue();
-            
+            for ($currentColumn = 0; $currentColumn < $allColumn; $currentColumn++){
+                $cell = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();
                 if ($cell instanceof PHPExcel_RichText) {
                     $cell = $cell->__toString();
                 }
-                $data[$currentRow - 1][$currentColumn] = $cell;
-                
+                $data[$currentRow - 2][$currentColumn] = $cell;
             }
-           
         }
-
-     
         //$data为excel表里的所有数据
         $arr=array();
         foreach($data as $key=>$val){
-
-            for($i=0;$i<$fieldnum-1;$i++){
-                if($val['A'] && $val['G'] && $val['M']){
+            for($i=0;$i<$fieldnum-1;$i++) {
+                if ($val[1] && $val[12] && $val[15] && $val[13]) {
                     //手动修改字段与值
-                    $arr[$key]['order_sn']   =  preg_replace('/\D/s', '', $val['A']);
-                    $arr[$key]['mobile']     =  strval(trim($val['G']));
-                    $arr[$key]['consignee']  =  $val['F'];
-                    $arr[$key]['address']    =  $val['I'];
-                    $arr[$key]['invoice_no'] =  $val['M'];
-                    $arr[$key]['goods']      =  $val['J'];
-                    $arr[$key]['add_time']   =  time();
+                    $arr[$key]['order_sn'] = preg_replace('/\D/s', '', $val[1]);
+                    $arr[$key]['mobile'] = strval(trim($val[15]));
+                    $arr[$key]['consignee'] = $val[14];
+                    $arr[$key]['address'] = $val[16];
+                    $arr[$key]['invoice_no'] = $val[13];
+                    $arr[$key]['add_time'] = time();
                     //快递信息
-                    $arr[$key]['shipping_name'] = $val['K'];
-                    $arr[$key]['shipping_code'] = Db::name('shipping')->where('shipping_name', $val['K'])
+                    $arr[$key]['shipping_name'] = $val[12];
+                    $arr[$key]['shipping_code'] = Db::name('shipping')->where('shipping_name', $val[12])
                         ->value('shipping_code');
                 }
             }
-
         }
-
         //如果第一行是 null，去掉
         if($arr[0]['shipping_code'] == NULL){
             unset($arr[0]);
@@ -1559,47 +1547,49 @@ class Order extends Base {
         }
 
         $orderList = Db::name('order')->field("*,FROM_UNIXTIME(add_time,'%Y-%m-%d') as create_time")->where($where)->order('order_id')->select();
-    	$strTable ='<table width="500" border="0">';
+    	$strTable ='<table width="600" border="1">';
     	$strTable .= '<tr>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;width:120px;">订单编号</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="100">日期</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">收货人</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">收货地址</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">电话</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">订单金额</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">实际支付</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">支付方式</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">支付状态</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">发货状态</td>';
-        $strTable .= '<td style="text-align:center;font-size:12px;" width="*">商品数量</td>';
-    	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">商品信息</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;"width:120px;">原始单号</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="100">日期</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">收件人姓名</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">收件人详细地址</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">收件人手机</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">订单金额</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">实际支付</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">支付方式</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">店铺</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">发货状态</td>';
+        $strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">商品数量</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">商品编码</td>';
     	$strTable .= '</tr>';
 	    if(is_array($orderList)){
 	    	$region	= get_region_list();
 	    	foreach($orderList as $k=>$val){
 	    		$strTable .= '<tr>';
-	    		$strTable .= '<td style="text-align:center;font-size:12px;">&nbsp;'.$val['order_sn'].'</td>';
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['create_time'].' </td>';	    		
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['consignee'].'</td>';
-                $strTable .= '<td style="text-align:left;font-size:12px;">'."{$region[$val['province']]},{$region[$val['city']]},{$region[$val['district']]},{$region[$val['twon']]}{$val['address']}".' </td>';
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['mobile'].'</td>';
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['goods_price'].'</td>';
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['order_amount'].'</td>';
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['pay_name'].'</td>';
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$this->pay_status[$val['pay_status']].'</td>';
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$this->shipping_status[$val['shipping_status']].'</td>';
+	    		$strTable .= '<td style="text-align:center;font:14px 宋体;">&nbsp;'.$val['order_sn'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['create_time'].' </td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['consignee'].'</td>';
+                $strTable .= '<td style="text-align:left;font:14px 宋体;">'."{$region[$val['province']]},{$region[$val['city']]},{$region[$val['district']]},{$region[$val['twon']]}{$val['address']}".' </td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['mobile'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['goods_price'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['order_amount'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['pay_name'].'</td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">丝蒂芬妮娅</td>';
+                $strTable .= '<td style="text-align:left;font-size:14px;">'.$this->shipping_status[$val['shipping_status']].'</td>';
 	    		$orderGoods = D('order_goods')->where('order_id='.$val['order_id'])->select();
-	    		$strGoods="";
+	    		$strGoods=$strNum='';
                 $goods_num = 0;
 	    		foreach($orderGoods as $goods){
                     $goods_num = $goods_num + $goods['goods_num'];
-	    			$strGoods .= $goods['goods_name']."  数量：".$goods['goods_num'];
+	    			$strGoods .= $goods['goods_name'];
+                    $strNum.=$goods['goods_num'];
 	    			if ($goods['spec_key_name'] != '') $strGoods .= " 规格：".$goods['spec_key_name'];
 	    			$strGoods .= "<br />";
+                    $strNum.= '<br />';
 	    		}
 	    		unset($orderGoods);
-                $strTable .= '<td style="text-align:left;font-size:12px;">总'.$goods_num.' </td>';
-	    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$strGoods.' </td>';
+                $strTable .= '<td style="text-align:left;font:14px 宋体;">'.$strNum.' </td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$strGoods.' </td>';
 	    		$strTable .= '</tr>';
 	    	}
 	    }
