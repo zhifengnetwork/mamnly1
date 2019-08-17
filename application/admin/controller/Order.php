@@ -1548,18 +1548,18 @@ class Order extends Base {
         $orderList = Db::name('order')->field("*,FROM_UNIXTIME(add_time,'%Y-%m-%d') as create_time")->where($where)->order('order_id')->select();
     	$strTable ='<table width="600" border="1">';
     	$strTable .= '<tr>';
-    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;"width:120px;">原始单号</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;"width:120px;">原始单号<span style="color: red;">*</span></td>';
     	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="100">日期</td>';
-    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">收件人姓名</td>';
-    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">收件人详细地址</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">收件人姓名<span style="color: red;">*</span></td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">收件人详细地址<span style="color: red;">*</span></td>';
     	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">收件人手机</td>';
     	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">订单金额</td>';
     	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">实际支付</td>';
     	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">支付方式</td>';
-    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">店铺</td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">店铺<span style="color: red;">*</span></td>';
     	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">发货状态</td>';
-        $strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">商品数量</td>';
-    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">商品编码</td>';
+        $strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">商品数量<span style="color: red;">*</span></td>';
+    	$strTable .= '<td style="text-align:center;font:bold 16px 宋体;" width="*">商品编码<span style="color: red;">*</span></td>';
     	$strTable .= '</tr>';
 	    if(is_array($orderList)){
 	    	$region	= get_region_list();
