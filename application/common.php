@@ -1395,7 +1395,7 @@ function update_pay_status($order_sn,$ext=array())
         $points && accountLog($order['user_id'], 0, $points, "下单赠送积分", 0, $order['order_id'], $order['order_sn']);
 
         // 赠送用户上级积分
-        $integral = M('order_goods')->where(['order_id' => $order['order_id']])->value('leader_integral');
+        $integral = M('order_goods')->where(['order_id' => $order['order_id']])->value('leader_integral * goods_num');
         $first_leader = M('users')->where(['user_id' => $order['user_id']])->value('first_leader');
         if ($integral> 0 && $first_leader > 0) {
             accountLog($first_leader, 0,+$integral, '直属下单赠送积分', 0,$order['order_id'] ,$order['order_sn']);
@@ -1430,12 +1430,15 @@ function update_pay_status($order_sn,$ext=array())
             $wechat->sendMsg($userinfo['openid'], 'text', $wx_content);
 
             //发给上级
-            //$first_leader_openid = Db::name('users')->where(['user_id' => $userinfo['first_leader']])->value('openid');
-            $first_leader_openid = Db::name('users')->field('openid,nickname,user_id')->where(['user_id' => $userinfo['first_leader']])->find();
+            $first_leader_openid = Db::name('users')->where(['user_id' => $userinfo['first_leader']])->value('openid');
+//            $first_leader_openid = Db::name('users')->field('openid,nickname,user_id')->where(['user_id' => $userinfo['first_leader']])->find();
             if($first_leader_openid){
-                $wx_first_leader_content = "你的直属{$userinfo['nickname']}[ID:{$userinfo['user_id']}]订单支付成功！\n\n订单：{$order_sn}\n支付时间：{$time}\n商品：{$text}\n金额：{$order['total_amount']}\n您获得{$leader_integral}积分\n";
+                $money = Db::name('account_log')->where(['user_id'=>$userinfo['first_leader'],'order_id'=>$order['order_id']])->value('user_money');
+                $wx_first_leader_content = "你的直属{$userinfo['nickname']}[ID:{$userinfo['user_id']}]订单支付成功！\n\n订单：{$order_sn}\n
+                支付时间：{$time}\n商品：{$text}\n金额：{$order['total_amount']}\n您获得{$leader_integral}积分,\n"
+                    .($money>0?"{$money}返利\n":'');
                 $wechat = new \app\common\logic\wechat\WechatUtil();
-                $wechat->sendMsg($first_leader_openid['openid'], 'text', $wx_first_leader_content);
+                $wechat->sendMsg($first_leader_openid, 'text', $wx_first_leader_content);
             }
 
         }
