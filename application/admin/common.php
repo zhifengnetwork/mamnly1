@@ -142,7 +142,9 @@ function getMenuArr(){
 			$role_right .= $val.',';
 		}
 		foreach($menuArr as $k=>$val){
+
 			foreach ($val['child'] as $j=>$v){
+			    if(!isset($v['child']))continue;
 				foreach ($v['child'] as $s=>$son){
 					if(strpos($role_right,$son['op'].'@'.$son['act']) === false){
 						unset($menuArr[$k]['child'][$j]['child'][$s]);//过滤菜单
@@ -151,12 +153,17 @@ function getMenuArr(){
 			}
 		}
 		foreach ($menuArr as $mk=>$mr){
-			foreach ($mr['child'] as $nk=>$nrr){
-				if(empty($nrr['child'])){
+		    foreach ($mr['child'] as $nk=>$nrr){
+		        if(empty($nrr['child'])||count($nrr['child'])==0){
 					unset($menuArr[$mk]['child'][$nk]);
 				}
-			}
+            }
 		}
+        foreach ($menuArr as $mk=>$mr){
+            if(empty($mr['child'])||count($mr['child'])==0){
+                unset($menuArr[$mk]);continue;
+            }
+        }
 	}
 	return $menuArr;
 }
