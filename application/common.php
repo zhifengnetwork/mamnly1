@@ -1435,7 +1435,7 @@ function update_pay_status($order_sn,$ext=array())
             if($first_leader_openid){
                 $money = Db::name('account_log')->where(['user_id'=>$userinfo['first_leader'],'order_id'=>$order['order_id']])->value('user_money');
                 $wx_first_leader_content = "你的直属{$userinfo['nickname']}[ID:{$userinfo['user_id']}]订单支付成功！\n\n订单：{$order_sn}支付时间：{$time}\n商品：{$text}\n金额：{$order['total_amount']}\n".
-                ($leader_integral>0||$money>0? '您获得':'').($leader_integral>0?"{$leader_integral}积分\n":'') .($money>0?"返利{$money}":'');
+                ($leader_integral>0||$money>0? '您获得':'').($leader_integral>0?"{$leader_integral}积分\n":'') .($money>0?"{$money}":'');
                 $wechat = new \app\common\logic\wechat\WechatUtil();
                 $wechat->sendMsg($first_leader_openid, 'text', $wx_first_leader_content);
             }
