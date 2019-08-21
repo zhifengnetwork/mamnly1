@@ -40,17 +40,9 @@
     </div>
     <div class="nc-module-menu">
         <ul class="nc-row">
-            <li data-param="index"><a href="javascript:void(0);">首页</a></li>
-            <li data-param="system"><a href="javascript:void(0);">设置</a></li>
-            <!-- <li data-param="decorate"><a href="javascript:void(0);">装修</a></li> -->
-            <li data-param="shop"><a href="javascript:void(0);">商城</a></li>
-            <li data-param="distribution"><a href="javascript:void(0);">奖金模式</a></li>
-            <li data-param="marketing"><a href="javascript:void(0);">营销</a></li>
-            <!-- <li data-param="distribution"><a href="javascript:void(0);">分销</a></li> -->
-            <li data-param="member"><a href="javascript:void(0);">会员</a></li>
-            <li data-param="data"><a href="javascript:void(0);">数据</a></li>
-            <li data-param="pickup"><a href="javascript:void(0);">门店</a></li>
-            <li data-param="seller"><a href="javascript:void(0);">商家管理</a></li>
+            <foreach name="menu" item="vo" key="k">
+                <li data-param="{$k}"><a href="javascript:void(0);">{$vo.name}</a></li>
+            </foreach>
         </ul>
     </div>
     <!--
