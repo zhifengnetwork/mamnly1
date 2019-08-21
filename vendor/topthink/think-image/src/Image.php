@@ -460,7 +460,7 @@ class Image
             /** 二维码 */
             case self::ERWEIMA:
                 $x = ($this->info['width'] - $info[0]) / 2;
-                $y = 378;
+                $y = 358;
                 break;
 
             default:
