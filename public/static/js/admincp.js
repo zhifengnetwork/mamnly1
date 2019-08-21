@@ -60,7 +60,8 @@
         //$('.nc-module-menu').find('li:first > a').click();
         openItem('welcome|Index');
     } else {
-        openItem($.cookie('workspaceParam'));
+        $('.nc-module-menu').find('li:first > a').click();
+        // openItem($.cookie('workspaceParam'));
     }
     // 导航菜单  显示
     $('a[tptype="map_on"],a[class="add-menu"]').click(function(){
