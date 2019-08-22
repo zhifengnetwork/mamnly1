@@ -1064,7 +1064,7 @@ class Order extends Base {
                 if ($val[1] && $val[20] && $val[19] && $val[21]) {
                     $val[12] = $val[12]!='百世快递'?$val[12]:'百世汇通快递';
                     //手动修改字段与值
-                    $arr[$key]['order_sn'] = preg_replace('/\D/s', '', $val[1]);
+                    $arr[$key]['order_sn'] = strval(trim($val[1]));
                     $arr[$key]['mobile'] = strval(trim($val[20]));
                     $arr[$key]['consignee'] = $val[19];
                     $arr[$key]['address'] = $val[21];
@@ -1090,7 +1090,7 @@ class Order extends Base {
             //先查找符合条件的订单
             $where = [
                 'mobile'         => $arr[$k]['mobile'],
-                'order_sn'       => $arr[$k]['order_sn'],
+                'order_id'       => $arr[$k]['order_sn'],
                 'order_status'   => ['in','0,1'],
                 'shipping_status'=> 0,
                 'pay_status'     => 1,
@@ -1153,11 +1153,11 @@ class Order extends Base {
                     }else{
                         $arr[$k]['status']   = 0;
                     }
-                    $handle = Db::name('delivery_order_handle')->where(['order_sn' => $val['order_sn']])->find();
+                    $handle = Db::name('delivery_order_handle')->where(['order_sn' => $val['order_id']])->find();
                     if(empty($handle)){
                         Db::name('delivery_order_handle')->insert($arr[$k]);
                     }else{
-                        Db::name('delivery_order_handle')->where(['order_sn' => $val['order_sn']])->update(['status'=>$arr[$k]['status']]);
+                        Db::name('delivery_order_handle')->where(['order_sn' => $val['order_id']])->update(['status'=>$arr[$k]['status']]);
                     }
                }
             }
@@ -1573,7 +1573,7 @@ class Order extends Base {
                 $orderGoods = D('order_goods')->where('order_id='.$val['order_id'])->select();
                 foreach($orderGoods as $goods){
 	    		$strTable .= '<tr>';
-	    		$strTable .= '<td style="text-align:center;font:14px 宋体;">&nbsp;'.$val['order_sn'].'</td>';
+	    		$strTable .= '<td style="text-align:center;font:14px 宋体;">'.$val['order_id'].'</td>';
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['create_time'].' </td>';
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['consignee'].'</td>';
                 $strTable .= '<td style="text-align:left;font:14px 宋体;">'."{$region[$val['province']]},{$region[$val['city']]},{$region[$val['district']]},{$region[$val['twon']]}{$val['address']}".' </td>';
