@@ -1062,6 +1062,7 @@ class Order extends Base {
         foreach($data as $key=>$val){
             for($i=0;$i<$fieldnum-1;$i++) {
                 if ($val[1] && $val[20] && $val[19] && $val[21]) {
+                    $val[12] = $val[12]!='百世快递'?:'百世汇通快递';
                     //手动修改字段与值
                     $arr[$key]['order_sn'] = preg_replace('/\D/s', '', $val[1]);
                     $arr[$key]['mobile'] = strval(trim($val[20]));
@@ -1073,6 +1074,9 @@ class Order extends Base {
                     $arr[$key]['shipping_name'] = $val[12];
                     $arr[$key]['shipping_code'] = Db::name('shipping')->where('shipping_name', $val[12])
                         ->value('shipping_code');
+                    if(!$arr[$key]['shipping_code']){
+                        $this->error("订单号为{$val[1]}的快递信息查询错误");
+                    }
                 }
             }
         }
