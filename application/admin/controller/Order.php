@@ -1156,6 +1156,8 @@ class Order extends Base {
                     $handle = Db::name('delivery_order_handle')->where(['order_sn' => $val['order_sn']])->find();
                     if(empty($handle)){
                         Db::name('delivery_order_handle')->insert($arr[$k]);
+                    }else{
+                        Db::name('delivery_order_handle')->where(['order_sn' => $val['order_sn']])->update(['status'=>$arr[$k]['status']]);
                     }
                }
             }
