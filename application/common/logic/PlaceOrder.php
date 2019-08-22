@@ -438,7 +438,8 @@ class PlaceOrder
 //        $OrderPromAmount = $this->pay->getOrderPromAmount();
         $payList = $this->pay->getPayList();
         $goods = is_object($payList[0])?$payList[0]:$payList[0]['goods'];
-        if ($goods->sign_free_receive == 1) {
+        $goods = Db::name('goods')->field('goods_id,sign_free_receive,shop_price')->where(['goods_id' => $goods->goods_id])->find();
+        if ($goods&&$goods->sign_free_receive == 1) {
             $user = $this->pay->getUser();
             $goods_num = Db::name('order_goods')->where('order_id', $this->order['order_id'])->value('goods_num');
             $arr = [

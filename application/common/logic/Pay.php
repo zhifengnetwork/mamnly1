@@ -389,10 +389,10 @@ class Pay
     public function getUserSign()
     {
         $isReceive['status'] = 0;
+        $goods = Db::name('goods')->field('goods_id,sign_free_receive,shop_price')->where(['goods_id' => $this->payList[0]['goods']->goods_id])->find();
+        if ($goods && $goods->sign_free_receive != 0 ) {
 
-        if ($this->payList[0]['goods']->sign_free_receive != 0 ) {
-
-            if ( $this->user['is_code'] == 1 && $this->payList[0]['goods']->sign_free_receive == 1) {
+            if ( $this->user['is_code'] == 1 && $goods->sign_free_receive == 1) {
 
                 // 能否领取商品
                 $data = M('order_sign_receive')->where(['uid' => $this->user['user_id'], 'type' => 1])->select();
@@ -401,26 +401,26 @@ class Pay
                 if (!empty($data)) {
                     $isReceive = ['status' => 0] ;
                 }else{
-                    $isReceive = provingReceive($this->user, $this->payList[0]['goods']->sign_free_receive, $this->totalNum,$this->payList[0]['goods']->goods_id);
+                    $isReceive = provingReceive($this->user, $goods->sign_free_receive, $this->totalNum,$goods->goods_id);
                 }
 
             }
 
-            if ($this->user['level'] >= 2 && $this->payList[0]['goods']->sign_free_receive != 0) {
-                $isReceive = provingReceive($this->user, $this->payList[0]['goods']->sign_free_receive, $this->totalNum,$this->payList[0]['goods']->goods_id);
+            if ($this->user['level'] >= 2 && $goods->sign_free_receive != 0) {
+                $isReceive = provingReceive($this->user, $goods->sign_free_receive, $this->totalNum,$goods->goods_id);
             }
             
             if($isReceive['status'] == 2){
-                if ($this->payList[0]['goods']->sign_free_receive == 2 ) {
+                if ($goods->sign_free_receive == 2 ) {
                     // 免费领取
-                    $this->orderAmount = $this->orderAmount - $this->payList[0]['goods']->shop_price * $this->totalNum; // 应付金额
-                    $this->totalAmount = $this->totalAmount - $this->payList[0]['goods']->shop_price * $this->totalNum;
-                    $this->orderPromAmount = $this->payList[0]['goods']->shop_price * $this->totalNum; //优惠金额
+                    $this->orderAmount = $this->orderAmount - $goods->shop_price * $this->totalNum; // 应付金额
+                    $this->totalAmount = $this->totalAmount - $goods->shop_price * $this->totalNum;
+                    $this->orderPromAmount =$goods->shop_price * $this->totalNum; //优惠金额
                 }else{
                     // 签到领取
-                    $this->orderAmount = $this->orderAmount - $this->payList[0]['goods']->shop_price * $this->totalNum; // 应付金额
-                    $this->totalAmount = $this->totalAmount - $this->payList[0]['goods']->shop_price * $this->totalNum;
-                    $this->signPrice = $this->payList[0]['goods']->shop_price * $this->totalNum; //签到抵扣
+                    $this->orderAmount = $this->orderAmount - $goods->shop_price * $this->totalNum; // 应付金额
+                    $this->totalAmount = $this->totalAmount - $goods->shop_price * $this->totalNum;
+                    $this->signPrice = $goods->shop_price * $this->totalNum; //签到抵扣
                 }
             }
         }

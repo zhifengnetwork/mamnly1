@@ -1564,6 +1564,8 @@ class Order extends Base {
 	    if(is_array($orderList)){
 	    	$region	= get_region_list();
 	    	foreach($orderList as $k=>$val){
+                $orderGoods = D('order_goods')->where('order_id='.$val['order_id'])->select();
+                foreach($orderGoods as $goods){
 	    		$strTable .= '<tr>';
 	    		$strTable .= '<td style="text-align:center;font:14px 宋体;">&nbsp;'.$val['order_sn'].'</td>';
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['create_time'].' </td>';
@@ -1575,21 +1577,14 @@ class Order extends Base {
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$val['pay_name'].'</td>';
 	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">丝蒂芬妮娅</td>';
                 $strTable .= '<td style="text-align:left;font-size:14px;">'.$this->shipping_status[$val['shipping_status']].'</td>';
-	    		$orderGoods = D('order_goods')->where('order_id='.$val['order_id'])->select();
-	    		$strGoods=$strNum='';
-                $goods_num = 0;
-	    		foreach($orderGoods as $goods){
-                    $goods_num = $goods_num + $goods['goods_num'];
-	    			$strGoods .= $goods['goods_name'];
-                    $strNum.=$goods['goods_num'];
+
+	    			$strGoods = $goods['goods_name'];
 	    			if ($goods['spec_key_name'] != '') $strGoods .= " 规格：".$goods['spec_key_name'];
-	    			$strGoods .= "<br />";
-                    $strNum.= '<br />';
-	    		}
-	    		unset($orderGoods);
-                $strTable .= '<td style="text-align:left;font:14px 宋体;">'.$strNum.' </td>';
-	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$strGoods.' </td>';
+
+                $strTable .= '<td style="text-align:left;font:14px 宋体;">'.$goods['goods_num'].'<br />'.' </td>';
+	    		$strTable .= '<td style="text-align:left;font:14px 宋体;">'.$strGoods.'<br /></td>';
 	    		$strTable .= '</tr>';
+                }
 	    	}
 	    }
     	$strTable .='</table>';
