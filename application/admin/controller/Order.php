@@ -1062,7 +1062,7 @@ class Order extends Base {
         foreach($data as $key=>$val){
             for($i=0;$i<$fieldnum-1;$i++) {
                 if ($val[1] && $val[20] && $val[19] && $val[21]) {
-                    $val[12] = $val[12]!='百世快递'?:'百世汇通快递';
+                    $val[12] = $val[12]!='百世快递'?$val[12]:'百世汇通快递';
                     //手动修改字段与值
                     $arr[$key]['order_sn'] = preg_replace('/\D/s', '', $val[1]);
                     $arr[$key]['mobile'] = strval(trim($val[20]));
