@@ -59,9 +59,10 @@ class MobileBase extends Controller {
                     session('openid', 0);
                     session('user', null);
                 }
-            } 
-            // || empty(session('old_openid'))
-    
+            }
+
+
+
             if (empty(session('user')) ){
 
                 if(is_array($this->weixin_config) && $this->weixin_config['wait_access'] == 1){
@@ -77,6 +78,9 @@ class MobileBase extends Controller {
                         //这里做 新 openid 登录成功
                         $is_cunzai_user = M('users')->where(['openid'=>$wxuser['openid']])->find();
                         if($is_cunzai_user){
+                            if(!is_subscribe($is_cunzai_user['user_id'])){
+                                $this->error('点击返回公众号关注1');
+                            }
                             session('user',$is_cunzai_user);
                             setcookie('user_id',$is_cunzai_user['user_id'],null,'/');
                             setcookie('is_distribut',$is_cunzai_user['is_distribut'],null,'/');
@@ -106,9 +110,8 @@ class MobileBase extends Controller {
 
                         //过滤特殊字符串
                         $wxuser['nickname'] && $wxuser['nickname'] = replaceSpecialStr($wxuser['nickname']);
-                        if($wxuser['subscribe']==0){
-                            $this->error('未关注');
-                            header('Location:/shop/user/login');
+                        if(!is_subscribe($is_cunzai_user['user_id'])){
+                            $this->error('点击返回公众号关注2');
                         }
                         session('subscribe', $wxuser['subscribe']);// 当前这个用户是否关注了微信公众号
                         setcookie('subscribe',$wxuser['subscribe']);
@@ -149,7 +152,11 @@ class MobileBase extends Controller {
                     }
 
                 }
-            }else{ 
+            }else{
+                if(!is_subscribe($user_temp['user_id'])){
+                    session('user', null);
+                    $this->error('点击返回公众号关注');
+                }
                 setcookie('user_id',$user_temp['user_id'],null,'/');
                 setcookie('is_distribut',$user_temp['is_distribut'],null,'/');
             }
