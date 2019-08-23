@@ -20,41 +20,38 @@
             <img src="__STATIC__/images/icogantanhao-sb.png"></div>
         <?php }?>
     </div>
-    <p class="prompt_s">
-        <?php if($code == 1) {?><?php echo(strip_tags($msg)); ?>
-        <?php }else{?>
-        <?php echo(strip_tags($msg)); ?>
-        <?php }?> ，等待时间：<b id="wait"><?php echo($wait); ?></b>
-    </p>
 
     <?php if($msg == '点击返回公众号关注') {?>
-<div class="systemprompt">
-    <a href="javascript:window.opener=null;window.open('','_self');window.close();">返回</a>
-    <a href="javascript:window.opener=null;window.location.href='about:blank'; window.close();">返回</a>
-</div>
+        <p class="prompt_s"><?php echo(strip_tags($msg)); ?></p>
+        <div class="systemprompt">
+            <a href="javascript:WeixinJSBridge.call('closeWindow');">返回</a>
+        </div>
     <?php }else{?>
-<div class="systemprompt">
-    <a href="<?php echo($url); ?>" id="href">返回上一页</a>
-    <a href="{:U('Index/index')}">返回首页</a>
-</div>
-<script src="__STATIC__/js/style.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript">
-    (function(){
-        var wait = document.getElementById('wait'),href = document.getElementById('href').href;
-        var interval = setInterval(function(){
-            var time = --wait.innerHTML;
-            if(time <= 0) {
-                location.href = href;
-                clearInterval(interval);
-            };
-        }, 1000);
-    })();
+        <p class="prompt_s">
+            <?php if($code == 1) {?><?php echo(strip_tags($msg)); ?>
+            <?php }else{?>
+            <?php echo(strip_tags($msg)); ?>
+            <?php }?> ，等待时间：<b id="wait"><?php echo($wait); ?></b>
+        </p>
+        <div class="systemprompt">
+            <a href="<?php echo($url); ?>" id="href">返回上一页</a>
+            <a href="{:U('Index/index')}">返回首页</a>
+        </div>
+        <script src="__STATIC__/js/style.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            (function(){
+                var wait = document.getElementById('wait'),href = document.getElementById('href').href;
+                var interval = setInterval(function(){
+                var time = --wait.innerHTML;
+                if(time <= 0) {
+                    location.href = href;
+                    clearInterval(interval);
+                };
+                }, 1000);
+            })();
 
-</script>
+        </script>
     <?php }?>
-
-
-
 
 </body>
 </html>
