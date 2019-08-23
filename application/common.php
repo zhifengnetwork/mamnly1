@@ -170,9 +170,7 @@ function is_subscribe($user_id){
 
     $resp = httpRequest($url, "GET");
     $res = json_decode($resp, true);
-
-    dump($res);
-
+    
     if(!isset($res['subscribe'])){
         return false;
     }else{

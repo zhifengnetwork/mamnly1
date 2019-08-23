@@ -47,9 +47,9 @@ class MobileBase extends Controller {
             session('openid',$user['openid']);
         }
 
-
         //微信浏览器
         if(strstr($_SERVER['HTTP_USER_AGENT'],'MicroMessenger')){
+
             $this->weixin_config = M('wx_user')->find(); //取微获信配置
             $this->assign('wechat_config', $this->weixin_config);            
             $user_temp = session('user');
@@ -61,52 +61,30 @@ class MobileBase extends Controller {
                 }
             }
 
-
-
             if (empty(session('user')) ){
 
                 if(is_array($this->weixin_config) && $this->weixin_config['wait_access'] == 1){
 
-
-                    if(!session("third_oauth")){
-
-                        $wxuser = $this->GetOpenid(); //授权获取openid以及微信用户信息
-                        if(!$wxuser['openid']){
-                            $this->error('获取新openid失败');
-                        }
-
-                        //这里做 新 openid 登录成功
-                        $is_cunzai_user = M('users')->where(['openid'=>$wxuser['openid']])->find();
-                        if($is_cunzai_user){
-                            if(!is_subscribe($is_cunzai_user['user_id'])){
-//                                $this->error('点击返回公众号关注');
-                            }
-                            session('user',$is_cunzai_user);
-                            setcookie('user_id',$is_cunzai_user['user_id'],null,'/');
-                            setcookie('is_distribut',$is_cunzai_user['is_distribut'],null,'/');
-                            setcookie('uname',$is_cunzai_user['nickname'],null,'/');
-                            session('openid',$is_cunzai_user['openid']);
-                        }
-
-
-                        session("third_oauth" , $wxuser);
-                    }else{
-                        $wxuser = session("third_oauth");
+                    $wxuser = $this->GetOpenid(); //授权获取openid以及微信用户信息
+                    if(!$wxuser['openid']){
+                        $this->error('获取新openid失败');
                     }
 
-
-                    //如果 没有  is_cunzai_user
-                    if(!$is_cunzai_user){
-
-                        if(I('old_openid') == ''){
-                            //跳去获取旧openid
-                            header('Location:/shop/code/index');
-                            exit;
-                        }else{
-                            $old_openid = I('old_openid');
+                    //这里做 新 openid 登录成功
+                    $is_cunzai_user = M('users')->where(['openid'=>$wxuser['openid']])->find();
+                    if($is_cunzai_user){
                         
-                            $wxuser['old_openid'] = $old_openid;
-                        }
+                        //===========老用户登录
+                       
+                        session('user',$is_cunzai_user);
+                        setcookie('user_id',$is_cunzai_user['user_id'],null,'/');
+                        setcookie('is_distribut',$is_cunzai_user['is_distribut'],null,'/');
+                        setcookie('uname',$is_cunzai_user['nickname'],null,'/');
+                        session('openid',$is_cunzai_user['openid']);
+
+                    }else{
+                      
+                        //===========新用户注册
 
                         //过滤特殊字符串
                         $wxuser['nickname'] && $wxuser['nickname'] = replaceSpecialStr($wxuser['nickname']);
@@ -116,6 +94,7 @@ class MobileBase extends Controller {
                         session('subscribe', $wxuser['subscribe']);// 当前这个用户是否关注了微信公众号
                         setcookie('subscribe',$wxuser['subscribe']);
                         $logic = new UsersLogic(); 
+
                         //$is_bind_account = tpCache('basic.is_bind_account');
                         //if ($is_bind_account) {
                             //  if (CONTROLLER_NAME != 'User' || ACTION_NAME != 'bind_guide') {
@@ -133,6 +112,7 @@ class MobileBase extends Controller {
                             $data = $logic->thirdLogin($wxuser);
                         
                         //}
+
                         if($data['status'] == 1){
                             session('user',$data['result']);
                             setcookie('user_id',$data['result']['user_id'],null,'/');
@@ -152,14 +132,19 @@ class MobileBase extends Controller {
                     }
 
                 }
-            }else{
-                if(!is_subscribe($user_temp['user_id'])){
-                    session('user', null);
-//                    $this->error('点击返回公众号关注');
-                }
-                setcookie('user_id',$user_temp['user_id'],null,'/');
-                setcookie('is_distribut',$user_temp['is_distribut'],null,'/');
+               
             }
+
+
+            
+            //if(!is_subscribe(session('user.user_id'))){
+                //$this->error('点击返回公众号关注');
+
+                write_log(   session('user.user_id').'======'. is_subscribe(session('user.user_id') ));
+
+            //}
+            
+
         }
 
         $this->public_assign();
