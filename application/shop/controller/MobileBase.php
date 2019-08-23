@@ -140,7 +140,13 @@ class MobileBase extends Controller {
             //if(!is_subscribe(session('user.user_id'))){
                 //$this->error('点击返回公众号关注');
 
-                write_log(   session('user.user_id').'======'. is_subscribe(session('user.user_id') ));
+                if(is_subscribe(session('user.user_id') == true)){
+                    $aaaa = '已关注';
+                }else{
+                    $aaaa = '不关注';                    
+                }
+
+                write_log(   session('user.user_id').'======'. $aaaa   ));
 
             //}
             
