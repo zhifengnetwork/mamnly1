@@ -146,7 +146,7 @@ class MobileBase extends Controller {
                     $aaaa = '不关注';                    
                 }
 
-                write_log(   session('user.user_id').'======'. $aaaa   ));
+                write_log(   session('user.user_id').'======'. $aaaa   );
 
             //}
             
