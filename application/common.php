@@ -165,24 +165,29 @@ function get_nickname_new($user_id){
 //获取用户昵称
 function is_subscribe($user_id){
 
-    //write_log( $user_id .'-----'  );
-
-    $user = M('users')->where(['user_id'=>$user_id])->field('openid')->find();
-    $access_token = access_token();
-    $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$access_token.'&openid='.$user['openid'].'&lang=zh_CN';
-
-    $resp = httpRequest($url, "GET");
-
-    //write_log(   session('user.user_id').'======'. $resp   );
-
-    $res = json_decode($resp, true);
-
-    if(!isset($res['subscribe'])){
-        return false;
+    write_log( $user_id .'-----'.session('subscribe').'……'  );
+    if(session('subscribe')==1){
+        return true;
     }else{
-        return $res['subscribe'] == 0 ? false : true;
-    }
+        $user = M('users')->where(['user_id'=>$user_id])->field('openid')->find();
+        $access_token = access_token();
+        $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$access_token.'&openid='.$user['openid'].'&lang=zh_CN';
 
+        $resp = httpRequest($url, "GET");
+
+        //write_log(   session('user.user_id').'======'. $resp   );
+
+        $res = json_decode($resp, true);
+
+        if(!isset($res['subscribe'])){
+            return false;
+        }else{
+            //1800秒即30分钟
+            session('subscribe',$res['subscribe'],3600);
+            write_log(session('subscribe').'======');
+            return $res['subscribe'] == 0 ? false : true;
+        }
+    }
 }
 
 //获取推荐上级
