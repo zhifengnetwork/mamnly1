@@ -79,7 +79,7 @@ class MobileBase extends Controller {
                         $is_cunzai_user = M('users')->where(['openid'=>$wxuser['openid']])->find();
                         if($is_cunzai_user){
                             if(!is_subscribe($is_cunzai_user['user_id'])){
-                                $this->error('点击返回公众号关注1');
+                                $this->error('点击返回公众号关注');
                             }
                             session('user',$is_cunzai_user);
                             setcookie('user_id',$is_cunzai_user['user_id'],null,'/');
@@ -111,7 +111,7 @@ class MobileBase extends Controller {
                         //过滤特殊字符串
                         $wxuser['nickname'] && $wxuser['nickname'] = replaceSpecialStr($wxuser['nickname']);
                         if(!is_subscribe($is_cunzai_user['user_id'])){
-                            $this->error('点击返回公众号关注2');
+                            $this->error('点击返回公众号关注');
                         }
                         session('subscribe', $wxuser['subscribe']);// 当前这个用户是否关注了微信公众号
                         setcookie('subscribe',$wxuser['subscribe']);

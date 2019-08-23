@@ -1059,25 +1059,33 @@ class Order extends Base {
         }
         //$data为excel表里的所有数据
         $arr=array();
-        foreach($data as $key=>$val){
-            for($i=0;$i<$fieldnum-1;$i++) {
+        foreach($data as $val){
                 if ($val[1] && $val[20] && $val[19] && $val[21]) {
-                    $val[12] = $val[12]!='百世快递'?$val[12]:'百世汇通快递';
-                    //手动修改字段与值
-                    $arr[$key]['order_sn'] = strval(trim($val[1]));
-                    $arr[$key]['mobile'] = strval(trim($val[20]));
-                    $arr[$key]['consignee'] = $val[19];
-                    $arr[$key]['address'] = $val[21];
-                    $arr[$key]['invoice_no'] = $val[13];
-                    $arr[$key]['add_time'] = time();
-                    //快递信息
-                    $arr[$key]['shipping_name'] = $val[12];
-                    $arr[$key]['shipping_code'] = Db::name('shipping')->where('shipping_name', $val[12])
-                        ->value('shipping_code');
-                    if(!$arr[$key]['shipping_code']){
-                        $this->error("订单号为{$val[1]}的快递信息查询错误");
+                    //导入的订单号这一列可能是合并的数据，以|分割
+                    $ids = explode('|',strval(trim($val[1])));
+                    foreach ($ids as $id){
+                        if(!$id) continue;
+                        $val[12] = $val[12]!='百世快递'?$val[12]:'百世汇通快递';
+                        $shipping_name = strval(trim($val[12]));
+                        $shipping_code = Db::name('shipping')->where('shipping_name', $shipping_name)
+                            ->value('shipping_code');
+                        if(!$shipping_code){
+                            $this->error("订单号为{$val[1]}的{$id}的快递信息查询错误");
+                        }
+
+                        $arr[] = [
+                            'order_sn'=>$id,
+                            'mobile'=>strval(trim($val[20])),
+                            'consignee'=>strval(trim($val[19])),
+                            'address'=>strval(trim($val[21])),
+                            'invoice_no'=> strval(trim($val[13])),
+                            'add_time'=>time(),
+                            'shipping_name'=>$shipping_name,
+                            'shipping_code'=>$shipping_code,
+                        ];
+
                     }
-                }
+
             }
         }
         //如果第一行是 null，去掉
