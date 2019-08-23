@@ -255,10 +255,11 @@ class UsersLogic extends Model
 	{
 		write_log("newopenid=".$data['openid']);
 	  
-		if (!$data['openid'] || !$data['oauth'] || !$data['old_openid']) {
+		if (!$data['openid'] || !$data['oauth'] ) {
 			return array('status' => -1, 'msg' => '参数有误openid或oauth丢失', 'result' => 'aaa');
 		}
-		write_log("oldopenid=".$data['old_openid']);
+
+		//write_log("oldopenid=".$data['old_openid']);
 		// $user2 = session('user');
 		// if (!empty($user2)) {
 		//     $r = $this->oauth_bind($data);//绑定账号
@@ -278,7 +279,7 @@ class UsersLogic extends Model
 		if(!$user){
 			//账户不存在 注册一个
 			$map['password'] = '';
-			$map['sign_old_openid'] = $data['old_openid'];
+			//$map['sign_old_openid'] = $data['old_openid'];
 			$map['openid'] = $data['openid'];
 			$map['nickname'] = $data['nickname'];
 			$map['reg_time'] = time();
@@ -296,6 +297,7 @@ class UsersLogic extends Model
 
 			$is_cunzai = Db::name('users')->where(array('openid'=>$data['openid']))->find();
 			$time=date("Y-m-d H:i:s");
+			
             write_log('新注册：openid'.$data['openid'].'--name--'.$data['nickname'].'time'.$time.'访问ip地址：' . $request->ip());
 			
 			if(!empty($is_cunzai)){

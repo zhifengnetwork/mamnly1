@@ -26,13 +26,16 @@ function access_token(){
 
     //判断是否过了缓存期
     $expire_time = $token['web_expires'];
+
     if($expire_time > time()){
         return $token['web_access_token'];
          
     }
+
     $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$appsecret}";
 
     $return = httpRequest($url,'GET');
+
     $return = json_decode($return,1);
     $web_expires = time() + 7140; // 提前60秒过期
     if($return['access_token']){
@@ -166,16 +169,19 @@ function get_nickname_new($user_id){
 function is_subscribe($user_id){
 
     write_log( $user_id .'-----'.session('subscribe').'……'  );
+
     if(session('subscribe')==1){
         return true;
+
     }else{
+
         $user = M('users')->where(['user_id'=>$user_id])->field('openid')->find();
         $access_token = access_token();
         $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$access_token.'&openid='.$user['openid'].'&lang=zh_CN';
 
         $resp = httpRequest($url, "GET");
 
-        //write_log(   session('user.user_id').'======'. $resp   );
+        write_log(   session('user.user_id').'======'. $resp   );
 
         $res = json_decode($resp, true);
 

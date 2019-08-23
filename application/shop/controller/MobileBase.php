@@ -66,6 +66,8 @@ class MobileBase extends Controller {
                 if(is_array($this->weixin_config) && $this->weixin_config['wait_access'] == 1){
 
                     $wxuser = $this->GetOpenid(); //授权获取openid以及微信用户信息
+
+                  
                     if(!$wxuser['openid']){
                         $this->error('获取新openid失败');
                     }
@@ -94,7 +96,7 @@ class MobileBase extends Controller {
                         session('subscribe', $wxuser['subscribe']);// 当前这个用户是否关注了微信公众号
                         setcookie('subscribe',$wxuser['subscribe']);
                         $logic = new UsersLogic(); 
-
+                   
                         //$is_bind_account = tpCache('basic.is_bind_account');
                         //if ($is_bind_account) {
                             //  if (CONTROLLER_NAME != 'User' || ACTION_NAME != 'bind_guide') {
@@ -126,7 +128,8 @@ class MobileBase extends Controller {
                             $logic->get_curr_time_section(); // VIP更新每天免费领取次数
                             $cartLogic->doUserLoginHandle();  //用户登录后 需要对购物车 一些操作
                         } elseif ($data['status'] == -1) {
-                            header('Location:/shop/user/logout');
+                            $this->error($data['msg']);
+                            exit;
                         }
 
                     }
