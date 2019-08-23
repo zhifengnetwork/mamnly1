@@ -405,6 +405,7 @@ class FanliLogic extends Model
 	    $pingji_4 =0;//记录联合创始人平级奖返利几个
 	    $pingji_5 =0;//记录执行平级奖返利几个
 	    $daqu=0;
+        $ping = 0;
 	    $teshu =0;//特殊情况
 		//查询上级信息
 		$parent_info = M('users')->where('user_id',$user_id)->field('level,user_id,first_leader')->find();
@@ -499,7 +500,7 @@ class FanliLogic extends Model
 				    //}
 				
 				}
-				if($ye['level']==5 && $four<2)  //处理执行返利
+				if($ye['level']==5 && $four<3&&$ping<2)  //处理执行返利
 				{
 					/*
 					 if($parent_info['level']==5)
@@ -525,6 +526,7 @@ class FanliLogic extends Model
 						 	//按上直属等级各自比例分享返利
 				         $bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission);
 				       	 $desc = "执行平级奖";
+				       	 $ping+=1;
 				         $log = $this->writeLog($ye['user_id'],$commission,$desc,6); //写入日志
 
 						 }
@@ -549,10 +551,10 @@ class FanliLogic extends Model
 				      }
 				
 				   }
-				   elseif($parent_info['level']!=5 && $pingji_5!=1)
+				   elseif($parent_info['level']!=5 && $pingji_5!=2)
 				   {
 				   	
-					if($four==1)
+					if($four==1||$four==2)
 					 {
 					 	//特殊情况返利两个联合创始人时候没有平级奖
 					 	if($teshu==0){
@@ -579,6 +581,7 @@ class FanliLogic extends Model
 						    {
 					         $bool = M('users')->where('user_id',$ye['user_id'])->setInc('user_money',$commission);
 					       	 $desc = "执行平级奖";
+					       	 $ping+=1;
 					         $log = $this->writeLog($ye['user_id'],$commission,$desc,6); //写入日志
 					        }
 
@@ -680,7 +683,6 @@ class FanliLogic extends Model
 
 			  }
 			}
-		
 
 	}
 

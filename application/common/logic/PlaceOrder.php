@@ -48,6 +48,7 @@ class PlaceOrder
 
     public function addNormalOrder()
     {
+        set_time_limit(0);
         $this->check();//提交订单前检查
         $this->queueInc();//是否排队
         $this->addOrder();//插入订单表
