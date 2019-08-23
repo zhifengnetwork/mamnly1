@@ -1977,4 +1977,83 @@ class Order extends Base {
         exit();
     }
 
+    function update()
+    {
+        $arr1 = Db::name('order')->where(
+            ['order_id' => ['lt', 1449], 'order_status' => ['in', '0,1'],
+                'shipping_status' => 0,
+                'pay_status' => 1]
+        )->select();
+        foreach ($arr1 as $k => $val) {
+
+            //改变order 发货时的状态和信息
+            $update['shipping_code'] = 'huitong';
+            $update['shipping_name'] = '百世汇通快递';
+            $update['order_status'] = 1;//订单改变为已确认
+            $update['shipping_status'] = 1;//订单改变为已发货
+            $res = Db::name('order')->where('order_sn', $val['order_sn'])->update($update);
+            $arr = [];
+            $arr['order_sn'] = $val['order_sn'];
+            $arr['mobile'] = $val['mobile'];
+            $arr['consignee'] = $val['consignee'];
+            $arr['address'] = $val['address'];
+            $arr['invoice_no'] = '71675056511111';
+            $arr['add_time'] = time();
+            //快递信息
+            $arr['shipping_name'] = '百世汇通快递';
+            $arr['shipping_code'] = 'huitong';
+            if ($res == 1) {
+                // 记录订单操作日志
+                $action_info = array(
+                    'order_id' => $val['order_id'],
+                    'action_user' => session('admin_id'),
+                    'order_status' => 1,
+                    'shipping_status' => 1,
+                    'pay_status' => 1,
+                    'action_note' => '确认发货',
+                    'status_desc' => '已确认订单', //''
+                    'log_time' => time(),
+                );
+                Db::name('order_action')->add($action_info);
+
+                // 发货成功
+                $doc = [
+                    'admin_id' => session('admin_id'),
+                    'order_sn' => $val['order_sn'],
+                    'consignee' => $val['consignee'],
+                    'address' => $val['address'],
+                    'mobile' => $val['mobile'],
+                    'order_id' => $val['order_id'],
+                    'user_id' => $val['user_id'],
+                    'zipcode' => $val['zipcode'],
+                    'country' => $val['country'],
+                    'province' => $val['province'],
+                    'city' => $val['city'],
+                    'district' => $val['district'],
+                    'shipping_code' => 'huitong',
+                    'shipping_name' => '百世汇通快递',
+                    'shipping_price' => '1',
+                    'invoice_no' => '71675056511111',
+                    'create_time' => time(),
+                    'send_type' => 0,
+                ];
+                $doc_cunzai = Db::name('delivery_doc')->where(['order_sn' => $val['order_sn']])->find();
+                if (empty($doc_cunzai)) {
+                    $rest = Db::name('delivery_doc')->add($doc);
+                }
+                $arr['status'] = 1;
+                $arr['order_id'] = $val['order_id'];
+                $arr['order_sn'] = $val['order_sn'];
+            } else {
+                $arr['status'] = 0;
+            }
+            $handle = Db::name('delivery_order_handle')->where(['order_sn' => $val['order_id']])->find();
+            if (empty($handle)) {
+                Db::name('delivery_order_handle')->insert($arr);
+            } else {
+                Db::name('delivery_order_handle')->where(['order_sn' => $val['order_id']])->update(['status' => $arr['status']]);
+            }
+        }
+    }
+
 }
