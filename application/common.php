@@ -182,8 +182,7 @@ function is_subscribe($user_id){
         if(!isset($res['subscribe'])){
             return false;
         }else{
-            //1800秒即30分钟
-            session('subscribe',$res['subscribe'],3600);
+            session('subscribe',$res['subscribe']);
             write_log(session('subscribe').'======');
             return $res['subscribe'] == 0 ? false : true;
         }
