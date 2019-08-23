@@ -164,13 +164,21 @@ function get_nickname_new($user_id){
 
 //获取用户昵称
 function is_subscribe($user_id){
-    $user = M('users')->where(['user_id'=>$user_id])->find();
+    $user = M('users')->where(['user_id'=>$user_id])->field('openid')->find();
     $access_token = access_token();
     $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$access_token.'&openid='.$user['openid'].'&lang=zh_CN';
 
     $resp = httpRequest($url, "GET");
     $res = json_decode($resp, true);
-    return $res['subscribe'] == 0 ? false : true;
+
+    dump($res);
+
+    if(!isset($res['subscribe'])){
+        return false;
+    }else{
+        return $res['subscribe'] == 0 ? false : true;
+    }
+
 }
 
 //获取推荐上级

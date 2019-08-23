@@ -6,6 +6,12 @@ use app\common\logic\wechat\WechatUtil;
 use app\common\util\Session;
 class Index extends MobileBase {
 
+
+    public function test(){
+        $user_id = I('user_id');
+        dump(is_subscribe($user_id));
+    }
+
     public function index(){
         
         //html 页面 免费领取面膜弹窗
