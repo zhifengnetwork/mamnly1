@@ -112,7 +112,6 @@ class FanliLogic extends Model
 
         if($this->goodId==$this->tgoodsid )//是否特殊产品
         {
-        	 
           $this->addhostmoney($user_info['user_id'],$parent_info);//合伙人推荐合伙人
              $this->upzdmoney($user_info['first_leader']);//执行，董事无限代
              //$this->pingji($user_info['first_leader']);//评级奖
@@ -515,7 +514,7 @@ class FanliLogic extends Model
                          $error =1; //判断上级比直属等级少，记录不循环
 					}
 		
-				   if($parent_info['level']==5 && $pingji_5!=1)//执行平级奖
+				   if($parent_info['level']==5 && $pingji_5!=2)//执行平级奖
 				   {
 				      if($ke>=1)
 				      {
@@ -553,7 +552,7 @@ class FanliLogic extends Model
 				   elseif($parent_info['level']!=5 && $pingji_5!=1)
 				   {
 				   	
-					if($four==1)  
+					if($four==1)
 					 {
 					 	//特殊情况返利两个联合创始人时候没有平级奖
 					 	if($teshu==0){
