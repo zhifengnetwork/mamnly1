@@ -141,9 +141,9 @@ class MobileBase extends Controller {
                 //$this->error('点击返回公众号关注');
 
                 if(is_subscribe(session('user.user_id') == true)){
-                    $aaaa = '已关注';
+                    $aaaa = 'subscribe';
                 }else{
-                    $aaaa = '不关注';                    
+                    $aaaa = 'no____subscribe';                    
                 }
 
                 write_log(   session('user.user_id').'======'. $aaaa   );
