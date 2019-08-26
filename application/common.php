@@ -168,10 +168,10 @@ function get_nickname_new($user_id){
 //获取用户昵称
 function is_subscribe($user_id){
 
-    write_log( $user_id .'-----'.session('subscribe').'……'  );
+//    write_log( $user_id .'-----'.session('subscribe').'……'  );
 
-    if(session('subscribe')==1){
-        return true;
+    if(session('subscribe')!==NULL){
+        return session('subscribe');
 
     }else{
 
@@ -189,7 +189,7 @@ function is_subscribe($user_id){
             return false;
         }else{
             session('subscribe',$res['subscribe']);
-            write_log(session('subscribe').'======');
+//            write_log(session('subscribe').'======');
             return $res['subscribe'] == 0 ? false : true;
         }
     }
