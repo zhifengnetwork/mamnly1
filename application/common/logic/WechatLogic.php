@@ -103,10 +103,10 @@ class WechatLogic
             ];
             // 由场景值获取分销直属id
             if (!empty($msg['EventKey'])) {
-                write_log('获取父id'.$msg['EventKey']);
+                write_log('leader_msg：'.$msg['EventKey']);
                 $userData['first_leader'] = substr($msg['EventKey'], strlen('qrscene_'));
+                write_log('leader_id：'.$userData['first_leader']);
                 if ($userData['first_leader']) {
-                    write_log('获取父erid'.$msg['EventKey']);
                     $first_leader = Db::name('users')->where('user_id', $userData['first_leader'])->find();
                     if ($first_leader) {
                         $userData['second_leader'] = $first_leader['first_leader']; //  第直属推荐人
