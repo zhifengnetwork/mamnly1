@@ -139,7 +139,7 @@ class WechatLogic
             }else if(!$is_bind_account){//非绑定账号才给注册
                 //此处注册也送积分
                 //$user_id = Db::name('users')->insertGetId($userData);
-                 
+
                 $isRegIntegral = tpCache('integral.is_reg_integral');
                 $pay_points = 0;
                 if($isRegIntegral==1){
@@ -157,7 +157,31 @@ class WechatLogic
                 'oauth' => 'weixin',
                 'oauth_child' => 'mp',
                 ]);*/
-            } 
+            }
+        }else{
+            $first_leader = Db::name('users')->where(['user_id'=>$oath['user_id']])->value('first_leader');
+            if($first_leader==0){
+                if (false === ($wxdata = self::$wechat_obj->getFanInfo($openid))) {
+                    $this->replyError($msg , self::$wechat_obj->getError());
+                }
+                if (!empty($msg['EventKey'])) {
+                    $userData['first_leader'] = substr($msg['EventKey'], strlen('qrscene_'));
+                    if ($userData['first_leader']) {
+                        $first_leader = Db::name('users')->where('user_id', $userData['first_leader'])->find();
+                        if ($first_leader) {
+                            $userData['second_leader'] = $first_leader['first_leader']; //  第直属推荐人
+                            $userData['third_leader'] = $first_leader['second_leader']; // 第二级推荐人
+                            //他上线分销的下线人数要加1
+                            Db::name('users')->where('user_id', $userData['first_leader'])->setInc('underling_number');
+                            Db::name('users')->where('user_id', $userData['second_leader'])->setInc('underling_number');
+                            Db::name('users')->where('user_id', $userData['third_leader'])->setInc('underling_number');
+                        }
+                        $userData['level_t'] = 66;
+                        Db::name('users')->where(['user_id'=>$oath['user_id']])->update($userData);
+                    }
+
+                }
+            }
         }
 
         $this->replySubscribe($msg['ToUserName'], $openid,$msg);
