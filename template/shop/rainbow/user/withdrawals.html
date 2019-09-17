@@ -63,7 +63,7 @@
 							<img id="pay_img" src="__STATIC__/images/withdraw-zhifubao.png" />
 						</span>
 
-						<div class="withdraw-conts fl">
+						<div class="withdraw-conts fl ss">
 							<p id="pay_name">{$user_extend.realname}</p>
 							<i id="pay_num">
 							<if condition="$user_extend['cash_alipay']">
@@ -74,7 +74,7 @@
 							</i>
 						</div>
 
-						<div class="withdraw-cheng">
+						<div class="withdraw-cheng ss">
 							<i class="icon-rigths" id="add_ion"><img src="__STATIC__/images/withdraw-right.png" /> </i>
 						</div>
 					</li>
@@ -192,7 +192,7 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-		  $(".withdraw-cheng").click(function(){
+		  $(".ss").click(function(){
 		  	if(cash_type==0){
 		  		$(".withdraw-addpay-pop").show();
 		  	}else{
