@@ -231,7 +231,9 @@ input,select,option,textarea{outline: none;}
 }
  .withdraw-cont-ul .withdraw-conts{
 	margin-left: 1.1733rem;
-	margin-top:1.192rem;
+	margin-top:0.692rem;
+	width: 11.4rem;
+	padding:.5rem 0
 }
 .withdraw-cont-ul .withdraw-conts p{
 	font-size: 0.6826rem;
