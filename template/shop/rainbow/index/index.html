@@ -54,7 +54,7 @@
 				<adv pid="9" limit="5" item="v">
 					<div class="swiper-slide">
 						<a href="{$v.ad_link}">
-							<img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" alt="">
+							<img src="{$v[ad_code]}?v={:date('YmdHis')}" title="{$v[title]}" style="{$v[style]}" alt="">
 						</a>
 					</div>
 				</adv>
@@ -161,7 +161,7 @@
 						<li>
 							<div class="img-wrap">
 								<a href="{:U('Shop/Goods/goodsInfo',array('id'=>$v[goods_id]))}"><img
-										src="{$v[goods_id]|goods_thum_images=400,400}?v={:date('Ym')}" /></a>
+										src="{$v[goods_id]|goods_thum_images=400,400}?v={:date('YmdHis')}" /></a>
 							</div>
 							<div class="text">
 								<p class="tit"><a
