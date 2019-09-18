@@ -64,7 +64,7 @@ class FanliLogic extends Model
 				->field('is_distribut,is_agent')
                 ->find();
            //获取每个产品返利数据
-         $rebase = $this->getconfing();
+
         //查询会员当前等级
 		$user_info = M('users')->where('user_id',$this->userId)->field('first_leader,level,user_id')->find();
 		//查询上直属信息
@@ -95,15 +95,20 @@ class FanliLogic extends Model
 
 		if(($goods_info['sign_free_receive']==0) && ($goods_info['cat_id']!= C('customize.special_cid'))&&$goods_info['exchange_integral']==0) //免费领取，签到产品,使用积分商品不参与返利
         {
-            // 2019-8-9 zxl 根据商品设置的返利比例返利
-            if (!empty($rebase) && isset($rebase[$user_info['level']]) && $rebase[$user_info['level']] > 0) {
+            // 2019-9-18 zxl 根据会员等级设置的直购返佣比例返佣
+            if ($user_info['level'] >= 3)//自购只返利给合伙人以上级别
+            {
+                $distribut_level = M('user_level')->where('level', $user_info['level'])->field('direct_rate')->find();
                 //计算返利金额
-                $commission = $goods_info['shop_price'] * ($rebase[$user_info['level']] / 100) * $this->goodNum;
+                $commission = $goods_info['shop_price'] * ($distribut_level['direct_rate'] / 100) * $this->goodNum;
                 //计算佣金
                 //按上直属等级各自比例分享返利
-                $bool = M('users')->where('user_id', $this->userId)->setInc('user_money', $commission);
+                $bool = M('users')->where('user_id', $user_info['user_id'])->setInc('user_money', $commission);
                 if ($bool !== false) {
-                    $this->writeLog($this->userId, $commission, '自购返利', 7);
+                    $desc = "自购返利";
+                    write_log("{$goods_info['shop_price']}!!!{$this->goodNum}!!!{$distribut_level}!!!{$distribut_level['direct_rate']}!!!
+                    {$commission}!!!{$user_info['user_id']}");
+                    $this->writeLog($user_info['user_id'], $commission, $desc, 7);
                 } else {
                     return false;
                 }
@@ -120,9 +125,10 @@ class FanliLogic extends Model
         }
         else
         {
-            // 2019-8-9 zxl 根据商品设置的返利比例返利
+            // 2019-8-9 zxl 根据商品设置的分享返利比例返利
         	if($goods_info['sign_free_receive']==0&&$goods_info['exchange_integral']==0) //免费领取，签到产品，使用积分商品不参与返利
         	{
+                $rebase = $this->getconfing();
                 if (!empty($rebase) && isset($rebase[$parent_info['level']]) && $rebase[$parent_info['level']] > 0) {
                     //计算返利金额
                     $commission = $goods_info['shop_price'] * ($rebase[$parent_info['level']] / 100) * $this->goodNum;
