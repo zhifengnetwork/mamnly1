@@ -440,19 +440,19 @@ class PlaceOrder
         $payList = $this->pay->getPayList();
         $goods = is_object($payList[0])?$payList[0]:$payList[0]['goods'];
         $goods = Db::name('goods')->field('goods_id,sign_free_receive,shop_price')->where(['goods_id' => $goods->goods_id])->find();
-        if ($goods&&$goods->sign_free_receive == 1) {
+        if ($goods&&($goods->sign_free_receive == 1||$goods['sign_free_receive'] == 1)) {
             $user = $this->pay->getUser();
             $goods_num = Db::name('order_goods')->where('order_id', $this->order['order_id'])->value('goods_num');
             $arr = [
                 'user_id'=>$user['user_id'],
-                'goods_id'=>$goods->goods_id,
+                'goods_id'=>$goods->goods_id?:$goods['goods_id'],
                 'order_id'=>$this->order['order_id'],
                 'num'=>$goods_num,
             ];
-                $rs = Db::name('sign_receive_log')->insert($arr);
-                if($rs){
+            $rs = Db::name('sign_receive_log')->insert($arr);
+            if($rs){
 //                    Db::name('users')->where('user_id', $user['user_id'])->setDec('sign_free_num', $goods_num);// 减签到领取次数
-                }
+            }
 
         }
 //        if($signPrice > 0 || $OrderPromAmount > 0){
