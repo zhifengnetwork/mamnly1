@@ -176,7 +176,7 @@
 		<div class="modle_box" v-if="v.id == 'fixedsId'? true:''" :key="v.id">
 			<div class="fixeds_wrap" :style="{'background':v.params.backColor}">
 				<div class="res" :style="{'background':v.params.backColor}">
-					<a href="{:U('Goods/ajaxSearch')}" :style="{color:v.params.textColor}">
+					<a href="{:U('Goods/ajaxSearch')}" :style="{color:v.params.textColor}" class="dddd">
 						<form action="#" :style="{'border-color':v.params.borderColor}"
 							:class="[v.params.resStyle,v.params.reswStyle]">
 							<input type="submit" class="searchBtn" value="">
@@ -1417,6 +1417,11 @@
 		border: .02rem solid #ddd;
 		outline: none;
 	}
+	.dddd{
+		display: inline-block;
+		width: 100%;
+		vertical-align: top;
+	}
 
 	/* 辅助空白label 辅助线label -e*/
 	/* 辅助线 -s */
@@ -1808,7 +1813,7 @@
 
 	.res .searchText {
 		width: 85%;
-		height: 40px;
+		height: 35px;
 		border: 0px;
 		padding: 0px 8px;
 		box-sizing: border-box;
