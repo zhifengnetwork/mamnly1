@@ -432,7 +432,7 @@ class Promotion extends Base
             $data['store_count'] = $goods['store_count'];
         }
         if(!$groupBuyValidate->batch()->check($data)){
-            $return = ['status' => 0,'msg' =>'操作失败','result' => $groupBuyValidate->getError() ];
+            $return = ['status' => 0,'msg' =>'请输入完整信息','result' => $groupBuyValidate->getError() ];
             $this->ajaxReturn($return);
         }
         $data['rebate'] = number_format($data['price'] / $data['goods_price'] * 10, 1);
