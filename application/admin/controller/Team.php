@@ -53,7 +53,7 @@ class Team extends Base
     {
         $data = input();
 
-        $data['start_time'] = strtotime($data['start_time']);        
+        $data['start1_time'] = strtotime($data['start_time']);
         $data['end_time'] = strtotime($data['end_time']);
 
         #   数据验证
@@ -86,7 +86,7 @@ class Team extends Base
         if ($data['act'] == 'edit')
         {
                 $res = Db::name('team_activity')->where('team_id', $data['team_id'])->update($data);
-                if($res){
+                if ($res !== false) {
                     $this->ajaxReturn(['status' => 1,'msg' =>'操作成功','result' => '']);
                 }else{
                     $this->ajaxReturn(['status' => 0,'msg' =>'操作失败','result' => '']);
