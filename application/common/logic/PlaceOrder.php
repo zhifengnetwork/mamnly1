@@ -364,8 +364,8 @@ class PlaceOrder
             $orderGoodsData['sku'] = $payItem['sku']; // sku
             $orderGoodsData['is_bonus'] = $goodsArr[$payItem['goods_id']]['is_bonus']; // 是否参加奖金池商品
             $orderGoodsData['member_goods_price'] = $payItem['member_goods_price']; // 会员折扣价
-            $orderGoodsData['give_integral'] = $goodsArr[$payItem['goods_id']]['give_integral']; // 购买商品赠送积分
-            $orderGoodsData['leader_integral'] = $goodsArr[$payItem['goods_id']]['leader_integral']; // 购买商品赠送上级积分
+            $orderGoodsData['give_integral'] = 0; // 购买商品赠送积分
+            $orderGoodsData['leader_integral'] = 0; // 购买商品赠送上级积分
             $orderGoodsData['sign_free_receive'] = $goodsArr[$payItem['goods_id']]['sign_free_receive']; // 免费领取类型
             if ($payItem['prom_type']) {
                 $orderGoodsData['prom_type'] = $payItem['prom_type']; // 0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
@@ -373,6 +373,8 @@ class PlaceOrder
             } else {
                 $orderGoodsData['prom_type'] = 0; // 0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
                 $orderGoodsData['prom_id'] = 0; // 活动id
+                $orderGoodsData['give_integral'] = $goodsArr[$payItem['goods_id']]['give_integral'];
+                $orderGoodsData['leader_integral'] = $goodsArr[$payItem['goods_id']]['leader_integral'];
             }
             array_push($orderGoodsAllData, $orderGoodsData);
         }

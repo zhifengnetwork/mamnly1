@@ -65,10 +65,13 @@ class Distribut extends Base {
             $orderSn = $order['order_sn'];
             $goods_list = M('order_goods')->where(['order_id'=>$order_id])->select();
             foreach($goods_list as $k => $v){
-                $goodId = $v['goods_id'];
-                $goodNum = $v['goods_num'];
-                $model = new FanliLogic($userId, $goodId,$goodNum,$orderSn,$order_id);
-                $res = $model->fanliModel();
+                if($v['prom_type']==0){
+                    $goodId = $v['goods_id'];
+                    $goodNum = $v['goods_num'];
+                    $model = new FanliLogic($userId, $goodId,$goodNum,$orderSn,$order_id);
+                    $res = $model->fanliModel();
+                }
+
             }
             //补业绩
             add_agent_performance($order_id);

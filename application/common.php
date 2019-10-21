@@ -1543,12 +1543,13 @@ function update_pay_status($order_sn,$ext=array())
     $goods_list = M('order_goods')->where(['order_id'=>$order_id])->select();
     //agent_performance($order_id);
     foreach($goods_list as $k => $v){
+        if($v['prom_type']==0){
+            $goodId = $v['goods_id'];
+            $goodNum = $v['goods_num'];
 
-        $goodId = $v['goods_id'];
-        $goodNum = $v['goods_num'];
-       
-        $model = new FanliLogic($userId, $goodId,$goodNum,$orderSn,$order_id);
-        $res = $model->fanliModel();
+            $model = new FanliLogic($userId, $goodId,$goodNum,$orderSn,$order_id);
+            $res = $model->fanliModel();
+        }
     }
  }
 /**
